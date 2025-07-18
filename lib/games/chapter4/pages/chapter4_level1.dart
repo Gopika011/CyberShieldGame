@@ -12,10 +12,7 @@ import 'package:flutter/material.dart';
 
 
 class Chapter4MainPage extends StatefulWidget {
-  /// Callback to be called when the entire Chapter 4 game is completed.
   final VoidCallback? onGameComplete;
-
-  /// Callback to be called when the user decides to exit the game.
   final VoidCallback? onGameExit;
 
   const Chapter4MainPage({
@@ -170,6 +167,7 @@ class _Chapter4MainPageState extends State<Chapter4MainPage> with SingleTickerPr
           totalQuestions: questions.length,
           gameType: GameType.spamCall,
           onContinue: _navigateToNextGame,
+          isLastGameInChapter: false,
         ),
       ),
     );
@@ -177,13 +175,15 @@ class _Chapter4MainPageState extends State<Chapter4MainPage> with SingleTickerPr
 
   /// Navigates to the next game in the chapter or signals chapter completion.
   void _navigateToNextGame() {
-    Navigator.push(
+    Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => CredentialDefenderGame()), 
-    ).then((_) {
-      // After CredentialDefenderGame finishes and pops, we can consider the chapter complete
-      widget.onGameComplete?.call(); // Signal completion to Game4Entry
-    });
+      MaterialPageRoute(
+        builder: (context) => CredentialDefenderGame(
+          onGameComplete: widget.onGameComplete,
+          onGameExit: widget.onGameExit,
+        ),
+      ),
+    );
   }
 
 

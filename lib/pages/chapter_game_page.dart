@@ -303,37 +303,38 @@ class ChapterGamePage extends StatelessWidget {
                                   
                                   const SizedBox(height: 16),
                                   
-                                  // Demo notice
-                                  Container(
-                                    padding: const EdgeInsets.all(12),
-                                    decoration: BoxDecoration(
-                                      color: const Color(0x05FFFFFF),
-                                      borderRadius: BorderRadius.circular(8),
-                                      border: Border.all(
-                                        color: const Color(0xFF00D4FF).withOpacity(0.3),
-                                        width: 1,
-                                      ),
-                                    ),
-                                    child: const Row(
-                                      children: [
-                                        Icon(
-                                          Icons.info_outline,
-                                          color: Color(0xFFB8C6DB),
-                                          size: 16,
+                                  // Demo notice - only show for chapters 1-3
+                                  if (chapterId != 4)
+                                    Container(
+                                      padding: const EdgeInsets.all(12),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0x05FFFFFF),
+                                        borderRadius: BorderRadius.circular(8),
+                                        border: Border.all(
+                                          color: const Color(0xFF00D4FF).withOpacity(0.3),
+                                          width: 1,
                                         ),
-                                        SizedBox(width: 8),
-                                        Expanded(
-                                          child: Text(
-                                            'Interactive gameplay modules will be implemented here',
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              color: Color(0xFFB8C6DB),
+                                      ),
+                                      child: const Row(
+                                        children: [
+                                          Icon(
+                                            Icons.info_outline,
+                                            color: Color(0xFFB8C6DB),
+                                            size: 16,
+                                          ),
+                                          SizedBox(width: 8),
+                                          Expanded(
+                                            child: Text(
+                                              'Interactive gameplay modules will be implemented here',
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                color: Color(0xFFB8C6DB),
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
-                                  ),
                                 ],
                               ),
                             ),
@@ -355,8 +356,18 @@ class ChapterGamePage extends StatelessWidget {
                     ),
                     child: ElevatedButton(
                       onPressed: () {
-                        gameState.completeChapter(chapterId);
-                        Navigator.pop(context, 'completed');
+                        if (chapterId == 4) {
+                          // Navigate to the actual game for Chapter 4
+                          Navigator.pushNamed(context, '/chapter4/game').then((result) {
+                            if (result == 'completed') {
+                              Navigator.pop(context, 'completed');
+                            }
+                          });
+                        } else {
+                          // For other chapters, just mark as completed
+                          gameState.completeChapter(chapterId);
+                          Navigator.pop(context, 'completed');
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.transparent,
@@ -366,9 +377,9 @@ class ChapterGamePage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      child: const Text(
-                        'COMPLETE MISSION',
-                        style: TextStyle(
+                      child: Text(
+                        chapterId == 4 ? 'START MISSION' : 'COMPLETE MISSION',
+                        style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                           color: Color(0xFF00D4FF),

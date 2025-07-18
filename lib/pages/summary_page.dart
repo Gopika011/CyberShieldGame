@@ -324,7 +324,7 @@ class SummaryPage extends StatelessWidget {
                       child: ElevatedButton(
                         onPressed: () {
                           // This button pops the SummaryPage and Game4Entry will handle chapter completion
-                          Navigator.pop(context, 'completed_chapter');
+                          Navigator.pop(context, 'chapter_complete');
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF00D4FF).withOpacity(0.1),

@@ -26,6 +26,15 @@ class GameScenario {
 }
 
 class CredentialDefenderGame extends StatefulWidget {
+  final VoidCallback? onGameComplete;
+  final VoidCallback? onGameExit;
+
+  const CredentialDefenderGame({
+    Key? key,
+    this.onGameComplete,
+    this.onGameExit,
+  }) : super(key: key);
+
   @override
   _CredentialDefenderGameState createState() => _CredentialDefenderGameState();
 }
@@ -182,7 +191,7 @@ class _CredentialDefenderGameState extends State<CredentialDefenderGame> {
   }
 
   void _navigateToSummary() {
-    Navigator.push(
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (context) => SummaryPage(
@@ -190,10 +199,15 @@ class _CredentialDefenderGameState extends State<CredentialDefenderGame> {
           totalQuestions: scenarios.length,
           gameType: GameType.phishing,
           onContinue: null,
-          isLastGameInChapter: true,
+          isLastGameInChapter: true, // This IS the last game
         ),
       ),
-    );
+    ).then((result) {
+      if (result == 'chapter_complete') {
+        // Navigate back to chapters page
+        widget.onGameComplete?.call();
+      }
+    });
   }
 
   Color _getOptionColor(int index) {
