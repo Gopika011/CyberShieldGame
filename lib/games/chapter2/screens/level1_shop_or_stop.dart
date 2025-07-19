@@ -1,6 +1,7 @@
 import 'package:claude/enums/games.dart';
 import 'package:claude/games/chapter2/screens/level2_permission_patrol.dart';
 import 'package:claude/games/chapter4/pages/intruction_page.dart';
+import 'package:claude/pages/land.dart';
 import 'package:claude/pages/summary_page.dart';
 import 'package:flutter/material.dart';
 import '../widgets/cyber_button.dart';
@@ -102,9 +103,9 @@ class _Level1ShopOrStopState extends State<Level1ShopOrStop> {
       showResult = true;
       if (isCorrect) {
         score += 100;
-        resultMessage = '✅ CORRECT!\n\n${websites[currentQuestion]['explanation']}';
+        resultMessage = websites[currentQuestion]['explanation'];
       } else {
-        resultMessage = '❌ WRONG!\n\n${websites[currentQuestion]['explanation']}';
+        resultMessage = websites[currentQuestion]['explanation'];
       }
     });
   }
@@ -158,20 +159,36 @@ class _Level1ShopOrStopState extends State<Level1ShopOrStop> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF0A1A2A),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              const Color(0xFF0A1A2A),
-              const Color(0xFF1A2A3A),
-            ],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+      body: Stack(
+        children: [
+          // Background gradient
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Color.fromARGB(202, 10, 21, 32),
+                  Color.fromARGB(206, 15, 27, 46),
+                  Color.fromARGB(158, 26, 35, 50),
+                ],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+            ),
           ),
-        ),
-        child: SafeArea(
-          child: showResult ? _buildResultScreen() : _buildGameScreen(),
-        ),
+          // Grid background painter
+          Positioned.fill(
+            child: CustomPaint(
+              painter: GridPainter(
+                gridColor: const Color(0x1A00D4FF),
+                cellSize: 25,
+              ),
+            ),
+          ),
+          // Main content
+          SafeArea(
+            child: showResult ? _buildResultScreen() : _buildGameScreen(),
+          ),
+        ],
       ),
     );
   }
@@ -354,56 +371,79 @@ class _Level1ShopOrStopState extends State<Level1ShopOrStop> {
     );
   }
 
-  Widget _buildResultScreen() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            padding: EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              border: Border.all(color: const Color(0xFF00D4FF), width: 2),
-              borderRadius: BorderRadius.circular(12),
-              color: const Color(0xFF1A2A3A).withOpacity(0.8),
-            ),
-            child: Column(
-              children: [
-                Text(
-                  resultMessage,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    height: 1.5,
+Widget _buildResultScreen() {
+  bool isCorrect = results.isNotEmpty ? results.last['isCorrect'] : false;
+  
+  return Padding(
+    padding: const EdgeInsets.all(16.0),
+    child: Column(
+      children: [
+        _buildHeader(),
+        SizedBox(height: 40),
+        
+        Expanded(
+          child: Center(
+            child: Container(
+              width: double.infinity,
+              padding: EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: isCorrect ? Colors.green : Colors.red,
+                  width: 2,
+                ),
+                borderRadius: BorderRadius.circular(12),
+                color: (isCorrect ? Colors.green : Colors.red).withOpacity(0.1),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    isCorrect ? Icons.check_circle : Icons.cancel,
+                    color: isCorrect ? Colors.green : Colors.red,
+                    size: 64,
                   ),
-                  textAlign: TextAlign.center,
-                ),
-                
-                SizedBox(height: 24),
-                
-                Text(
-                  'Score: $score',
-                  style: TextStyle(
-                    color: const Color(0xFF00D4FF),
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
+                  
+                  SizedBox(height: 16),
+                  
+                  Text(
+                    isCorrect ? 'Correct!' : 'Wrong!',
+                    style: TextStyle(
+                      color: isCorrect ? Colors.green : Colors.red,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                
-                SizedBox(height: 24),
-                
-                CyberButton(
-                  text: currentQuestion < websites.length - 1 ? 'NEXT WEBSITE' : 'COMPLETE LEVEL',
-                  onPressed: nextQuestion,
-                  isLarge: true,
-                ),
-              ],
+                  
+                  SizedBox(height: 16),
+                  
+                  Text(
+                    resultMessage,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      height: 1.5,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  
+                  SizedBox(height: 32),
+                  
+                  CyberButton(
+                    text: currentQuestion < websites.length - 1 
+                        ? 'NEXT WEBSITE' 
+                        : 'COMPLETE LEVEL',
+                    onPressed: nextQuestion,
+                    isLarge: true,
+                  ),
+                ],
+              ),
             ),
           ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
+}
 
   Widget _buildHeader() {
     return Row(

@@ -44,11 +44,11 @@ class _Chapter4MainPageState extends State<Chapter4MainPage> with SingleTickerPr
       'transcript': 'Hello, this is Rohit speaking from your bank. You have been selected for a special cashback offer. Please share your UPI PIN to activate the offer.',
       'isLegit': false,
     },
-    {
-      'audio' : 'assets/audio/call3.mp3',
-      'transcript' : 'Your Aadhar card has been suspended due to unusual activity. Confirm you Aadhar number, date of birth and OTP to reactivate it.',
-      'isLegit' : false,
-    },
+    // {
+    //   'audio' : 'assets/audio/call3.mp3',
+    //   'transcript' : 'Your Aadhar card has been suspended due to unusual activity. Confirm you Aadhar number, date of birth and OTP to reactivate it.',
+    //   'isLegit' : false,
+    // },
   ];
 
   int currentIndex = 0; 

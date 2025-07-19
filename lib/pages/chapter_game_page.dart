@@ -73,7 +73,7 @@ class ChapterGamePage extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'CHAPTER ${chapterId.toString().padLeft(2, '0')}',
+                              'CHAPTER ${(chapterId -1).toString().padLeft(2, '0')}',
                               style: const TextStyle(
                                 color: Color(0xFFB8C6DB),
                                 fontSize: 12,

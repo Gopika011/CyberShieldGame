@@ -3,7 +3,7 @@ class GameState {
   factory GameState() => _instance;
   GameState._internal();
 
-  List<int> unlockedChapters = [1]; // Chapter 1 unlocked by default
+  List<int> unlockedChapters = [2]; // Chapter 1 unlocked by default
   List<int> completedChapters = [];
 
   void completeChapter(int chapterId) {

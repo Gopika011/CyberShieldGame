@@ -1,3 +1,4 @@
+import 'package:claude/games/chapter3/widgets/theme.dart';
 import 'package:flutter/material.dart';
 import '../chapter3.dart';
 import 'level3_intro.dart';
@@ -64,11 +65,6 @@ class _Level3State extends State<Level3> with TickerProviderStateMixin {
         showFeedback = false;
       } else {
         levelCompleted = true;
-        // Assuming ScoreManager is available globally or imported
-        // If not, you might need to import it or pass it as a parameter
-        // For now, assuming it's available in the context
-        // This line was removed as per the edit hint to remove Provider
-        // Provider.of<ScoreManager>(context, listen: false).setLevelScore(3, score);
       }
     });
   }
@@ -153,112 +149,90 @@ class _Level3State extends State<Level3> with TickerProviderStateMixin {
     });
     Future.delayed(const Duration(seconds: 2), nextSection);
   }
+    Widget _buildStatusBar() {
+    return Container(
+      margin: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: DigitalTheme.cardBackground,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: DigitalTheme.primaryCyan),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'DETECTION STATUS',
+                style: DigitalTheme.subheadingStyle.copyWith(
+                  color: DigitalTheme.primaryCyan,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(
+                'Level 2 - Active',
+                style: DigitalTheme.bodyStyle.copyWith(
+                  color: DigitalTheme.primaryText,
+                  fontSize: 16,
+                ),
+              ),
+            ],
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                'SCORE',
+                style: DigitalTheme.subheadingStyle.copyWith(
+                  color: DigitalTheme.primaryCyan,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(
+                '$score/${fakeDMs.length}',
+                style: DigitalTheme.bodyStyle.copyWith(
+                  color: DigitalTheme.primaryText,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF0A1A2A),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF0F1B2A),
+        backgroundColor: Color(0xFF334155),
         elevation: 0,
-        title: Row(
-          children: [
-            Stack(
-              children: [
-                Container(
-                  width: 45,
-                  height: 45,
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFFFF4444), Color(0xFFFF6666)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: const Color(0xFF00D4FF), width: 1),
-                  ),
-                  child: const Icon(
-                    Icons.person,
-                    color: Colors.white,
-                    size: 24,
-                  ),
-                ),
-                Positioned(
-                  right: 0,
-                  top: 0,
-                  child: Container(
-                    width: 12,
-                    height: 12,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFF4444),
-                      shape: BoxShape.circle,
-                      border: Border.all(color: const Color(0xFF0F1B2A), width: 2),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(width: 15),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    "Arya's Account",
-                    style: TextStyle(
-                      color: Color(0xFF00D4FF),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                      letterSpacing: 1.2,
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFF4444),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Text(
-                      'SECURE PROFILE',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1.0,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+        title: Text(
+          'CYBER SHIELD - SECURE PROFILE',
+          style: DigitalTheme.subheadingStyle.copyWith(
+            color: DigitalTheme.primaryCyan,
+            fontSize: 16,
+            letterSpacing: 1.5,
+          ),
         ),
         leading: Container(
           margin: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: const Color(0xFF00D4FF).withOpacity(0.1),
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: const Color(0xFF00D4FF).withOpacity(0.3)),
+            border: Border.all(color: DigitalTheme.primaryCyan),
+            borderRadius: BorderRadius.circular(4),
           ),
           child: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Color(0xFF00D4FF)),
+            icon: const Icon(Icons.arrow_back, color: DigitalTheme.primaryCyan),
             onPressed: () => Navigator.pop(context),
           ),
         ),
-        actions: [
-          Container(
-            margin: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: const Color(0xFF00D4FF).withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: const Color(0xFF00D4FF).withOpacity(0.3)),
-            ),
-            child: IconButton(
-              icon: const Icon(Icons.more_vert, color: Color(0xFF00D4FF)),
-              onPressed: () {},
-            ),
-          ),
-        ],
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -274,122 +248,9 @@ class _Level3State extends State<Level3> with TickerProviderStateMixin {
         ),
         child: Column(
           children: [
-            // Futuristic Progress Bar
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: const Color(0xFF0F1B2A),
-                border: Border(
-                  bottom: BorderSide(color: const Color(0xFF00D4FF).withOpacity(0.3)),
-                ),
-              ),
-              child: Row(
-                children: [
-                  // Score indicator
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF00D4FF), Color(0xFF0099CC)],
-                      ),
-                      borderRadius: BorderRadius.circular(15),
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xFF00D4FF).withOpacity(0.3),
-                          blurRadius: 10,
-                          spreadRadius: 0,
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.stars, color: Colors.white, size: 16),
-                        const SizedBox(width: 6),
-                        Text(
-                          'SCORE: $score/5',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12,
-                            letterSpacing: 1.0,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  // Progress bar
-                  Expanded(
-                    child: Container(
-                      height: 12,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF1A2A3A),
-                        borderRadius: BorderRadius.circular(6),
-                        border: Border.all(color: const Color(0xFF00D4FF).withOpacity(0.3)),
-                      ),
-                      child: Stack(
-                        children: [
-                          FractionallySizedBox(
-                            alignment: Alignment.centerLeft,
-                            widthFactor: (currentSection + (levelCompleted ? 1 : 0)) / 3,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                gradient: const LinearGradient(
-                                  colors: [Color(0xFF00D4FF), Color(0xFF00FF88)],
-                                ),
-                                borderRadius: BorderRadius.circular(6),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: const Color(0xFF00D4FF).withOpacity(0.5),
-                                    blurRadius: 8,
-                                    spreadRadius: 0,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  // Section indicator
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF00FF88), Color(0xFF00CC66)],
-                      ),
-                      borderRadius: BorderRadius.circular(15),
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xFF00FF88).withOpacity(0.3),
-                          blurRadius: 10,
-                          spreadRadius: 0,
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.security, color: Colors.white, size: 16),
-                        const SizedBox(width: 6),
-                        Text(
-                          'SECTION ${levelCompleted ? 3 : currentSection + 1}/3',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12,
-                            letterSpacing: 1.0,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            _buildStatusBar(),
+            const SizedBox(height: 20),
+
             // Main Content Area
             Expanded(
               child: Container(
@@ -891,151 +752,358 @@ class _Level3State extends State<Level3> with TickerProviderStateMixin {
   }
 
   Widget _buildCompletion() {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      margin: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            const Color(0xFF00FF88).withOpacity(0.9),
-            const Color(0xFF00D4FF).withOpacity(0.9),
-          ],
+  return Container(
+    decoration: const BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          Color.fromARGB(202, 10, 21, 32),
+          Color.fromARGB(206, 15, 27, 46),
+          Color.fromARGB(158, 26, 35, 50),
+        ],
+      ),
+    ),
+
+    
+    child: Stack(
+      children: [
+          Positioned.fill(
+            child: CustomPaint(
+              painter: GridPainter(
+                gridColor: const Color(0x1A00D4FF),
+                cellSize: 25,
+              ),
+            ),
+          ),
+        // Main content
+        Center(
+          child: SingleChildScrollView(
+            child: Container(
+              margin: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: const Color(0xFF0F1B2A).withOpacity(0.85),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: const Color(0xFF00D4FF).withOpacity(0.4),
+                  width: 2,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF00FF88).withOpacity(0.2),
+                    blurRadius: 30,
+                    spreadRadius: 5,
+                  ),
+                  BoxShadow(
+                    color: const Color(0xFF00D4FF).withOpacity(0.1),
+                    blurRadius: 60,
+                    spreadRadius: 10,
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Success title
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          const Color(0xFF00FF88).withOpacity(0.1),
+                          const Color(0xFF00D4FF).withOpacity(0.1),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: const Color(0xFF00D4FF).withOpacity(0.3),
+                        width: 1,
+                      ),
+                    ),
+                    child: const Text(
+                      ' MISSION ACCOMPLISHED ',
+                      style: TextStyle(
+                        color: Color(0xFF00FF88),
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.5,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  
+                  const SizedBox(height: 16),
+                  
+                  // Score section
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF0F1B2A).withOpacity(0.6),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: const Color(0xFF00D4FF).withOpacity(0.3),
+                        width: 1,
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        const Text(
+                          'ACCOUNT SECURED',
+                          style: TextStyle(
+                            color: Color(0xFF00D4FF),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'You\'ve protected Arya from online threats!',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: 0.5,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 12),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    const Color(0xFF00FF88).withOpacity(0.2),
+                                    const Color(0xFF00D4FF).withOpacity(0.2),
+                                  ],
+                                ),
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: const Color(0xFF00FF88).withOpacity(0.4),
+                                  width: 1,
+                                ),
+                              ),
+                              child: Text(
+                                'SCORE: $score/5',
+                                style: const TextStyle(
+                                  color: Color(0xFF00FF88),
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1.0,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  
+                  const SizedBox(height: 24),
+                  
+                  // Security Tips Section
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF0F1B2A).withOpacity(0.4),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: const Color(0xFF00D4FF).withOpacity(0.2),
+                        width: 1,
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              width: 4,
+                              height: 20,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF00D4FF),
+                                borderRadius: BorderRadius.circular(2),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            const Text(
+                              '💡 SECURITY PROTOCOLS',
+                              style: TextStyle(
+                                color: Color(0xFF00D4FF),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                                letterSpacing: 1.0,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        Column(
+                          children: [
+                            _buildSecurityTip('Always verify friend requests'),
+                            _buildSecurityTip('Review privacy settings monthly'),
+                            _buildSecurityTip('Never share location in posts'),
+                            _buildSecurityTip('Keep your account private'),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  
+                  const SizedBox(height: 24),
+                  
+                  // Action buttons
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        GameState().completeChapter(3);
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (context) => ChaptersPage()),
+                          (route) => false,
+                        );
+                      },
+                      icon: const Icon(Icons.home, size: 20),
+                      label: const Text('RETURN TO BASE'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF00D4FF),
+                        foregroundColor: Colors.black,
+                        padding: const EdgeInsets.symmetric(vertical: 18),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        elevation: 0,
+                      ),
+                    ),
+                  ),
+                  
+                  if (score < 3) ...[
+                    const SizedBox(height: 20),
+                    
+                    // Warning section for low score
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFF4444).withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: const Color(0xFFFF4444).withOpacity(0.3),
+                          width: 1,
+                        ),
+                      ),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFFF4444).withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: const Icon(
+                                  Icons.warning,
+                                  color: Color(0xFFFF4444),
+                                  size: 20,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              const Expanded(
+                                child: Text(
+                                  'SECURITY BREACH DETECTED',
+                                  style: TextStyle(
+                                    color: Color(0xFFFF4444),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 1.0,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          const Text(
+                            'Some of Arya\'s information is still exposed! Review your privacy settings and try again to fully secure her account.',
+                            style: TextStyle(
+                              color: Color(0xFFFFAAAA),
+                              fontSize: 14,
+                              height: 1.4,
+                              letterSpacing: 0.3,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
+                    
+                    const SizedBox(height: 16),
+                    
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (context) => const Level3Intro()),
+                          );
+                        },
+                        icon: const Icon(Icons.refresh, size: 20),
+                        label: const Text('RETRY MISSION'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFFF4444),
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 18),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          elevation: 0,
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
         ),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFF00D4FF)),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF00FF88).withOpacity(0.3),
-            blurRadius: 20,
-            spreadRadius: 2,
+      ],
+    ),
+  );
+}
+
+Widget _buildSecurityTip(String tip) {
+  return Padding(
+    padding: const EdgeInsets.only(bottom: 8),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 6,
+          height: 6,
+          margin: const EdgeInsets.only(top: 6),
+          decoration: const BoxDecoration(
+            color: Color(0xFF00D4FF),
+            shape: BoxShape.circle,
           ),
-        ],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(50),
-              border: Border.all(color: Colors.white.withOpacity(0.3)),
-            ),
-            child: const Icon(
-              Icons.security,
-              color: Colors.white,
-              size: 48,
-            ),
-          ),
-          const SizedBox(height: 16),
-          const Text(
-            '🎉 Account Secured! 🛡️',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 2.0,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'You\'ve protected Arya from online snoops!\nScore: $score/5',
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            tip,
             style: const TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 1.5,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 20),
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.white.withOpacity(0.3)),
-            ),
-            child: const Column(
-              children: [
-                Text(
-                  '💡 Security Tips:',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-                SizedBox(height: 12),
-                Text(
-                  '• Always check who follows you\n'
-                  '• Review your settings monthly\n'
-                  '• Never share location in posts\n'
-                  '• Keep your account private',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
+              color: Color(0xFFB8C6DB),
+              fontSize: 14,
+              height: 1.4,
+              letterSpacing: 0.2,
             ),
           ),
-          const SizedBox(height: 20),
-          ElevatedButton.icon(
-            onPressed: () {
-              GameState().completeChapter(3);
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => ChaptersPage()),
-                (route) => false,
-              );
-            },
-            icon: const Icon(Icons.home),
-            label: const Text('BACK TO HOME'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF00D4FF),
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-              textStyle: const TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.2),
-              elevation: 8,
-            ),
-          ),
-          if (score < 3) ...[
-            const SizedBox(height: 16),
-            const Text(
-              '⚠️ Some of Arya’s info is still exposed! Review your privacy settings and try again to secure her account.',
-              style: TextStyle(
-                color: Color(0xFFFF4444),
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 1.0,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 12),
-            ElevatedButton.icon(
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const Level3Intro()),
-                );
-              },
-              icon: const Icon(Icons.refresh),
-              label: const Text('RETRY LEVEL'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFFF4444),
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                textStyle: const TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.2),
-                elevation: 8,
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
+}
 } 

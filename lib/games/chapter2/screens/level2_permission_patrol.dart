@@ -1,6 +1,7 @@
 import 'package:claude/enums/games.dart';
 import 'package:claude/games/chapter2/screens/level3_wifi_woes.dart';
 import 'package:claude/games/chapter4/pages/intruction_page.dart';
+import 'package:claude/pages/land.dart';
 import 'package:claude/pages/summary_page.dart';
 import 'package:flutter/material.dart';
 import '../widgets/cyber_button.dart';
@@ -141,11 +142,11 @@ class _Level2PermissionPatrolState extends State<Level2PermissionPatrol>
       showResult = true;
       if (isCorrect) {
         score += 150; // Higher score for harder level
-        resultMessage = '✅ CORRECT!\n\n${permissionScenarios[currentQuestion]['explanation']}';
+        resultMessage = permissionScenarios[currentQuestion]['explanation'];
       } else {
         lives--;
         _shakeController.forward().then((_) => _shakeController.reverse());
-        resultMessage = '❌ WRONG! (-1 Life)\n\n${permissionScenarios[currentQuestion]['explanation']}';
+        resultMessage = permissionScenarios[currentQuestion]['explanation'];
         
       }
     });
@@ -205,28 +206,44 @@ class _Level2PermissionPatrolState extends State<Level2PermissionPatrol>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF0A1A2A),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              const Color(0xFF0A1A2A),
-              const Color(0xFF2A1A3A), // Slightly different gradient
-            ],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+      body: Stack(
+        children: [
+          // Background gradient
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Color.fromARGB(202, 10, 21, 32),
+                  Color.fromARGB(206, 15, 27, 46),
+                  Color.fromARGB(158, 26, 35, 50),
+                ],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+            ),
           ),
-        ),
-        child: SafeArea(
-          child: AnimatedBuilder(
-            animation: _shakeAnimation,
-            builder: (context, child) {
-              return Transform.translate(
-                offset: Offset(_shakeAnimation.value, 0),
-                child: showResult ? _buildResultScreen() : _buildGameScreen(),
-              );
-            },
+          // Grid background painter
+          Positioned.fill(
+            child: CustomPaint(
+              painter: GridPainter(
+                gridColor: const Color(0x1A00D4FF),
+                cellSize: 25,
+              ),
+            ),
           ),
-        ),
+          // Main content with shake animation
+          SafeArea(
+            child: AnimatedBuilder(
+              animation: _shakeAnimation,
+              builder: (context, child) {
+                return Transform.translate(
+                  offset: Offset(_shakeAnimation.value, 0),
+                  child: showResult ? _buildResultScreen() : _buildGameScreen(),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -449,95 +466,72 @@ class _Level2PermissionPatrolState extends State<Level2PermissionPatrol>
   }
 
   Widget _buildResultScreen() {
+    bool isCorrect = results.isNotEmpty ? results.last['isCorrect'] : false;
+    
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
-            padding: EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: gameOver ? Colors.red : const Color(0xFF00D4FF), 
-                width: 2,
-              ),
-              borderRadius: BorderRadius.circular(12),
-              color: const Color(0xFF1A2A3A).withOpacity(0.9),
-            ),
-            child: Column(
-              children: [
-                if (gameOver) ...[
-                  Icon(
-                    Icons.security,
-                    color: Colors.red,
-                    size: 60,
+          _buildHeader(),
+          SizedBox(height: 40),
+          
+          Expanded(
+            child: Center(
+              child: Container(
+                width: double.infinity,
+                padding: EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: isCorrect ? Colors.green : Colors.red,
+                    width: 2,
                   ),
-                  SizedBox(height: 16),
-                ],
-                
-                Text(
-                  resultMessage,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    height: 1.5,
-                  ),
-                  textAlign: TextAlign.center,
+                  borderRadius: BorderRadius.circular(12),
+                  color: (isCorrect ? Colors.green : Colors.red).withOpacity(0.1),
                 ),
-                
-                SizedBox(height: 24),
-                
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Column(
-                      children: [
-                        Text(
-                          'Score',
-                          style: TextStyle(color: Colors.white70),
-                        ),
-                        Text(
-                          '$score',
-                          style: TextStyle(
-                            color: const Color(0xFF00D4FF),
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
+                    Icon(
+                      isCorrect ? Icons.check_circle : Icons.cancel,
+                      color: isCorrect ? Colors.green : Colors.red,
+                      size: 64,
                     ),
-                    // Column(
-                    //   children: [
-                    //     Text(
-                    //       'Lives',
-                    //       style: TextStyle(color: Colors.white70),
-                    //     ),
-                    //     Row(
-                    //       children: List.generate(3, (index) => 
-                    //         Icon(
-                    //           Icons.favorite,
-                    //           color: index < lives ? Colors.red : Colors.grey,
-                    //           size: 20,
-                    //         ),
-                    //       ),
-                    //     ),
-                    //   ],
-                    // ),
+                    
+                    SizedBox(height: 16),
+                    
+                    Text(
+                      isCorrect ? 'Correct!' : 'Wrong!',
+                      style: TextStyle(
+                        color: isCorrect ? Colors.green : Colors.red,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    
+                    SizedBox(height: 16),
+                    
+                    Text(
+                      resultMessage,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        height: 1.5,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    
+                    SizedBox(height: 32),
+                    
+                    CyberButton(
+                      text: currentQuestion < permissionScenarios.length - 1 
+                          ? 'NEXT APP' 
+                          : 'COMPLETE LEVEL',
+                      onPressed: nextQuestion,
+                      isLarge: true,
+                    ),
                   ],
                 ),
-                
-                SizedBox(height: 24),
-                
-                CyberButton(
-                  text: gameOver 
-                      ? 'BACK TO MENU' 
-                      : (currentQuestion < permissionScenarios.length - 1 
-                          ? 'NEXT APP' 
-                          : 'COMPLETE LEVEL'),
-                  onPressed: nextQuestion,
-                  isLarge: true,
-                ),
-              ],
+              ),
             ),
           ),
         ],

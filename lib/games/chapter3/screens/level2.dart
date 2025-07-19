@@ -118,111 +118,121 @@ class _Level2State extends State<Level2> {
     });
   }
 
-  Widget _buildCornerDecoration() {
-    return Positioned(
-      top: 0,
-      left: 0,
-      child: Container(
-        width: 40,
-        height: 40,
-        decoration: const BoxDecoration(
-          border: Border(
-            top: BorderSide(color: DigitalTheme.primaryCyan, width: 3),
-            left: BorderSide(color: DigitalTheme.primaryCyan, width: 3),
+
+  Widget _buildStatusBar() {
+    return Container(
+      margin: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: DigitalTheme.cardBackground,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: DigitalTheme.primaryCyan),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'DETECTION STATUS',
+                style: DigitalTheme.subheadingStyle.copyWith(
+                  color: DigitalTheme.primaryCyan,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(
+                'Level 2 - Active',
+                style: DigitalTheme.bodyStyle.copyWith(
+                  color: DigitalTheme.primaryText,
+                  fontSize: 16,
+                ),
+              ),
+            ],
           ),
-        ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                'SCORE',
+                style: DigitalTheme.subheadingStyle.copyWith(
+                  color: DigitalTheme.primaryCyan,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(
+                '$score/${phases.length}',
+                style: DigitalTheme.bodyStyle.copyWith(
+                  color: DigitalTheme.primaryText,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
-
-  Widget _buildBottomRightCorner() {
-    return Positioned(
-      bottom: 0,
-      right: 0,
-      child: Container(
-        width: 40,
-        height: 40,
-        decoration: const BoxDecoration(
-          border: Border(
-            bottom: BorderSide(color: DigitalTheme.primaryCyan, width: 3),
-            right: BorderSide(color: DigitalTheme.primaryCyan, width: 3),
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildFeedbackPanel() {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
-      child: Stack(
-        children: [
-          Center(
-            child: Container(
-              padding: const EdgeInsets.all(24),
+      child: Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: const Color(0xFF0F1B2A).withOpacity(0.9),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: showFeedback
+                ? (feedbackType == 'success' ? const Color(0xFF00FF88) : const Color(0xFFFF4444))
+                : const Color(0xFF00D4FF),
+            width: 1,
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              width: 80,
+              height: 80,
               decoration: BoxDecoration(
-                color: DigitalTheme.surfaceBackground,
-                borderRadius: BorderRadius.circular(12),
+                shape: BoxShape.circle,
                 border: Border.all(
                   color: showFeedback
-                      ? (feedbackType == 'success' ? DigitalTheme.successGreen : DigitalTheme.dangerRed)
-                      : DigitalTheme.primaryCyan,
+                      ? (feedbackType == 'success' ? const Color(0xFF00FF88) : const Color(0xFFFF4444))
+                      : const Color(0xFF00D4FF),
                   width: 2,
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: showFeedback
-                        ? (feedbackType == 'success' ? DigitalTheme.successGreen : DigitalTheme.dangerRed)
-                        : DigitalTheme.primaryCyan,
-                    blurRadius: 15,
-                    spreadRadius: 0,
-                  ),
-                ],
+                color: const Color(0xFF0F1B2A),
               ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 80,
-                    height: 80,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: showFeedback
-                            ? (feedbackType == 'success' ? DigitalTheme.successGreen : DigitalTheme.dangerRed)
-                            : DigitalTheme.primaryCyan,
-                        width: 3,
-                      ),
-                      color: DigitalTheme.surfaceBackground,
-                    ),
-                    child: Icon(
-                      showFeedback
-                          ? (feedbackType == 'success' ? Icons.verified_rounded : Icons.warning_amber_rounded)
-                          : Icons.shield,
-                      color: showFeedback
-                          ? (feedbackType == 'success' ? DigitalTheme.successGreen : DigitalTheme.dangerRed)
-                          : DigitalTheme.primaryCyan,
-                      size: 40,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Text(
-                    feedbackMessage.isEmpty ? 'ANALYZING THREAT LEVEL...' : feedbackMessage,
-                    textAlign: TextAlign.center,
-                    style: DigitalTheme.headingStyle.copyWith(
-                      color: showFeedback
-                          ? (feedbackType == 'success' ? DigitalTheme.successGreen : DigitalTheme.dangerRed)
-                          : DigitalTheme.primaryCyan,
-                    ),
-                  ),
-                ],
+              child: Icon(
+                showFeedback
+                    ? (feedbackType == 'success' ? Icons.verified_rounded : Icons.warning_amber_rounded)
+                    : Icons.shield,
+                color: showFeedback
+                    ? (feedbackType == 'success' ? const Color(0xFF00FF88) : const Color(0xFFFF4444))
+                    : const Color(0xFF00D4FF),
+                size: 40,
               ),
             ),
-          ),
-          _buildCornerDecoration(),
-          _buildBottomRightCorner(),
-        ],
+            const SizedBox(height: 20),
+            Text(
+              feedbackMessage.isEmpty ? 'ANALYZING THREAT LEVEL...' : feedbackMessage,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: showFeedback
+                    ? (feedbackType == 'success' ? const Color(0xFF00FF88) : const Color(0xFFFF4444))
+                    : const Color(0xFF00D4FF),
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                height: 1.4,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -230,245 +240,62 @@ class _Level2State extends State<Level2> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: DigitalTheme.darkBackground,
+      backgroundColor: const Color(0xFF0A1520),
       appBar: AppBar(
         backgroundColor: DigitalTheme.surfaceBackground,
         elevation: 0,
-        title: Row(
-          children: [
-            Stack(
-              children: [
-                Container(
-                  width: 45,
-                  height: 45,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [DigitalTheme.dangerRed, DigitalTheme.dangerRed.withOpacity(0.8)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: DigitalTheme.primaryCyan, width: 1),
-                  ),
-                  child: const Icon(
-                    Icons.person,
-                    color: Colors.white,
-                    size: 24,
-                  ),
-                ),
-                Positioned(
-                  right: 0,
-                  top: 0,
-                  child: Container(
-                    width: 12,
-                    height: 12,
-                    decoration: BoxDecoration(
-                      color: DigitalTheme.dangerRed,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: DigitalTheme.darkBackground, width: 2),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(width: 15),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Rahul_2.0',
-                    style: DigitalTheme.subheadingStyle.copyWith(
-                      color: DigitalTheme.primaryCyan,
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: DigitalTheme.dangerRed,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Text(
-                      'THREAT DETECTED',
-                      style: DigitalTheme.bodyStyle.copyWith(
-                        color: DigitalTheme.primaryText,
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1.0,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+        title: Text(
+          'CYBER SHIELD - CHAT DEFENDER',
+          style: DigitalTheme.subheadingStyle.copyWith(
+            color: DigitalTheme.primaryCyan,
+            fontSize: 16,
+            letterSpacing: 1.5,
+          ),
         ),
         leading: Container(
           margin: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: DigitalTheme.primaryCyan.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: DigitalTheme.primaryCyan.withOpacity(0.3)),
+            border: Border.all(color: DigitalTheme.primaryCyan),
+            borderRadius: BorderRadius.circular(4),
           ),
           child: IconButton(
             icon: const Icon(Icons.arrow_back, color: DigitalTheme.primaryCyan),
             onPressed: () => Navigator.pop(context),
           ),
         ),
-        actions: [
-          Container(
-            margin: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: DigitalTheme.primaryCyan.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: DigitalTheme.primaryCyan.withOpacity(0.3)),
-            ),
-            child: IconButton(
-              icon: const Icon(Icons.more_vert, color: DigitalTheme.primaryCyan),
-              onPressed: () {},
-            ),
-          ),
-        ],
       ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: DigitalTheme.backgroundGradient,
-        ),
-        child: Column(
-          children: [
-            // Futuristic Progress Bar
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: DigitalTheme.surfaceBackground,
-                border: Border(
-                  bottom: BorderSide(color: DigitalTheme.primaryCyan.withOpacity(0.3)),
-                ),
-              ),
-              child: Row(
-                children: [
-                  // Score indicator
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [DigitalTheme.primaryCyan, DigitalTheme.primaryCyan.withOpacity(0.8)],
-                      ),
-                      borderRadius: BorderRadius.circular(15),
-                      boxShadow: [
-                        BoxShadow(
-                          color: DigitalTheme.primaryCyan.withOpacity(0.3),
-                          blurRadius: 10,
-                          spreadRadius: 0,
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.stars, color: Colors.white, size: 16),
-                        const SizedBox(width: 6),
-                        Text(
-                          'SCORE: $score/${phases.length}',
-                          style: DigitalTheme.bodyStyle.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12,
-                            letterSpacing: 1.0,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  
-                  // Progress bar
-                  Expanded(
-                    child: Container(
-                      height: 12,
-                      decoration: BoxDecoration(
-                        color: DigitalTheme.surfaceBackground,
-                        borderRadius: BorderRadius.circular(6),
-                        border: Border.all(color: DigitalTheme.primaryCyan.withOpacity(0.3)),
-                      ),
-                      child: Stack(
-                        children: [
-                          FractionallySizedBox(
-                            alignment: Alignment.centerLeft,
-                            widthFactor: (currentPhase + 1) / phases.length,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [DigitalTheme.primaryCyan, DigitalTheme.primaryCyan.withOpacity(0.8)],
-                                ),
-                                borderRadius: BorderRadius.circular(6),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: DigitalTheme.primaryCyan.withOpacity(0.5),
-                                    blurRadius: 8,
-                                    spreadRadius: 0,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  
-                  // Phase indicator
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [DigitalTheme.primaryCyan.withOpacity(0.8), DigitalTheme.primaryCyan.withOpacity(0.6)],
-                      ),
-                      borderRadius: BorderRadius.circular(15),
-                      boxShadow: [
-                        BoxShadow(
-                          color: DigitalTheme.primaryCyan.withOpacity(0.3),
-                          blurRadius: 10,
-                          spreadRadius: 0,
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.security, color: Colors.white, size: 16),
-                        const SizedBox(width: 6),
-                        Text(
-                          'PHASE ${currentPhase + 1}/${phases.length}',
-                          style: DigitalTheme.bodyStyle.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12,
-                            letterSpacing: 1.0,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+      body: Stack(
+        children: [
+          // Background gradient
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Color.fromARGB(202, 10, 21, 32),
+                  Color.fromARGB(206, 15, 27, 46),
+                  Color.fromARGB(158, 26, 35, 50),
                 ],
               ),
             ),
+          ),
 
-            // Chat Messages Area
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: const AssetImage('assets/images/background.jpg'),
-                    fit: BoxFit.cover,
-                    opacity: 0.05,
-                    colorFilter: ColorFilter.mode(
-                      DigitalTheme.primaryCyan.withOpacity(0.1),
-                      BlendMode.overlay,
-                    ),
-                  ),
-                ),
+          Positioned.fill(
+            child: CustomPaint(
+              painter: GridPainter(
+                gridColor: const Color(0x1A00D4FF),
+                cellSize: 25,
+              ),
+            ),
+          ),
+
+          Column(
+            children: [
+              _buildStatusBar(),
+
+              // Chat Messages Area
+              Expanded(
                 child: ListView(
                   padding: const EdgeInsets.all(20),
                   children: [
@@ -480,11 +307,9 @@ class _Level2State extends State<Level2> {
                           width: 40,
                           height: 40,
                           decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [DigitalTheme.dangerRed, DigitalTheme.dangerRed.withOpacity(0.8)],
-                            ),
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: DigitalTheme.primaryCyan, width: 1),
+                            color: const Color(0xFFFF4444),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: const Color(0xFF00D4FF), width: 1),
                           ),
                           child: const Icon(
                             Icons.person,
@@ -499,28 +324,21 @@ class _Level2State extends State<Level2> {
                               Container(
                                 padding: const EdgeInsets.all(18),
                                 decoration: BoxDecoration(
-                                  color: DigitalTheme.surfaceBackground,
+                                  color: const Color(0xFF0F1B2A).withOpacity(0.8),
                                   borderRadius: const BorderRadius.only(
                                     topLeft: Radius.circular(4),
-                                    topRight: Radius.circular(20),
-                                    bottomLeft: Radius.circular(20),
-                                    bottomRight: Radius.circular(20),
+                                    topRight: Radius.circular(12),
+                                    bottomLeft: Radius.circular(12),
+                                    bottomRight: Radius.circular(12),
                                   ),
                                   border: Border.all(
-                                    color: DigitalTheme.dangerRed.withOpacity(0.3),
+                                    color: const Color(0xFFFF4444).withOpacity(0.3),
                                   ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: DigitalTheme.dangerRed.withOpacity(0.1),
-                                      blurRadius: 10,
-                                      spreadRadius: 0,
-                                    ),
-                                  ],
                                 ),
                                 child: Text(
                                   phases[currentPhase]['message'],
-                                  style: DigitalTheme.bodyStyle.copyWith(
-                                    color: Colors.white,
+                                  style: const TextStyle(
+                                    color: Color(0xFFB8C6DB),
                                     fontSize: 16,
                                     height: 1.4,
                                   ),
@@ -533,7 +351,7 @@ class _Level2State extends State<Level2> {
                                   width: 8,
                                   height: 8,
                                   decoration: const BoxDecoration(
-                                    color: DigitalTheme.dangerRed,
+                                    color: Color(0xFFFF4444),
                                     shape: BoxShape.circle,
                                   ),
                                 ),
@@ -545,21 +363,21 @@ class _Level2State extends State<Level2> {
                     ),
                     const SizedBox(height: 12),
 
-                    // Timestamp with tech styling
+                    // Timestamp
                     Padding(
                       padding: const EdgeInsets.only(left: 52),
                       child: Row(
                         children: [
                           Icon(
                             Icons.schedule,
-                            color: DigitalTheme.primaryCyan.withOpacity(0.6),
+                            color: const Color(0xFF00D4FF).withOpacity(0.6),
                             size: 12,
                           ),
                           const SizedBox(width: 4),
                           Text(
                             '${DateTime.now().hour}:${DateTime.now().minute.toString().padLeft(2, '0')}',
-                            style: DigitalTheme.bodyStyle.copyWith(
-                              color: DigitalTheme.primaryCyan.withOpacity(0.6),
+                            style: TextStyle(
+                              color: const Color(0xFF00D4FF).withOpacity(0.6),
                               fontSize: 11,
                               fontWeight: FontWeight.w500,
                               letterSpacing: 0.8,
@@ -574,7 +392,7 @@ class _Level2State extends State<Level2> {
                     if (showFeedback)
                       _buildFeedbackPanel(),
 
-                    // Choices with futuristic styling
+                    // Choices
                     if (!showFeedback && !levelCompleted)
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -582,46 +400,34 @@ class _Level2State extends State<Level2> {
                           Container(
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [
-                                  DigitalTheme.primaryCyan.withOpacity(0.1),
-                                  DigitalTheme.primaryCyan.withOpacity(0.1).withOpacity(0.8),
-                                ],
-                              ),
-                              borderRadius: BorderRadius.circular(15),
+                              color: const Color(0xFF00D4FF).withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                                color: DigitalTheme.primaryCyan.withOpacity(0.4),
+                                color: const Color(0xFF00D4FF).withOpacity(0.3),
                               ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: DigitalTheme.primaryCyan.withOpacity(0.1),
-                                  blurRadius: 15,
-                                  spreadRadius: 0,
-                                ),
-                              ],
                             ),
                             child: Row(
                               children: [
                                 Container(
                                   padding: const EdgeInsets.all(8),
                                   decoration: BoxDecoration(
-                                    color: DigitalTheme.primaryCyan.withOpacity(0.2),
-                                    borderRadius: BorderRadius.circular(10),
+                                    color: const Color(0xFF00D4FF).withOpacity(0.2),
+                                    borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: const Icon(
                                     Icons.psychology,
-                                    color: DigitalTheme.primaryCyan,
+                                    color: Color(0xFF00D4FF),
                                     size: 24,
                                   ),
                                 ),
                                 const SizedBox(width: 12),
-                                Text(
+                                const Text(
                                   'SELECT DEFENSIVE ACTION',
-                                  style: DigitalTheme.headingStyle.copyWith(
-                                    color: DigitalTheme.primaryCyan,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 1.2,
+                                  style: TextStyle(
+                                    color: Color(0xFF00D4FF),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    letterSpacing: 1.0,
                                   ),
                                 ),
                               ],
@@ -638,23 +444,11 @@ class _Level2State extends State<Level2> {
                                     width: double.infinity,
                                     padding: const EdgeInsets.all(18),
                                     decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        colors: [
-                                          DigitalTheme.surfaceBackground,
-                                          DigitalTheme.surfaceBackground,
-                                        ],
-                                      ),
-                                      borderRadius: BorderRadius.circular(15),
+                                      color: const Color(0xFF0F1B2A).withOpacity(0.6),
+                                      borderRadius: BorderRadius.circular(12),
                                       border: Border.all(
-                                        color: DigitalTheme.primaryCyan.withOpacity(0.3),
+                                        color: const Color(0xFF00D4FF).withOpacity(0.3),
                                       ),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: DigitalTheme.primaryCyan.withOpacity(0.1),
-                                          blurRadius: 10,
-                                          spreadRadius: 0,
-                                        ),
-                                      ],
                                     ),
                                     child: Row(
                                       children: [
@@ -664,7 +458,7 @@ class _Level2State extends State<Level2> {
                                           decoration: BoxDecoration(
                                             shape: BoxShape.circle,
                                             border: Border.all(
-                                              color: DigitalTheme.primaryCyan,
+                                              color: const Color(0xFF00D4FF),
                                               width: 2,
                                             ),
                                           ),
@@ -673,8 +467,8 @@ class _Level2State extends State<Level2> {
                                         Expanded(
                                           child: Text(
                                             entry.value['text'],
-                                            style: DigitalTheme.bodyStyle.copyWith(
-                                              color: Colors.white,
+                                            style: const TextStyle(
+                                              color: Color(0xFFB8C6DB),
                                               fontSize: 15,
                                               fontWeight: FontWeight.w500,
                                               height: 1.3,
@@ -688,7 +482,7 @@ class _Level2State extends State<Level2> {
                                     child: Material(
                                       color: Colors.transparent,
                                       child: InkWell(
-                                        borderRadius: BorderRadius.circular(15),
+                                        borderRadius: BorderRadius.circular(12),
                                         onTap: () => handleChoice(entry.key),
                                         child: Container(),
                                       ),
@@ -701,235 +495,180 @@ class _Level2State extends State<Level2> {
                         ],
                       ),
 
-                    // Continue button with futuristic styling
-                    if (showFeedback && !levelCompleted)
-                      Center(
-                        child: Container(
-                          margin: const EdgeInsets.only(top: 20),
-                          child: ElevatedButton(
-                            onPressed: retryPhase,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.transparent,
-                              foregroundColor: DigitalTheme.primaryCyan,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 32,
-                                vertical: 16,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25),
-                                side: const BorderSide(
-                                  color: DigitalTheme.primaryCyan,
-                                  width: 2,
-                                ),
-                              ),
-                              elevation: 0,
-                            ),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    'CONTINUE',
-                                    style: DigitalTheme.headingStyle.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      letterSpacing: 1.2,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  const Icon(Icons.arrow_forward),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
                   ],
                 ),
               ),
-            ),
 
-            // Level Completion with futuristic styling
-            if (levelCompleted)
-              Container(
-                padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      DigitalTheme.successGreen.withOpacity(0.9),
-                      DigitalTheme.primaryCyan.withOpacity(0.9),
-                    ],
+              // Level Completion
+              if (levelCompleted)
+                Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF0F1B2A).withOpacity(0.9),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: const Color(0xFF00D4FF)),
                   ),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: DigitalTheme.primaryCyan),
-                  boxShadow: [
-                    BoxShadow(
-                      color: DigitalTheme.successGreen.withOpacity(0.3),
-                      blurRadius: 20,
-                      spreadRadius: 2,
-                    ),
-                  ],
-                ),
-                margin: const EdgeInsets.all(20),
-                child: Column(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(50),
-                        border: Border.all(color: Colors.white.withOpacity(0.3)),
-                      ),
-                      child: const Icon(
-                        Icons.verified_user,
-                        color: Colors.white,
-                        size: 50,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      'MISSION ACCOMPLISHED',
-                      style: DigitalTheme.headingStyle.copyWith(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 2.0,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      'SECURITY SCORE: $score/${phases.length}',
-                      style: DigitalTheme.bodyStyle.copyWith(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 1.5,
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(15),
-                        border: Border.all(color: Colors.white.withOpacity(0.3)),
-                      ),
-                      child: const Column(
-                        children: [
-                          Text(
-                            'SECURITY PROTOCOLS',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                              letterSpacing: 1.2,
-                            ),
-                          ),
-                          SizedBox(height: 16),
-                          Text(
-                            '• Never share personal info with strangers\n'
-                            '• Verify identities before trusting\n'
-                            '• Don\'t send photos to unknown people\n'
-                            '• If in doubt, block and report',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 14,
-                              height: 1.5,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    if (score < 2) ...[
+                  margin: const EdgeInsets.all(20),
+                  child: Column(
+                    children: [
                       Container(
-                        padding: const EdgeInsets.all(16),
+                        padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
-                          color: DigitalTheme.dangerRed.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: DigitalTheme.dangerRed),
+                          color: const Color(0xFF00D4FF).withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(50),
+                          border: Border.all(color: const Color(0xFF00D4FF).withOpacity(0.3)),
                         ),
-                        child: Text(
-                          'THREAT LEVEL: HIGH\nSome choices compromised security. Review protocols and retry.',
-                          style: DigitalTheme.bodyStyle.copyWith(
-                            color: DigitalTheme.dangerRed,
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1.0,
-                          ),
-                          textAlign: TextAlign.center,
+                        child: const Icon(
+                          Icons.verified_user,
+                          color: Color(0xFF00D4FF),
+                          size: 50,
                         ),
                       ),
-                      const SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(builder: (context) => const Level2Intro()),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: DigitalTheme.dangerRed,
-                          foregroundColor: DigitalTheme.primaryText,
-                          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(25),
-                          ),
+                      const SizedBox(height: 20),
+                      const Text(
+                        'MISSION ACCOMPLISHED',
+                        style: TextStyle(
+                          color: Color(0xFF00D4FF),
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.2,
                         ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        'SECURITY SCORE: $score/${phases.length}',
+                        style: const TextStyle(
+                          color: Color(0xFFB8C6DB),
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 1.0,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF00D4FF).withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: const Color(0xFF00D4FF).withOpacity(0.3)),
+                        ),
+                        child: const Column(
                           children: [
-                            const Icon(Icons.refresh),
-                            const SizedBox(width: 8),
                             Text(
-                              'RETRY MISSION',
-                              style: DigitalTheme.headingStyle.copyWith(
+                              'SECURITY PROTOCOLS',
+                              style: TextStyle(
+                                color: Color(0xFF00D4FF),
                                 fontWeight: FontWeight.bold,
-                                letterSpacing: 1.2,
+                                fontSize: 14,
+                                letterSpacing: 1.0,
                               ),
+                            ),
+                            SizedBox(height: 16),
+                            Text(
+                              '• Never share personal info with strangers\n'
+                              '• Verify identities before trusting\n'
+                              '• Don\'t send photos to unknown people\n'
+                              '• If in doubt, block and report',
+                              style: TextStyle(
+                                color: Color(0xFFB8C6DB),
+                                fontSize: 14,
+                                height: 1.5,
+                              ),
+                              textAlign: TextAlign.center,
                             ),
                           ],
                         ),
                       ),
-                      const SizedBox(height: 12),
-                    ],
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (context) => const Level3Intro()),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: DigitalTheme.primaryCyan,
-                        foregroundColor: DigitalTheme.primaryText,
-                        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25),
-                        ),
-                        elevation: 8,
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            'NEXT LEVEL',
-                            style: DigitalTheme.headingStyle.copyWith(
+                      const SizedBox(height: 24),
+                      if (score < 2) ...[
+                        Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFF4444).withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: const Color(0xFFFF4444)),
+                          ),
+                          child: const Text(
+                            'THREAT LEVEL: HIGH\nSome choices compromised security. Review protocols and retry.',
+                            style: TextStyle(
+                              color: Color(0xFFFF4444),
+                              fontSize: 14,
                               fontWeight: FontWeight.bold,
-                              letterSpacing: 1.2,
+                              letterSpacing: 0.5,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(builder: (context) => const Level2Intro()),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFFF4444),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
                             ),
                           ),
-                          const SizedBox(width: 8),
-                          const Icon(Icons.arrow_forward),
-                        ],
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.refresh),
+                              SizedBox(width: 8),
+                              Text(
+                                'RETRY MISSION',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1.2,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                      ],
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (context) => const Level3Intro()),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF00D4FF),
+                          foregroundColor: Colors.black,
+                          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          elevation: 0,
+                        ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'NEXT LEVEL',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1.2,
+                              ),
+                            ),
+                            SizedBox(width: 8),
+                            Icon(Icons.arrow_forward),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-          ],
-        ),
+            ],
+          ),
+        ],
       ),
     );
   }
