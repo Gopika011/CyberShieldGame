@@ -271,12 +271,13 @@ class _ChaptersPageState extends State<ChaptersPage> {
                             border: Border.all(color: const Color(0xFF00D4FF)),
                           ),
                           child: ElevatedButton(
-                            onPressed: () async{
-                              await Navigator.pushNamed(context, '/chapter${chapter.id}');
-
-                              setState(() {
-                                
-                              });
+                            onPressed: () async {
+                              if (chapter.id == 3) {
+                                await Navigator.pushNamed(context, '/chapter3/game');
+                              } else {
+                                await Navigator.pushNamed(context, '/chapter${chapter.id}');
+                              }
+                              setState(() {});
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.transparent,
