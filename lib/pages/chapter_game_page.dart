@@ -1,33 +1,6 @@
+import 'package:claude/pages/land.dart';
 import 'package:claude/services/game_state.dart';
 import 'package:flutter/material.dart';
-
-class GridPainter extends CustomPainter {
-  final Color gridColor;
-  final double cellSize;
-
-  GridPainter({required this.gridColor, required this.cellSize});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = gridColor
-      ..strokeWidth = 0.5
-      ..style = PaintingStyle.stroke;
-
-    // Draw vertical lines
-    for (double x = 0; x < size.width; x += cellSize) {
-      canvas.drawLine(Offset(x, 0), Offset(x, size.height), paint);
-    }
-
-    // Draw horizontal lines
-    for (double y = 0; y < size.height; y += cellSize) {
-      canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
 
 class ChapterGamePage extends StatelessWidget {
   final int chapterId;
@@ -223,118 +196,80 @@ class ChapterGamePage extends StatelessWidget {
                                   
                                   const SizedBox(height: 16),
                                   
-                                  // Story description
                                   Expanded(
                                     child: SingleChildScrollView(
-                                      child: Text(
-                                        chapter['story'],
-                                        style: const TextStyle(
-                                          fontSize: 15,
-                                          color: Color(0xFFB8C6DB),
-                                          height: 1.6,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  
-                                  const SizedBox(height: 16),
-                                  
-                                  // Mission levels
-                                  Container(
-                                    padding: const EdgeInsets.all(16),
-                                    decoration: BoxDecoration(
-                                      color: const Color(0x05FFFFFF),
-                                      borderRadius: BorderRadius.circular(8),
-                                      border: Border.all(
-                                        color: const Color(0xFF00D4FF).withOpacity(0.3),
-                                        width: 1,
-                                      ),
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Container(
-                                              padding: const EdgeInsets.all(6),
-                                              decoration: BoxDecoration(
-                                                color: const Color(0xFF00D4FF).withOpacity(0.1),
-                                                borderRadius: BorderRadius.circular(4),
-                                              ),
-                                              child: const Icon(
-                                                Icons.layers_outlined,
-                                                color: Color(0xFF00D4FF),
-                                                size: 14,
-                                              ),
-                                            ),
-                                            const SizedBox(width: 8),
-                                            const Text(
-                                              'TRAINING MODULES',
-                                              style: TextStyle(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w600,
-                                                color: Color(0xFFB8C6DB),
-                                                letterSpacing: 1,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(height: 12),
-                                        _buildMissionLevel(
-                                          'LEVEL 01',
-                                          'Interactive Detection Training',
-                                          Icons.psychology_outlined,
-                                        ),
-                                        const SizedBox(height: 6),
-                                        _buildMissionLevel(
-                                          'LEVEL 02',
-                                          'Decision-Based Scenarios',
-                                          Icons.quiz_outlined,
-                                        ),
-                                        const SizedBox(height: 6),
-                                        _buildMissionLevel(
-                                          'LEVEL 03',
-                                          'Comprehensive Assessment',
-                                          Icons.security_outlined,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  
-                                  const SizedBox(height: 16),
-                                  
-                                  // Demo notice - only show for chapters 1-3
-                                  if (chapterId != 4)
-                                    Container(
-                                      padding: const EdgeInsets.all(12),
-                                      decoration: BoxDecoration(
-                                        color: const Color(0x05FFFFFF),
-                                        borderRadius: BorderRadius.circular(8),
-                                        border: Border.all(
-                                          color: const Color(0xFF00D4FF).withOpacity(0.3),
-                                          width: 1,
-                                        ),
-                                      ),
-                                      child: const Row(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          Icon(
-                                            Icons.info_outline,
-                                            color: Color(0xFFB8C6DB),
-                                            size: 16,
+                                          Text(
+                                            chapter['story'],
+                                            style: const TextStyle(
+                                              fontSize: 15,
+                                              color: Color(0xFFB8C6DB),
+                                              height: 1.6,
+                                            ),
                                           ),
-                                          SizedBox(width: 8),
-                                          Expanded(
-                                            child: Text(
-                                              'Interactive gameplay modules will be implemented here',
-                                              style: TextStyle(
-                                                fontSize: 12,
-                                                color: Color(0xFFB8C6DB),
+                                          const SizedBox(height: 50),
+                                          // Training modules block
+                                          Container(
+                                            padding: const EdgeInsets.all(16),
+                                            decoration: BoxDecoration(
+                                              color: const Color(0x05FFFFFF),
+                                              borderRadius: BorderRadius.circular(8),
+                                              border: Border.all(
+                                                color: const Color(0xFF00D4FF).withOpacity(0.3),
+                                                width: 1,
                                               ),
+                                            ),
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    Container(
+                                                      padding: const EdgeInsets.all(6),
+                                                      decoration: BoxDecoration(
+                                                        color: const Color(0xFF00D4FF).withOpacity(0.1),
+                                                        borderRadius: BorderRadius.circular(4),
+                                                      ),
+                                                      child: const Icon(
+                                                        Icons.layers_outlined,
+                                                        color: Color(0xFF00D4FF),
+                                                        size: 14,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(width: 8),
+                                                    const Text(
+                                                      'TRAINING MODULES',
+                                                      style: TextStyle(
+                                                        fontSize: 12,
+                                                        fontWeight: FontWeight.w600,
+                                                        color: Color(0xFFB8C6DB),
+                                                        letterSpacing: 1,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                const SizedBox(height: 12),
+                                                ...(chapter['levels'] as List).map<Widget>((levelData) {
+                                                  return Padding(
+                                                    padding: const EdgeInsets.only(bottom: 6),
+                                                    child: _buildMissionLevel(
+                                                      levelData['level'],
+                                                      levelData['description'],
+                                                      levelData['icon'],
+                                                    ),
+                                                  );
+                                                }).toList(),
+                                              ],
                                             ),
                                           ),
                                         ],
                                       ),
                                     ),
+                                  ),
+
+                                
                                 ],
                               ),
                             ),
@@ -458,26 +393,50 @@ class ChapterGamePage extends StatelessWidget {
         'title': 'The Scholarship Trap',
         'story': 'Arya receives an email claiming she\'s selected for a prestigious internship. The offer seems too good to be true, and something feels off about the sender\'s credentials.',
         'icon': Icons.email_outlined,
+        'levels': [
+          {'level': 'LEVEL 01', 'description': 'Email Header Analysis', 'icon': Icons.mark_email_read_outlined},
+          {'level': 'LEVEL 02', 'description': 'Suspicious Link Detection', 'icon': Icons.link_off_outlined},
+          {'level': 'LEVEL 03', 'description': 'Phishing Simulation', 'icon': Icons.security_outlined},
+        ],
       },
       2: {
         'title': 'Deals Too Good to Be True',
         'story': 'While waiting at a bus stop, Arya sees a WhatsApp forward advertising \'90% off on iPhones.\' The deal is tempting, but the source seems questionable.',
         'icon': Icons.shopping_bag_outlined,
+        'levels': [
+          {'level': 'LEVEL 01', 'description': 'Spot the Fake Deal', 'icon': Icons.warning_amber_outlined},
+          {'level': 'LEVEL 02', 'description': 'Website Trust Test', 'icon': Icons.public_outlined},
+          {'level': 'LEVEL 03', 'description': 'Secure Shopping Guide', 'icon': Icons.verified_outlined},
+        ],
       },
       3: {
         'title': 'The Impersonator',
         'story': 'Arya receives a friend request from \'Rahul_2.0\' who appears to be her classmate, but asks strange personal questions that the real Rahul would never ask.',
         'icon': Icons.people_outline,
+        'levels': [
+          {'level': 'LEVEL 01', 'description': 'Profile Check Training', 'icon': Icons.account_circle_outlined},
+          {'level': 'LEVEL 02', 'description': 'Chat Red Flags', 'icon': Icons.chat_bubble_outline},
+          {'level': 'LEVEL 03', 'description': 'Report & Block Simulation', 'icon': Icons.block_outlined},
+        ],
       },
       4: {
         'title': 'The Fake Bank Call',
         'story': 'Arya\'s father receives a call claiming his account will be blocked unless he shares his OTP. He turns to Arya for advice on how to handle the situation.',
         'icon': Icons.phone_outlined,
+        'levels': [
+          {'level': 'LEVEL 01', 'description': 'Interactive Detection Training', 'icon': Icons.psychology_outlined},
+          {'level': 'LEVEL 02', 'description': 'Decision-Based Scenarios', 'icon': Icons.quiz_outlined},
+        ],
       },
       5: {
         'title': 'The Final Test',
         'story': 'Arya faces her most challenging scenario yet - a sophisticated multi-layered attack that combines elements from all her previous encounters.',
         'icon': Icons.security_outlined,
+        'levels': [
+          {'level': 'LEVEL 01', 'description': 'Multi-Stage Threat Detection', 'icon': Icons.layers_outlined},
+          {'level': 'LEVEL 02', 'description': 'Live Attack Simulation', 'icon': Icons.bug_report_outlined},
+          {'level': 'LEVEL 03', 'description': 'Digital Safety Certification', 'icon': Icons.verified_user_outlined},
+        ],
       },
     };
     return chapters[chapterId]!;

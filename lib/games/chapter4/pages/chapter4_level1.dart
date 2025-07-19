@@ -6,8 +6,10 @@ import 'package:claude/games/chapter4/components/chapter4_Content.dart';
 import 'package:claude/games/chapter4/components/chapter4_fbutton.dart';
 import 'package:claude/games/chapter4/components/chapter4_load.dart';
 import 'package:claude/games/chapter4/pages/chapter4_level2.dart';
+import 'package:claude/games/chapter4/pages/intruction_page.dart';
 import 'package:claude/pages/land.dart';
 import 'package:claude/pages/summary_page.dart';
+import 'package:claude/services/game_state.dart';
 import 'package:flutter/material.dart';
 
 
@@ -27,16 +29,16 @@ class Chapter4MainPage extends StatefulWidget {
 
 class _Chapter4MainPageState extends State<Chapter4MainPage> with SingleTickerProviderStateMixin {
   final questions = [
-    {
-      'audio': 'audio/call1.mp3',
-      'transcript': 'Hello, this is from your bank. Your account will be suspended immediately unless you confirm your account details and OTP.',
-      'isLegit': false,
-    },
-    {
-      'audio': 'audio/call2.mp3',
-      'transcript': 'Hello, this is Rohit speaking from your bank. You have been selected for a special cashback offer. Please share your UPI PIN to activate the offer.',
-      'isLegit': false,
-    },
+    // {
+    //   'audio': 'audio/call1.mp3',
+    //   'transcript': 'Hello, this is from your bank. Your account will be suspended immediately unless you confirm your account details and OTP.',
+    //   'isLegit': false,
+    // },
+    // {
+    //   'audio': 'audio/call2.mp3',
+    //   'transcript': 'Hello, this is Rohit speaking from your bank. You have been selected for a special cashback offer. Please share your UPI PIN to activate the offer.',
+    //   'isLegit': false,
+    // },
     {
       'audio': 'audio/audio1.mp3',
       'transcript': 'Hello, this is from your bank. ',
@@ -173,18 +175,26 @@ class _Chapter4MainPageState extends State<Chapter4MainPage> with SingleTickerPr
     );
   }
 
-  /// Navigates to the next game in the chapter or signals chapter completion.
-  void _navigateToNextGame() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => CredentialDefenderGame(
-          onGameComplete: widget.onGameComplete,
+void _navigateToNextGame() {
+  // Navigate to instruction page for CredentialDefenderGame (Level 2)
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(
+      builder: (context) => InstructionPage(
+        gameType: GameType.socialEngineering,
+        nextGameWidget: CredentialDefenderGame(
+          onGameComplete: () {
+            // This is Level 2 completion - mark chapter as complete
+            GameState().completeChapter(4);
+            widget.onGameComplete?.call();
+          },
           onGameExit: widget.onGameExit,
         ),
+        onExitChapter: widget.onGameExit,
       ),
-    );
-  }
+    ),
+  );
+}
 
 
   @override
@@ -241,15 +251,6 @@ class _Chapter4MainPageState extends State<Chapter4MainPage> with SingleTickerPr
                             fontWeight: FontWeight.w500,
                             color: Colors.grey[600],
                           ),
-                        ),
-                        // Optional: Add an exit button
-                        IconButton(
-                          icon: Icon(Icons.exit_to_app, color: Colors.grey[600]),
-                          onPressed: () {
-                            player.stop(); // Stop audio before exiting
-                            soundPlayer.stop();
-                            widget.onGameExit?.call(); // Call exit callback
-                          },
                         ),
                       ],
                     ),

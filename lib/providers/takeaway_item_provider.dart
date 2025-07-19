@@ -8,20 +8,20 @@ class GameTakeawayProvider {
       case GameType.spamCall:
         return [
           TakeawayItem(
-            icon: Icons.help_outline,
-            title: 'Unknown Numbers',
-            description: 'Be cautious of calls from unknown or suspicious numbers',
+            icon: Icons.phone_forwarded,
+            title: 'Verify Caller Identity',
+           description: 'Don’t trust calls claiming to be from your bank—always verify via official channels.',
           ),
           TakeawayItem(
-            icon: Icons.phone_outlined,
-            title: 'Repeated Calls',
-            description: 'Multiple calls from same number can indicate spam attempts',
+            icon: Icons.sms_failed,
+            title: 'Never Share OTP',
+            description: 'OTP is meant for you only. Banks never ask for it over calls.',
           ),
           TakeawayItem(
-            icon: Icons.shield_outlined,
-            title: 'Spoofed Caller IDs',
-            description: 'Scammers often disguise their identity with fake caller information',
-          ),
+            icon: Icons.warning_amber_outlined,
+            title: 'Beware of Urgency',
+            description: 'Scammers create panic to make you act fast. Take a moment to think.',
+        ),
         ];
       
       case GameType.phishing:
@@ -46,19 +46,19 @@ class GameTakeawayProvider {
       case GameType.socialEngineering:
         return [
           TakeawayItem(
-            icon: Icons.person_outline,
-            title: 'Identity Verification',
-            description: 'Always verify who you\'re talking to before sharing information',
+            icon: Icons.security,
+            title: 'Protect Sensitive Info',
+            description: 'Never share PINs, passwords, or full card details in pop-ups or calls.',
           ),
           TakeawayItem(
-            icon: Icons.psychology_outlined,
-            title: 'Emotional Manipulation',
-            description: 'Be aware of attempts to manipulate your emotions',
+            icon: Icons.public_off,
+            title: 'Avoid Public Networks',
+            description: 'Don’t access banking services over public WiFi. Use mobile data or VPN.',
           ),
           TakeawayItem(
-            icon: Icons.info_outline,
-            title: 'Information Gathering',
-            description: 'Limit personal information shared with strangers',
+            icon: Icons.emoji_objects,
+            title: 'Think Before You Click',
+            description: 'Phishing emails and fake quizzes can steal your personal data. Stay alert.',
           ),
         ];
       

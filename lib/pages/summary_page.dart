@@ -1,7 +1,8 @@
 import 'package:claude/enums/games.dart';
 import 'package:claude/models/takeaway_item.dart';
-import 'package:claude/pages/chapters_page.dart';
+import 'package:claude/pages/land.dart';
 import 'package:claude/providers/takeaway_item_provider.dart';
+import 'package:claude/services/game_state.dart';
 import 'package:flutter/material.dart';
 // import 'package:cyber_shield_audio/components/fbutton.dart';
 
@@ -323,8 +324,9 @@ class SummaryPage extends StatelessWidget {
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () {
-                          // This button pops the SummaryPage and Game4Entry will handle chapter completion
-                          Navigator.pop(context, 'chapter_complete');
+                          // Mark chapter as completed
+                          GameState().completeChapter(4);
+                          Navigator.of(context).popUntil((route) => route.settings.name == '/chapters');
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF00D4FF).withOpacity(0.1),
@@ -346,37 +348,37 @@ class SummaryPage extends StatelessWidget {
                         ),
                       ),
                     )
-                  else if (onContinue != null) 
-                    Container(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: onContinue,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF00D4FF),
-                          foregroundColor: Colors.black,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          elevation: 0,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text(
-                              'CONTINUE TO NEXT CHALLENGE',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 1.2,
-                              ),
+                    else if (onContinue != null) 
+                      Container(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: onContinue,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF00D4FF),
+                            foregroundColor: Colors.black,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
                             ),
-                            const SizedBox(width: 8),
-                            const Icon(Icons.arrow_forward, size: 20),
-                          ],
+                            elevation: 0,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text(
+                                'CONTINUE TO NEXT CHALLENGE',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1.2,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              const Icon(Icons.arrow_forward, size: 20),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
                 ],
               ),
             ),

@@ -271,7 +271,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   }) : super(key: key);
 
   @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight + 35);
+  Size get preferredSize => Size.fromHeight(kToolbarHeight + 40);
 
   @override
   Widget build(BuildContext context) {
@@ -392,10 +392,10 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                                   child: Text(
                                     'CYBERSHIELD',
                                     style: TextStyle(
-                                      fontSize: 20, // Increased from 18
+                                      fontSize: 20, 
                                       fontWeight: FontWeight.w900,
                                       color: Color(0xFF00D4FF),
-                                      letterSpacing: 2.0, // Increased from 1.8
+                                      letterSpacing: 2.0, 
                                       shadows: [
                                         Shadow(
                                           color: Color(0xFF00D4FF).withOpacity(0.5),

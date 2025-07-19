@@ -1,4 +1,6 @@
+import 'package:claude/enums/games.dart';
 import 'package:claude/games/chapter4/pages/chapter4_level1.dart';
+import 'package:claude/games/chapter4/pages/intruction_page.dart';
 import 'package:flutter/material.dart';
 import 'package:claude/services/game_state.dart';
 
@@ -14,15 +16,21 @@ class Game4Entry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Chapter4MainPage(
-      onGameComplete: () {
-        // Mark chapter as completed in main app
-        GameState().completeChapter(4);
-        onGameComplete?.call();
-      },
-      onGameExit: () {
-        onGameExit?.call();
-      },
+    return InstructionPage(
+      gameType: GameType.spamCall,
+      nextGameWidget: Chapter4MainPage(
+        onGameComplete: () {          
+          // Or if you have a specific route/page to go back to:
+          // Navigator.of(context).pushReplacementNamed('/chapters');
+          
+          // Call the original completion callback
+          onGameComplete?.call();
+        },
+        onGameExit: () {
+          onGameExit?.call();
+        },
+      ),
+      onExitChapter: onGameExit,
     );
   }
 }

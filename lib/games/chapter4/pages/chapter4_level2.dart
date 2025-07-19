@@ -2,8 +2,8 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:claude/enums/games.dart';
 import 'package:claude/pages/land.dart';
 import 'package:claude/pages/summary_page.dart';
+import 'package:claude/services/game_state.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class GameScenario {
   final String title;
@@ -53,10 +53,10 @@ class _CredentialDefenderGameState extends State<CredentialDefenderGame> {
       description: "A pop-up suddenly appears asking for your full debit card number and PIN to 'verify your account security'.",
       options: [
         "A) Enter the details to verify",
-        "B) Close the pop-up immediately",
-        "C) Enter only the PIN, not the card number"
+        "B) Enter only the PIN, not the card number",
+        "C) Close the pop-up immediately"
       ],
-      correctAnswerIndex: 1,
+      correctAnswerIndex: 2,
       explanation: "Never enter sensitive financial information in unexpected pop-ups. Banks will never ask for your PIN or full card details through pop-ups. Always close suspicious pop-ups and contact your bank directly if concerned.",
       icon: Icons.credit_card,
       iconColor: const Color(0xFF00D4FF),
@@ -65,11 +65,11 @@ class _CredentialDefenderGameState extends State<CredentialDefenderGame> {
       title: "OTP Phone Call",
       description: "You receive an OTP SMS. Immediately after, someone calls claiming to be from your bank and asks you to read out the OTP for 'verification purposes'.",
       options: [
-        "A) Read the OTP to help them verify",
-        "B) Hang up and enter OTP in your banking app",
+        "A) Hang up and enter OTP in your banking app",
+        "B) Read the OTP to help them verify",
         "C) Share only the last 3 digits of the OTP"
       ],
-      correctAnswerIndex: 1,
+      correctAnswerIndex: 0,
       explanation: "Never share OTPs with anyone over the phone. OTPs are meant only for you to enter in legitimate apps/websites. Hang up and use the OTP only in your official banking app.",
       icon: Icons.phone,
       iconColor: const Color(0xFFFF4757),
@@ -79,10 +79,10 @@ class _CredentialDefenderGameState extends State<CredentialDefenderGame> {
       description: "Your colleague asks for your work system password because they 'forgot theirs' and need to access something urgently.",
       options: [
         "A) Share your password to help them",
-        "B) Refuse and suggest they contact IT support",
-        "C) Share the password but ask them to change it later"
+        "B) Share the password but ask them to change it later",
+        "C) Refuse and suggest they contact IT support"
       ],
-      correctAnswerIndex: 1,
+      correctAnswerIndex: 2,
       explanation: "Never share passwords, even with trusted colleagues. Each person should have their own credentials for accountability and security. Direct them to proper IT channels for password reset assistance.",
       icon: Icons.work,
       iconColor: const Color(0xFF00D4FF),
@@ -117,11 +117,11 @@ class _CredentialDefenderGameState extends State<CredentialDefenderGame> {
       title: "Social Media Quiz",
       description: "A fun quiz on social media asks: 'What was your first pet's name?' and 'What street did you grow up on?' to generate your 'superhero name'.",
       options: [
-        "A) Participate - it's just for fun!",
-        "B) Skip the quiz entirely",
+        "A) Skip the quiz entirely",
+        "B) Participate - it's just for fun!",
         "C) Use fake answers for the quiz"
       ],
-      correctAnswerIndex: 1,
+      correctAnswerIndex: 0,
       explanation: "These questions are common security questions used for password recovery. Sharing real answers publicly can help attackers gain access to your accounts. It's safer to avoid such quizzes entirely.",
       icon: Icons.quiz,
       iconColor: const Color(0xFFFF4757),
@@ -190,25 +190,27 @@ class _CredentialDefenderGameState extends State<CredentialDefenderGame> {
     }
   }
 
-  void _navigateToSummary() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => SummaryPage(
-          results: gameResults,
-          totalQuestions: scenarios.length,
-          gameType: GameType.phishing,
-          onContinue: null,
-          isLastGameInChapter: true, // This IS the last game
-        ),
+void _navigateToSummary() {
+  Navigator.pushReplacement( 
+    context,
+    MaterialPageRoute(
+      builder: (context) => SummaryPage( 
+        results: gameResults,
+        totalQuestions: scenarios.length,
+        gameType: GameType.socialEngineering,
+        onContinue: null,
+        isLastGameInChapter: true,
       ),
-    ).then((result) {
-      if (result == 'chapter_complete') {
-        // Navigate back to chapters page
-        widget.onGameComplete?.call();
-      }
-    });
-  }
+    ),
+  ).then((result) {
+    if (result == 'chapter_complete') {
+      // Mark chapter as complete
+      GameState().completeChapter(4);
+      // Call completion callback
+      widget.onGameComplete?.call();
+    }
+  });
+}
 
   Color _getOptionColor(int index) {
     if (!hasAnswered) return const Color(0x05FFFFFF);
