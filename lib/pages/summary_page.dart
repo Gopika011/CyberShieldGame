@@ -257,11 +257,7 @@ class SummaryPage extends StatelessWidget {
                     Container(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: () {
-                          // Mark chapter as completed
-                          GameState().completeChapter(4);
-                          Navigator.of(context).popUntil((route) => route.settings.name == '/chapters');
-                        },
+                        onPressed: onContinue,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF00D4FF).withOpacity(0.1),
                           foregroundColor: const Color(0xFF00D4FF),

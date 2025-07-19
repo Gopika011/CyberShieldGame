@@ -171,10 +171,10 @@ class _CredentialDefenderGameState extends State<CredentialDefenderGame> {
       setState(() {
         score++;
       });
-      print("hh");
-      _playSoundEffect('audio/correct_chime.mp3');
+      // print("hh");
+      // _playSoundEffect('audio/correct_chime.mp3');
     } else {
-      _playSoundEffect('audio/wrong_buzz_short.mp3');
+      // _playSoundEffect('audio/wrong_buzz_short.mp3');
     }
   }
 
@@ -190,27 +190,27 @@ class _CredentialDefenderGameState extends State<CredentialDefenderGame> {
     }
   }
 
-void _navigateToSummary() {
-  Navigator.pushReplacement( 
-    context,
-    MaterialPageRoute(
-      builder: (context) => SummaryPage( 
-        results: gameResults,
-        totalQuestions: scenarios.length,
-        gameType: GameType.socialEngineering,
-        onContinue: null,
-        isLastGameInChapter: true,
+  void _navigateToSummary() {
+    Navigator.pushReplacement( 
+      context,
+      MaterialPageRoute(
+        builder: (context) => SummaryPage( 
+          results: gameResults,
+          totalQuestions: scenarios.length,
+          gameType: GameType.socialEngineering,
+          onContinue: _onSummaryContinue,
+          isLastGameInChapter: true,
+        ),
       ),
-    ),
-  ).then((result) {
-    if (result == 'chapter_complete') {
-      // Mark chapter as complete
-      GameState().completeChapter(4);
-      // Call completion callback
-      widget.onGameComplete?.call();
-    }
-  });
-}
+    );
+  }
+
+  void _onSummaryContinue() {
+    // Complete the chapter first
+    GameState().completeChapter(4);
+    Navigator.of(context).pop(); // Pop summary page
+    Navigator.of(context).popUntil((route) => route.settings.name == '/chapters');
+  }
 
   Color _getOptionColor(int index) {
     if (!hasAnswered) return const Color(0x05FFFFFF);

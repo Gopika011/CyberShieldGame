@@ -17,7 +17,6 @@ class InstructionPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Get instruction data from provider
     final instructionData = GameInstructionProvider.getInstructionData(gameType);
     final String title = instructionData['title'];
     final IconData icon = instructionData['icon'];

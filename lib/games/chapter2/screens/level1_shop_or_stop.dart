@@ -1,9 +1,20 @@
 import 'package:claude/enums/games.dart';
+import 'package:claude/games/chapter2/screens/level2_permission_patrol.dart';
+import 'package:claude/games/chapter4/pages/intruction_page.dart';
 import 'package:claude/pages/summary_page.dart';
 import 'package:flutter/material.dart';
 import '../widgets/cyber_button.dart';
 
 class Level1ShopOrStop extends StatefulWidget {
+  final VoidCallback? onGameComplete;
+  final VoidCallback? onGameExit;
+
+  const Level1ShopOrStop({
+    Key? key,
+    this.onGameComplete,
+    this.onGameExit,
+  }) : super(key: key);
+
   @override
   _Level1ShopOrStopState createState() => _Level1ShopOrStopState();
 }
@@ -111,25 +122,36 @@ class _Level1ShopOrStopState extends State<Level1ShopOrStop> {
     }
   }
 
-    void _navigateToSummary() {
+  void _navigateToSummary() {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => SummaryPage(
           results: results,
           totalQuestions: websites.length,
-          gameType: GameType.ecommerceScam, // You can change this to appropriate game type
-          onContinue: _onSummaryContinue,
-          isLastGameInChapter: false, // Set to true if this is the last game in chapter
+          gameType: GameType.ecommerceScam, 
+          onContinue: _navigateToNextGame,
+          isLastGameInChapter: false, 
         ),
       ),
     );
   }
 
-    void _onSummaryContinue() {
-    // Pop both summary page and game page
-    Navigator.of(context).pop(); // Pop summary page
-    Navigator.of(context).pop(score); // Pop game page and return score
+  void _navigateToNextGame() {
+    // Navigate to instruction page for Level2PermissionPatrol
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => InstructionPage(
+          gameType: GameType.appPermissions, 
+          nextGameWidget: Level2PermissionPatrol(
+            onGameComplete: widget.onGameComplete,
+            onGameExit: widget.onGameExit,
+          ),
+          onExitChapter: widget.onGameExit,
+        ),
+      ),
+    );
   }
 
   @override

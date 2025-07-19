@@ -29,20 +29,25 @@ class Chapter4MainPage extends StatefulWidget {
 
 class _Chapter4MainPageState extends State<Chapter4MainPage> with SingleTickerProviderStateMixin {
   final questions = [
-    // {
-    //   'audio': 'audio/call1.mp3',
-    //   'transcript': 'Hello, this is from your bank. Your account will be suspended immediately unless you confirm your account details and OTP.',
-    //   'isLegit': false,
-    // },
-    // {
-    //   'audio': 'audio/call2.mp3',
-    //   'transcript': 'Hello, this is Rohit speaking from your bank. You have been selected for a special cashback offer. Please share your UPI PIN to activate the offer.',
-    //   'isLegit': false,
-    // },
     {
-      'audio': 'audio/audio1.mp3',
-      'transcript': 'Hello, this is from your bank. ',
+      'audio': 'audio/call1.mp3',
+      'transcript': 'Hello, this is from your bank. Your account will be suspended immediately unless you confirm your account details and OTP.',
       'isLegit': false,
+    },
+    {
+      'audio': 'audio/call4.mp3',
+      'transcript': 'Hello, this is Priya from XYZ Bank. This is a reminder that your credit card bill is due on the 25th. Please log in to your net banking or use our official app to make the payment.',
+      'isLegit': true,
+    },
+    {
+      'audio': 'audio/call2.mp3',
+      'transcript': 'Hello, this is Rohit speaking from your bank. You have been selected for a special cashback offer. Please share your UPI PIN to activate the offer.',
+      'isLegit': false,
+    },
+    {
+      'audio' : 'assets/audio/call3.mp3',
+      'transcript' : 'Your Aadhar card has been suspended due to unusual activity. Confirm you Aadhar number, date of birth and OTP to reactivate it.',
+      'isLegit' : false,
     },
   ];
 
@@ -131,15 +136,15 @@ class _Chapter4MainPageState extends State<Chapter4MainPage> with SingleTickerPr
     setState(() {
       if (isTimeout) {
         _currentFeedbackEffect = FeedbackEffect.timeout;
-        _playSoundEffect('audio/wrong_buzz_short.mp3');
+        // _playSoundEffect('audio/wrong_buzz_short.mp3');
       } else if (correct) {
         feedback = 'CORRECT';
         _currentFeedbackEffect = FeedbackEffect.correct;
-        _playSoundEffect('audio/correct_chime.mp3');
+        // _playSoundEffect('audio/correct_chime.mp3');
       } else {
         feedback = 'WRONG';
         _currentFeedbackEffect = FeedbackEffect.wrong;
-        _playSoundEffect('audio/wrong_buzz_short.mp3');
+        // _playSoundEffect('audio/wrong_buzz_short.mp3');
       }
       _progressController.stop(); 
     });
@@ -159,7 +164,6 @@ class _Chapter4MainPageState extends State<Chapter4MainPage> with SingleTickerPr
     });
   }
 
-  /// Navigates to the summary page of the game.
   void _navigateToSummary() {
     Navigator.push(
       context,
@@ -176,18 +180,13 @@ class _Chapter4MainPageState extends State<Chapter4MainPage> with SingleTickerPr
   }
 
 void _navigateToNextGame() {
-  // Navigate to instruction page for CredentialDefenderGame (Level 2)
   Navigator.pushReplacement(
     context,
     MaterialPageRoute(
       builder: (context) => InstructionPage(
         gameType: GameType.socialEngineering,
         nextGameWidget: CredentialDefenderGame(
-          onGameComplete: () {
-            // This is Level 2 completion - mark chapter as complete
-            GameState().completeChapter(4);
-            widget.onGameComplete?.call();
-          },
+          onGameComplete: widget.onGameComplete,
           onGameExit: widget.onGameExit,
         ),
         onExitChapter: widget.onGameExit,
@@ -225,7 +224,7 @@ void _navigateToNextGame() {
           // Grid background painter
           Positioned.fill(
             child: CustomPaint(
-              painter: GridPainter( // Using Chapter4GridPainter
+              painter: GridPainter(
                 gridColor: const Color(0x1A00D4FF),
                 cellSize: 25,
               ),
@@ -274,16 +273,16 @@ void _navigateToNextGame() {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Content card displaying transcript
-                  Chapter4ContentCard( // Using Chapter4ContentCard
+
+                  Chapter4ContentCard( 
                     contentText: questions[currentIndex]['transcript'] as String,
                     screenWidth: screenWidth,
                     feedbackEffect: _currentFeedbackEffect,
                   ),
 
                   const SizedBox(height: 32),
-                  // Load bar / progress animation
-                  Chapter4LoadBar( // Using Chapter4LoadBar
+
+                  Chapter4LoadBar( 
                     animation: _progressBarAnimation,
                     cardWidth: cardWidth,
                     maxCardWidth: maxCardWidth,
@@ -291,7 +290,7 @@ void _navigateToNextGame() {
 
                   const SizedBox(height: 62),
 
-                  // Animated switcher for PLAY/ACCEPT/REJECT buttons
+                  //buttons
                   AnimatedSwitcher(
                     duration: const Duration(milliseconds: 200),
                     transitionBuilder: (Widget child, Animation<double> animation) {
@@ -302,29 +301,29 @@ void _navigateToNextGame() {
                     },
                     child: _audioComplete
                         ? SizedBox(
-                            key: ValueKey('buttons'), // Key for AnimatedSwitcher
+                            key: ValueKey('buttons'),
                             width: maxCardWidth,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Chapter4Fbutton(label: "ACCEPT", onPressed: () => _handleCheck(true), isAccept: true), // Using Chapter4Fbutton
+                                Chapter4Fbutton(label: "ACCEPT", onPressed: () => _handleCheck(true), isAccept: true), 
                                 const SizedBox(width: 20),
-                                Chapter4Fbutton(label: "REJECT", onPressed: () => _handleCheck(false), isAccept: false) // Using Chapter4Fbutton
+                                Chapter4Fbutton(label: "REJECT", onPressed: () => _handleCheck(false), isAccept: false)
                               ],
                             ),
                           )
                         : SizedBox(
-                            key: ValueKey('play_button'), // Key for AnimatedSwitcher
+                            key: ValueKey('play_button'), 
                             width: maxCardWidth,
-                            child: Chapter4Fbutton(label: "PLAY", onPressed: _playSound, isAccept: true), // Using Chapter4Fbutton
+                            child: Chapter4Fbutton(label: "PLAY", onPressed: _playSound, isAccept: true), 
                           ),
                   )
                 ],
               ),
             ),
           ),
-          // Feedback overlay for visual effects (correct/wrong/timeout)
-          FeedbackOverlay(currentFeedbackEffect: _currentFeedbackEffect), // Using Chapter4FeedbackOverlay
+          // visual effects
+          FeedbackOverlay(currentFeedbackEffect: _currentFeedbackEffect), 
         ],
       ),
     );

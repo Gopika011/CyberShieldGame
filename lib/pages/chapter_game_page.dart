@@ -318,7 +318,7 @@ class ChapterGamePage extends StatelessWidget {
                         ),
                       ),
                       child: Text(
-                        (chapterId == 2 || chapterId == 4) ? 'START MISSION' : 'COMPLETE MISSION',
+                        (chapterId == 1 || chapterId == 2 || chapterId == 4 || chapterId == 3) ? 'START MISSION' : 'COMPLETE MISSION',
                         style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,

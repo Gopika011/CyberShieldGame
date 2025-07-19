@@ -1,10 +1,21 @@
 import 'package:claude/enums/games.dart';
+import 'package:claude/games/chapter2/screens/level3_wifi_woes.dart';
+import 'package:claude/games/chapter4/pages/intruction_page.dart';
 import 'package:claude/pages/summary_page.dart';
 import 'package:flutter/material.dart';
 import '../widgets/cyber_button.dart';
 import 'dart:math';
 
 class Level2PermissionPatrol extends StatefulWidget {
+  final VoidCallback? onGameComplete;
+  final VoidCallback? onGameExit;
+
+  const Level2PermissionPatrol({
+    Key? key,
+    this.onGameComplete,
+    this.onGameExit,
+  }) : super(key: key);
+
   @override
   _Level2PermissionPatrolState createState() => _Level2PermissionPatrolState();
 }
@@ -24,20 +35,20 @@ class _Level2PermissionPatrolState extends State<Level2PermissionPatrol>
   
   // Harder permission scenarios with tricky apps
   final List<Map<String, dynamic>> permissionScenarios = [
-    {
-      'appName': 'FlashLight Pro',
-      'appIcon': Icons.flashlight_on,
-      'appType': 'Utility',
-      'rating': '4.8★ (2.1M reviews)',
-      'permissions': [
-        {'name': 'Camera', 'icon': Icons.camera_alt, 'suspicious': false, 'reason': 'Needed for flashlight function'},
-        {'name': 'Location (Precise)', 'icon': Icons.location_on, 'suspicious': true, 'reason': 'Why does flashlight need your exact location?'},
-        {'name': 'Contacts', 'icon': Icons.contacts, 'suspicious': true, 'reason': 'Flashlight should NOT need your contacts!'},
-        {'name': 'Microphone', 'icon': Icons.mic, 'suspicious': true, 'reason': 'No reason for flashlight to access microphone'},
-      ],
-      'correctChoice': 'deny',
-      'explanation': 'DENY! This flashlight app asks for way too many permissions. Camera is okay, but Location, Contacts, and Microphone are major red flags!'
-    },
+    // {
+    //   'appName': 'FlashLight Pro',
+    //   'appIcon': Icons.flashlight_on,
+    //   'appType': 'Utility',
+    //   'rating': '4.8★ (2.1M reviews)',
+    //   'permissions': [
+    //     {'name': 'Camera', 'icon': Icons.camera_alt, 'suspicious': false, 'reason': 'Needed for flashlight function'},
+    //     {'name': 'Location (Precise)', 'icon': Icons.location_on, 'suspicious': true, 'reason': 'Why does flashlight need your exact location?'},
+    //     {'name': 'Contacts', 'icon': Icons.contacts, 'suspicious': true, 'reason': 'Flashlight should NOT need your contacts!'},
+    //     {'name': 'Microphone', 'icon': Icons.mic, 'suspicious': true, 'reason': 'No reason for flashlight to access microphone'},
+    //   ],
+    //   'correctChoice': 'deny',
+    //   'explanation': 'DENY! This flashlight app asks for way too many permissions. Camera is okay, but Location, Contacts, and Microphone are major red flags!'
+    // },
     {
       'appName': 'Photo Editor Studio',
       'appIcon': Icons.photo,
@@ -51,20 +62,20 @@ class _Level2PermissionPatrolState extends State<Level2PermissionPatrol>
       'correctChoice': 'allow',
       'explanation': 'ALLOW! All permissions make perfect sense for a photo editing app. No suspicious requests here.'
     },
-    {
-      'appName': 'Super Fun Games',
-      'appIcon': Icons.games,
-      'appType': 'Games',
-      'rating': '3.9★ (156K reviews)',
-      'permissions': [
-        {'name': 'Phone Calls', 'icon': Icons.phone, 'suspicious': true, 'reason': 'Games should NOT make phone calls!'},
-        {'name': 'SMS Messages', 'icon': Icons.message, 'suspicious': true, 'reason': 'Why would a game send text messages?'},
-        {'name': 'Location (Background)', 'icon': Icons.location_on, 'suspicious': true, 'reason': 'Constant location tracking is suspicious'},
-        {'name': 'Install Unknown Apps', 'icon': Icons.download, 'suspicious': true, 'reason': 'HUGE red flag - can install malware!'},
-      ],
-      'correctChoice': 'deny',
-      'explanation': 'DENY IMMEDIATELY! This is clearly malware. No legitimate game needs to make calls, send SMS, or install other apps!'
-    },
+    // {
+    //   'appName': 'Super Fun Games',
+    //   'appIcon': Icons.games,
+    //   'appType': 'Games',
+    //   'rating': '3.9★ (156K reviews)',
+    //   'permissions': [
+    //     {'name': 'Phone Calls', 'icon': Icons.phone, 'suspicious': true, 'reason': 'Games should NOT make phone calls!'},
+    //     {'name': 'SMS Messages', 'icon': Icons.message, 'suspicious': true, 'reason': 'Why would a game send text messages?'},
+    //     {'name': 'Location (Background)', 'icon': Icons.location_on, 'suspicious': true, 'reason': 'Constant location tracking is suspicious'},
+    //     {'name': 'Install Unknown Apps', 'icon': Icons.download, 'suspicious': true, 'reason': 'HUGE red flag - can install malware!'},
+    //   ],
+    //   'correctChoice': 'deny',
+    //   'explanation': 'DENY IMMEDIATELY! This is clearly malware. No legitimate game needs to make calls, send SMS, or install other apps!'
+    // },
     {
       'appName': 'Banking Assistant',
       'appIcon': Icons.account_balance,
@@ -163,20 +174,31 @@ class _Level2PermissionPatrolState extends State<Level2PermissionPatrol>
       context,
       MaterialPageRoute(
         builder: (context) => SummaryPage(
-          results: results,
-          totalQuestions: permissionScenarios.length,
-          gameType: GameType.appPermissions, // Assuming you have this enum value
-          onContinue: _onSummaryContinue,
-          isLastGameInChapter: false, // Set to true if this is the last game in chapter
+          results: results, 
+          totalQuestions: permissionScenarios.length, 
+          gameType: GameType.appPermissions, 
+          onContinue: _navigateToNextGame,
+          isLastGameInChapter: false, 
         ),
       ),
     );
   }
 
-  void _onSummaryContinue() {
-    // Pop both summary page and game page
-    Navigator.of(context).pop(); // Pop summary page
-    Navigator.of(context).pop(score); // Pop game page and return score
+  void _navigateToNextGame() {
+    // Navigate to instruction page for Level3WifiWoes
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => InstructionPage(
+          gameType: GameType.networkRisk, 
+          nextGameWidget: Level3WifiWoes(
+            onGameComplete: widget.onGameComplete,
+            onGameExit: widget.onGameExit,
+          ),
+          onExitChapter: widget.onGameExit,
+        ),
+      ),
+    );
   }
 
   @override
@@ -324,21 +346,17 @@ class _Level2PermissionPatrolState extends State<Level2PermissionPatrol>
                                   margin: EdgeInsets.only(bottom: 12),
                                   padding: EdgeInsets.all(12),
                                   decoration: BoxDecoration(
-                                    color: isSuspicious 
-                                        ? Colors.red.withOpacity(0.1)
-                                        : Colors.green.withOpacity(0.1),
+                                    color: Colors.blue.withOpacity(0.1),
                                     borderRadius: BorderRadius.circular(8),
                                     border: Border.all(
-                                      color: isSuspicious 
-                                          ? Colors.red.withOpacity(0.5)
-                                          : Colors.green.withOpacity(0.5),
+                                      color: Colors.blue.withOpacity(0.5)
                                     ),
                                   ),
                                   child: Row(
                                     children: [
                                       Icon(
                                         permission['icon'],
-                                        color: isSuspicious ? Colors.red : Colors.green,
+                                        color: Colors.blue,
                                         size: 24,
                                       ),
                                       SizedBox(width: 12),
@@ -354,25 +372,25 @@ class _Level2PermissionPatrolState extends State<Level2PermissionPatrol>
                                                 fontWeight: FontWeight.bold,
                                               ),
                                             ),
-                                            if (isSuspicious) ...[
-                                              SizedBox(height: 4),
-                                              Text(
-                                                '⚠️ ${permission['reason']}',
-                                                style: TextStyle(
-                                                  color: Colors.red,
-                                                  fontSize: 12,
-                                                ),
-                                              ),
-                                            ],
+                                            // if (isSuspicious) ...[
+                                            //   SizedBox(height: 4),
+                                            //   Text(
+                                            //     '⚠️ ${permission['reason']}',
+                                            //     style: TextStyle(
+                                            //       color: Colors.red,
+                                            //       fontSize: 12,
+                                            //     ),
+                                            //   ),
+                                            // ],
                                           ],
                                         ),
                                       ),
-                                      if (isSuspicious)
-                                        Icon(
-                                          Icons.dangerous,
-                                          color: Colors.red,
-                                          size: 20,
-                                        ),
+                                      // if (isSuspicious)
+                                      //   Icon(
+                                      //     Icons.dangerous,
+                                      //     color: Colors.red,
+                                      //     size: 20,
+                                      //   ),
                                     ],
                                   ),
                                 );
@@ -488,23 +506,23 @@ class _Level2PermissionPatrolState extends State<Level2PermissionPatrol>
                         ),
                       ],
                     ),
-                    Column(
-                      children: [
-                        Text(
-                          'Lives',
-                          style: TextStyle(color: Colors.white70),
-                        ),
-                        Row(
-                          children: List.generate(3, (index) => 
-                            Icon(
-                              Icons.favorite,
-                              color: index < lives ? Colors.red : Colors.grey,
-                              size: 20,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                    // Column(
+                    //   children: [
+                    //     Text(
+                    //       'Lives',
+                    //       style: TextStyle(color: Colors.white70),
+                    //     ),
+                    //     Row(
+                    //       children: List.generate(3, (index) => 
+                    //         Icon(
+                    //           Icons.favorite,
+                    //           color: index < lives ? Colors.red : Colors.grey,
+                    //           size: 20,
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
                   ],
                 ),
                 
@@ -556,32 +574,32 @@ class _Level2PermissionPatrolState extends State<Level2PermissionPatrol>
           ),
         ),
         // Lives display
-        Row(
-          children: [
-            ...List.generate(3, (index) => 
-              Icon(
-                Icons.favorite,
-                color: index < lives ? Colors.red : Colors.grey,
-                size: 20,
-              ),
-            ),
-            SizedBox(width: 16),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                border: Border.all(color: const Color(0xFF00D4FF)),
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: Text(
-                'Score: $score',
-                style: TextStyle(
-                  color: const Color(0xFF00D4FF),
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ],
-        ),
+        // Row(
+        //   children: [
+        //     ...List.generate(3, (index) => 
+        //       Icon(
+        //         Icons.favorite,
+        //         color: index < lives ? Colors.red : Colors.grey,
+        //         size: 20,
+        //       ),
+        //     ),
+        //     SizedBox(width: 16),
+        //     Container(
+        //       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        //       decoration: BoxDecoration(
+        //         border: Border.all(color: const Color(0xFF00D4FF)),
+        //         borderRadius: BorderRadius.circular(6),
+        //       ),
+        //       child: Text(
+        //         'Score: $score',
+        //         style: TextStyle(
+        //           color: const Color(0xFF00D4FF),
+        //           fontWeight: FontWeight.bold,
+        //         ),
+        //       ),
+        //     ),
+        //   ],
+        // ),
       ],
     );
   }

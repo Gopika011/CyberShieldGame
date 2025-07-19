@@ -5,6 +5,15 @@ import 'package:flutter/material.dart';
 import '../widgets/cyber_button.dart';
 
 class Level3WifiWoes extends StatefulWidget {
+  final VoidCallback? onGameComplete;
+  final VoidCallback? onGameExit;
+
+  const Level3WifiWoes({
+    Key? key,
+    this.onGameComplete,
+    this.onGameExit,
+  }) : super(key: key);
+
   @override
   _Level3WifiWoesState createState() => _Level3WifiWoesState();
 }
@@ -47,24 +56,24 @@ class _Level3WifiWoesState extends State<Level3WifiWoes> {
       'explanation': 'Fake hotel portals collect personal info! Always verify with hotel staff before entering details.',
       'points': 100,
     },
-    {
-      'title': 'VPN Protection',
-      'description': 'You have a VPN app on your phone. Should you use it before shopping on public WiFi?',
-      'question': 'Will VPN make public WiFi shopping safe?',
-      'options': ['Yes, VPN Makes It Safe', 'Still Better to Avoid'],
-      'correctAnswer': 1,
-      'explanation': 'VPN helps but isn\'t foolproof! Best practice: avoid payments on public WiFi entirely.',
-      'points': 100,
-    },
-    {
-      'title': 'Final Decision',
-      'description': 'After learning about WiFi risks, Arya sees the same iPhone deal at home on secure WiFi.',
-      'question': 'Now what should she do?',
-      'options': ['Buy Immediately', 'Research the Website First'],
-      'correctAnswer': 1,
-      'explanation': 'Great! Even on secure WiFi, always verify if the website/deal is legitimate first!',
-      'points': 100,
-    },
+    // {
+    //   'title': 'VPN Protection',
+    //   'description': 'You have a VPN app on your phone. Should you use it before shopping on public WiFi?',
+    //   'question': 'Will VPN make public WiFi shopping safe?',
+    //   'options': ['Yes, VPN Makes It Safe', 'Still Better to Avoid'],
+    //   'correctAnswer': 1,
+    //   'explanation': 'VPN helps but isn\'t foolproof! Best practice: avoid payments on public WiFi entirely.',
+    //   'points': 100,
+    // },
+    // {
+    //   'title': 'Final Decision',
+    //   'description': 'After learning about WiFi risks, Arya sees the same iPhone deal at home on secure WiFi.',
+    //   'question': 'Now what should she do?',
+    //   'options': ['Buy Immediately', 'Research the Website First'],
+    //   'correctAnswer': 1,
+    //   'explanation': 'Great! Even on secure WiFi, always verify if the website/deal is legitimate first!',
+    //   'points': 100,
+    // },
   ];
 
   void handleAnswer(int selectedAnswer) {
@@ -114,20 +123,20 @@ class _Level3WifiWoesState extends State<Level3WifiWoes> {
         builder: (context) => SummaryPage(
           results: results,
           totalQuestions: scenarios.length,
-          gameType: GameType.networkRisk, // Assuming you have this enum value, otherwise use appropriate one
+          gameType: GameType.networkRisk, 
           onContinue: _onSummaryContinue,
-          isLastGameInChapter: false, 
+          isLastGameInChapter: true, 
         ),
       ),
     );
   }
 
   void _onSummaryContinue() {
-    // Complete the chapter and navigate back
-    // GameState().completeChapter(2);
+    GameState().completeChapter(2);
     // Pop both summary page and game page
     Navigator.of(context).pop(); // Pop summary page
     Navigator.of(context).popUntil((route) => route.settings.name == '/chapters');
+
   }
 
   @override
@@ -179,35 +188,35 @@ class _Level3WifiWoesState extends State<Level3WifiWoes> {
                 SizedBox(height: 16),
                 
                 // Lives and Score
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: List.generate(3, (index) => 
-                        Icon(
-                          Icons.favorite,
-                          color: index < lives ? Colors.red : Colors.grey,
-                          size: 24,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: const Color(0xFF00D4FF)),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        'Score: $score',
-                        style: TextStyle(
-                          color: const Color(0xFF00D4FF),
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //   children: [
+                //     Row(
+                //       children: List.generate(3, (index) => 
+                //         Icon(
+                //           Icons.favorite,
+                //           color: index < lives ? Colors.red : Colors.grey,
+                //           size: 24,
+                //         ),
+                //       ),
+                //     ),
+                //     Container(
+                //       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                //       decoration: BoxDecoration(
+                //         border: Border.all(color: const Color(0xFF00D4FF)),
+                //         borderRadius: BorderRadius.circular(20),
+                //       ),
+                //       child: Text(
+                //         'Score: $score',
+                //         style: TextStyle(
+                //           color: const Color(0xFF00D4FF),
+                //           fontSize: 16,
+                //           fontWeight: FontWeight.bold,
+                //         ),
+                //       ),
+                //     ),
+                //   ],
+                // ),
                 
                 SizedBox(height: 40),
                 
