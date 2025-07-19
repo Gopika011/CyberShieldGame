@@ -1,3 +1,5 @@
+import 'package:claude/enums/games.dart';
+import 'package:claude/pages/summary_page.dart';
 import 'package:flutter/material.dart';
 import '../widgets/cyber_button.dart';
 
@@ -11,6 +13,8 @@ class _Level1ShopOrStopState extends State<Level1ShopOrStop> {
   int score = 0;
   bool showResult = false;
   String resultMessage = '';
+
+  List<Map<String, dynamic>> results = [];
   
   // Fake website scenarios
   final List<Map<String, dynamic>> websites = [
@@ -76,7 +80,13 @@ class _Level1ShopOrStopState extends State<Level1ShopOrStop> {
 
   void selectOption(bool userThinksFake) {
     bool isCorrect = userThinksFake == websites[currentQuestion]['isFake'];
-    
+    results.add({
+      'questionIndex': currentQuestion,
+      'userAnswer': userThinksFake,
+      'correctAnswer': websites[currentQuestion]['isFake'],
+      'isCorrect': isCorrect,
+      'website': websites[currentQuestion],
+    });
     setState(() {
       showResult = true;
       if (isCorrect) {
@@ -96,8 +106,30 @@ class _Level1ShopOrStopState extends State<Level1ShopOrStop> {
       });
     } else {
       // Game completed
-      Navigator.pop(context, score);
+      _navigateToSummary();
+      // Navigator.pop(context, score);
     }
+  }
+
+    void _navigateToSummary() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SummaryPage(
+          results: results,
+          totalQuestions: websites.length,
+          gameType: GameType.ecommerceScam, // You can change this to appropriate game type
+          onContinue: _onSummaryContinue,
+          isLastGameInChapter: false, // Set to true if this is the last game in chapter
+        ),
+      ),
+    );
+  }
+
+    void _onSummaryContinue() {
+    // Pop both summary page and game page
+    Navigator.of(context).pop(); // Pop summary page
+    Navigator.of(context).pop(score); // Pop game page and return score
   }
 
   @override

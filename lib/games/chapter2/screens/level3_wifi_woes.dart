@@ -1,3 +1,6 @@
+import 'package:claude/enums/games.dart';
+import 'package:claude/pages/summary_page.dart';
+import 'package:claude/services/game_state.dart';
 import 'package:flutter/material.dart';
 import '../widgets/cyber_button.dart';
 
@@ -13,6 +16,8 @@ class _Level3WifiWoesState extends State<Level3WifiWoes> {
   bool showResult = false;
   String resultMessage = "";
   bool isCorrect = false;
+
+  List<Map<String, dynamic>> results = [];
 
   final List<Map<String, dynamic>> scenarios = [
     {
@@ -63,8 +68,18 @@ class _Level3WifiWoesState extends State<Level3WifiWoes> {
   ];
 
   void handleAnswer(int selectedAnswer) {
+    bool isAnswerCorrect = selectedAnswer == scenarios[currentStep]['correctAnswer'];
+
+    results.add({
+      'questionIndex': currentStep,
+      'userAnswer': selectedAnswer,
+      'correctAnswer': scenarios[currentStep]['correctAnswer'],
+      'isCorrect': isAnswerCorrect,
+      'scenario': scenarios[currentStep],
+    });
+
     setState(() {
-      isCorrect = selectedAnswer == scenarios[currentStep]['correctAnswer'];
+      isCorrect = isAnswerCorrect;
       
       if (isCorrect) {
         score += scenarios[currentStep]['points'] as int;
@@ -79,11 +94,6 @@ class _Level3WifiWoesState extends State<Level3WifiWoes> {
   }
 
   void nextStep() {
-    if (lives <= 0) {
-      Navigator.pop(context, 0);
-      return;
-    }
-
     setState(() {
       if (currentStep < scenarios.length - 1) {
         currentStep++;
@@ -91,9 +101,33 @@ class _Level3WifiWoesState extends State<Level3WifiWoes> {
         resultMessage = "";
       } else {
         // Level completed
-        Navigator.pop(context, score);
+        GameState().completeChapter(2);
+        _navigateToSummary();
       }
     });
+  }
+
+  void _navigateToSummary() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SummaryPage(
+          results: results,
+          totalQuestions: scenarios.length,
+          gameType: GameType.networkRisk, // Assuming you have this enum value, otherwise use appropriate one
+          onContinue: _onSummaryContinue,
+          isLastGameInChapter: false, 
+        ),
+      ),
+    );
+  }
+
+  void _onSummaryContinue() {
+    // Complete the chapter and navigate back
+    // GameState().completeChapter(2);
+    // Pop both summary page and game page
+    Navigator.of(context).pop(); // Pop summary page
+    Navigator.of(context).popUntil((route) => route.settings.name == '/chapters');
   }
 
   @override

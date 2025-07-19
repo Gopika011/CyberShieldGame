@@ -291,8 +291,13 @@ class ChapterGamePage extends StatelessWidget {
                     ),
                     child: ElevatedButton(
                       onPressed: () {
-                        if (chapterId == 4) {
-                          // Navigate to the actual game for Chapter 4
+                        if (chapterId == 2) {
+                          Navigator.pushNamed(context, '/chapter2/game').then((result) {
+                            if (result == 'completed') {
+                              Navigator.pop(context, 'completed');
+                            }
+                          });
+                        } else if (chapterId == 4) {
                           Navigator.pushNamed(context, '/chapter4/game').then((result) {
                             if (result == 'completed') {
                               Navigator.pop(context, 'completed');
@@ -313,7 +318,7 @@ class ChapterGamePage extends StatelessWidget {
                         ),
                       ),
                       child: Text(
-                        chapterId == 4 ? 'START MISSION' : 'COMPLETE MISSION',
+                        (chapterId == 2 || chapterId == 4) ? 'START MISSION' : 'COMPLETE MISSION',
                         style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
@@ -404,9 +409,9 @@ class ChapterGamePage extends StatelessWidget {
         'story': 'While waiting at a bus stop, Arya sees a WhatsApp forward advertising \'90% off on iPhones.\' The deal is tempting, but the source seems questionable.',
         'icon': Icons.shopping_bag_outlined,
         'levels': [
-          {'level': 'LEVEL 01', 'description': 'Spot the Fake Deal', 'icon': Icons.warning_amber_outlined},
-          {'level': 'LEVEL 02', 'description': 'Website Trust Test', 'icon': Icons.public_outlined},
-          {'level': 'LEVEL 03', 'description': 'Secure Shopping Guide', 'icon': Icons.verified_outlined},
+          {'level': 'LEVEL 01', 'description': 'Deal or Deception', 'icon': Icons.warning_amber_outlined},
+          {'level': 'LEVEL 02', 'description': 'Access Evaluation Module', 'icon': Icons.public_outlined},
+          {'level': 'LEVEL 03', 'description': 'Network Risk Simulation', 'icon': Icons.wifi},
         ],
       },
       3: {

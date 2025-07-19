@@ -4,31 +4,36 @@ import 'screens/level2_permission_patrol.dart';
 import 'screens/level3_wifi_woes.dart';
 import 'widgets/cyber_button.dart';
 
-void main() {
-  runApp(MyApp());
-}
 
-class MyApp extends StatelessWidget {
+class Game2Entry extends StatefulWidget {
+  final VoidCallback? onGameComplete;
+  final VoidCallback? onGameExit;
+
+  const Game2Entry({
+    Key? key,
+    this.onGameComplete,
+    this.onGameExit,
+  }) : super(key: key);
+
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Cyber Security Game',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: GameMenu(),
-      debugShowCheckedModeBanner: false,
-    );
-  }
+  _Game2EntryState createState() => _Game2EntryState();
 }
 
-class GameMenu extends StatefulWidget {
-  @override
-  _GameMenuState createState() => _GameMenuState();
-}
-
-class _GameMenuState extends State<GameMenu> {
+class _Game2EntryState extends State<Game2Entry> {
   int totalScore = 0;
+
+  void _handleGameComplete() {
+    if (widget.onGameComplete != null) {
+      widget.onGameComplete!();
+    }
+  }
+
+  void _handleGameExit() {
+    if (widget.onGameExit != null) {
+      widget.onGameExit!();
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -340,44 +345,45 @@ class _GameMenuState extends State<GameMenu> {
                     ),
                     SizedBox(width: 16),
                    Expanded(
-  child: Container(
-    height: 80,
-    decoration: BoxDecoration(
-      border: Border.all(color: Colors.green),
-      borderRadius: BorderRadius.circular(8),
-    ),
-    child: Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () async {
-          final result = await Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => Level3WifiWoes(),
-            ),
-          );
-          if (result != null) {
-            setState(() {
-              totalScore += result as int;
-            });
-          }
-        },
-        borderRadius: BorderRadius.circular(8),
-        child: Center(
-          child: Text(
-            'LEVEL 3\nWI-FI WOES',
-            style: TextStyle(
-              color: Colors.green,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ),
-      ),
-    ),
-  ),
-),
+                    child: Container(
+                      height: 80,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.green),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: () async {
+                            final result = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Level3WifiWoes(),
+                              ),
+                            );
+                            if (result != null) {
+                              setState(() {
+                                totalScore += result as int;
+                              });
+                              
+                            }
+                          },
+                          borderRadius: BorderRadius.circular(8),
+                          child: Center(
+                            child: Text(
+                              'LEVEL 3\nWI-FI WOES',
+                              style: TextStyle(
+                                color: Colors.green,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                   ],
                 ),
                 

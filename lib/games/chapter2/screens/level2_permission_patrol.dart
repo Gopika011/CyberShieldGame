@@ -1,3 +1,5 @@
+import 'package:claude/enums/games.dart';
+import 'package:claude/pages/summary_page.dart';
 import 'package:flutter/material.dart';
 import '../widgets/cyber_button.dart';
 import 'dart:math';
@@ -17,6 +19,8 @@ class _Level2PermissionPatrolState extends State<Level2PermissionPatrol>
   bool gameOver = false;
   late AnimationController _shakeController;
   late Animation<double> _shakeAnimation;
+
+  List<Map<String, dynamic>> results = [];
   
   // Harder permission scenarios with tricky apps
   final List<Map<String, dynamic>> permissionScenarios = [
@@ -114,7 +118,14 @@ class _Level2PermissionPatrolState extends State<Level2PermissionPatrol>
 
   void selectOption(String choice) {
     bool isCorrect = choice == permissionScenarios[currentQuestion]['correctChoice'];
-    
+    results.add({
+      'questionIndex': currentQuestion,
+      'userAnswer': choice,
+      'correctAnswer': permissionScenarios[currentQuestion]['isFake'],
+      'isCorrect': isCorrect,
+      'website': permissionScenarios[currentQuestion],
+    });
+
     setState(() {
       showResult = true;
       if (isCorrect) {
@@ -125,10 +136,6 @@ class _Level2PermissionPatrolState extends State<Level2PermissionPatrol>
         _shakeController.forward().then((_) => _shakeController.reverse());
         resultMessage = '❌ WRONG! (-1 Life)\n\n${permissionScenarios[currentQuestion]['explanation']}';
         
-        if (lives <= 0) {
-          gameOver = true;
-          resultMessage += '\n\n🔴 GAME OVER!\nYour device got compromised!';
-        }
       }
     });
   }
@@ -146,8 +153,30 @@ class _Level2PermissionPatrolState extends State<Level2PermissionPatrol>
       });
     } else {
       // Level completed
-      Navigator.pop(context, score);
+      _navigateToSummary();
+      // Navigator.pop(context, score);
     }
+  }
+
+  void _navigateToSummary() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SummaryPage(
+          results: results,
+          totalQuestions: permissionScenarios.length,
+          gameType: GameType.appPermissions, // Assuming you have this enum value
+          onContinue: _onSummaryContinue,
+          isLastGameInChapter: false, // Set to true if this is the last game in chapter
+        ),
+      ),
+    );
+  }
+
+  void _onSummaryContinue() {
+    // Pop both summary page and game page
+    Navigator.of(context).pop(); // Pop summary page
+    Navigator.of(context).pop(score); // Pop game page and return score
   }
 
   @override
