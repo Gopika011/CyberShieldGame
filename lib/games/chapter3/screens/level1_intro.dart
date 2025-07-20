@@ -1,6 +1,6 @@
+import 'package:claude/games/chapter3/screens/level1.dart';
 import 'package:claude/pages/land.dart';
 import 'package:flutter/material.dart';
-import 'level1.dart';
 
 class Level1Intro extends StatefulWidget {
   const Level1Intro({super.key});

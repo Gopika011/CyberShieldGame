@@ -1,9 +1,14 @@
-import '../widgets/ProfileCard.dart';
+import 'package:claude/games/chapter3/screens/level2_intro.dart';
+import 'package:claude/games/chapter3/widgets/ProfileCard.dart';
+import 'package:claude/games/chapter3/widgets/feedback_panel.dart';
+import 'package:claude/games/chapter3/widgets/game_app_bar.dart';
+import 'package:claude/games/chapter3/widgets/game_background.dart';
+import 'package:claude/games/chapter3/widgets/game_button.dart';
+import 'package:claude/games/chapter3/widgets/game_status_bar.dart';
+import 'package:claude/games/chapter3/widgets/level_complete_card.dart';
 import 'package:flutter/material.dart';
-import 'level2_intro.dart';
 import '../widgets/theme.dart';
-import '../chapter3.dart';
-import 'package:provider/provider.dart';
+
 
 class Level1 extends StatefulWidget {
   const Level1({super.key});
@@ -13,6 +18,7 @@ class Level1 extends StatefulWidget {
 }
 
 class _Level1State extends State<Level1> with TickerProviderStateMixin {
+  // Game state variables
   int score = 0;
   int currentRound = 0;
   String feedback = ' ';
@@ -20,6 +26,7 @@ class _Level1State extends State<Level1> with TickerProviderStateMixin {
   bool showRetry = false;
   bool levelCompleted = false;
   
+  // Animation controllers
   late AnimationController _pulseController;
   late AnimationController _glowController;
   late Animation<double> _pulseAnimation;
@@ -28,6 +35,10 @@ class _Level1State extends State<Level1> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+    _initializeAnimations();
+  }
+
+  void _initializeAnimations() {
     _pulseController = AnimationController(
       duration: const Duration(seconds: 2),
       vsync: this,
@@ -54,6 +65,7 @@ class _Level1State extends State<Level1> with TickerProviderStateMixin {
     super.dispose();
   }
 
+  // Game data
   final List<Map<String, dynamic>> profileRounds = [
     {
       'fake': {
@@ -93,6 +105,7 @@ class _Level1State extends State<Level1> with TickerProviderStateMixin {
     },
   ];
 
+  // Game logic methods
   void handleFakeSelection() {
     if (cardSelected || levelCompleted) return;
 
@@ -102,6 +115,20 @@ class _Level1State extends State<Level1> with TickerProviderStateMixin {
       cardSelected = true;
     });
 
+    _processNextRound();
+  }
+
+  void handleRealSelection() {
+    if (cardSelected || levelCompleted) return;
+
+    setState(() {
+      feedback = 'DETECTION FAILED - REAL PROFILE';
+      cardSelected = true;
+      showRetry = true;
+    });
+  }
+
+  void _processNextRound() {
     Future.delayed(const Duration(seconds: 2), () {
       if (currentRound >= 2) {
         setState(() {
@@ -116,16 +143,6 @@ class _Level1State extends State<Level1> with TickerProviderStateMixin {
     });
   }
 
-  void handleRealSelection() {
-    if (cardSelected || levelCompleted) return;
-
-    setState(() {
-      feedback = 'DETECTION FAILED - REAL PROFILE';
-      cardSelected = true;
-      showRetry = true;
-    });
-  }
-
   void resetLevel() {
     setState(() {
       feedback = ' ';
@@ -134,6 +151,7 @@ class _Level1State extends State<Level1> with TickerProviderStateMixin {
     });
   }
 
+  // UI Builder methods
   Widget _buildCyberCard({
     required Widget child,
     Color? borderColor,
@@ -168,55 +186,59 @@ class _Level1State extends State<Level1> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildStatusBar() {
+  Widget _buildProfileSelectionArea() {
+    if (levelCompleted) return const SizedBox.shrink();
+    
+    final currentData = profileRounds[currentRound];
+    final retryKey = showRetry.toString() + currentRound.toString();
+    
     return Container(
-      margin: const EdgeInsets.all(16),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: DigitalTheme.cardBackground,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: DigitalTheme.primaryCyan),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'DETECTION STATUS',
-                style: DigitalTheme.subheadingStyle.copyWith(
-                  color: DigitalTheme.primaryCyan,
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Text(
-                'Level 1 - Active',
-                style: DigitalTheme.bodyStyle.copyWith(
-                  color: DigitalTheme.primaryText,
-                  fontSize: 16,
-                ),
-              ),
-            ],
+          Text(
+            'SELECT THE FAKE PROFILE',
+            style: DigitalTheme.subheadingStyle.copyWith(
+              color: DigitalTheme.primaryCyan,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1.2,
+            ),
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
+          const SizedBox(height: 20),
+          Row(
             children: [
-              Text(
-                'SCORE',
-                style: DigitalTheme.subheadingStyle.copyWith(
-                  color: DigitalTheme.primaryCyan,
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
+              Expanded(
+                child: _buildCyberCard(
+                  borderColor: DigitalTheme.dangerRed,
+                  isGlowing: !cardSelected,
+                  child: Container(
+                    height: MediaQuery.of(context).size.height * 0.4,
+                    child: ProfileCard(
+                      key: ValueKey('fake-$retryKey'),
+                      image: currentData['fake']['image'],
+                      username: currentData['fake']['username'],
+                      bio: currentData['fake']['bio'],
+                      onSelected: handleFakeSelection,
+                    ),
+                  ),
                 ),
               ),
-              Text(
-                '$score/3',
-                style: DigitalTheme.bodyStyle.copyWith(
-                  color: DigitalTheme.primaryText,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+              const SizedBox(width: 16),
+              Expanded(
+                child: _buildCyberCard(
+                  borderColor: DigitalTheme.successGreen,
+                  isGlowing: !cardSelected,
+                  child: Container(
+                    height: MediaQuery.of(context).size.height * 0.4,
+                    child: ProfileCard(
+                      key: ValueKey('real-$retryKey'),
+                      image: currentData['real']['image'],
+                      username: currentData['real']['username'],
+                      bio: currentData['real']['bio'],
+                      onSelected: handleRealSelection,
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -226,289 +248,92 @@ class _Level1State extends State<Level1> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildFeedbackPanel() {
+  Widget _buildRetryButton() {
+    if (!showRetry || levelCompleted) return const SizedBox.shrink();
+    
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: DigitalTheme.cardBackground,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: cardSelected 
-              ? (score > currentRound ? DigitalTheme.successGreen : DigitalTheme.dangerRed)
-              : DigitalTheme.primaryCyan,
-        ),
+      width: double.infinity,
+      child: GameButton(
+        text: 'RETRY ANALYSIS',
+        onPressed: resetLevel,
+        backgroundColor: DigitalTheme.cardBackground,
+        textColor: DigitalTheme.primaryCyan,
+        icon: Icons.refresh,
+        isIconRight: false,
       ),
-      child: Column(
-        children: [
-          Container(
-            width: 64,
-            height: 64,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: cardSelected
-                    ? (score > currentRound ? DigitalTheme.successGreen : DigitalTheme.dangerRed)
-                    : DigitalTheme.primaryCyan,
-                width: 2,
-              ),
-              color: cardSelected
-                  ? (score > currentRound ? DigitalTheme.successGreen.withOpacity(0.15) : DigitalTheme.dangerRed.withOpacity(0.15))
-                  : DigitalTheme.primaryCyan.withOpacity(0.08),
-            ),
-            child: Icon(
-              cardSelected
-                  ? (score > currentRound ? Icons.verified_rounded : Icons.warning_amber_rounded)
-                  : Icons.shield,
-              color: cardSelected
-                  ? (score > currentRound ? DigitalTheme.successGreen : DigitalTheme.dangerRed)
-                  : DigitalTheme.primaryCyan,
-              size: 40,
-            ),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            feedback.isEmpty ? 'ANALYZING PROFILES...' : feedback,
-            textAlign: TextAlign.center,
-            style: DigitalTheme.bodyStyle.copyWith(
-              color: cardSelected 
-                  ? (score > currentRound ? DigitalTheme.successGreen : DigitalTheme.dangerRed)
-                  : DigitalTheme.primaryCyan,
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 1.2,
-            ),
-          ),
-        ],
+    );
+  }
+
+  Widget _buildCompletionCard() {
+    if (!levelCompleted) return const SizedBox.shrink();
+    
+    return LevelCompletionCard(
+      title: 'LEVEL COMPLETED',
+      message: 'Well done! You spotted the imposter and protected your digital identity. Always double-check friend requests and stay vigilant against online clones!',
+      score: score,
+      maxScore: 3,
+      nextButton: GameButton(
+        text: 'Next Level',
+        onPressed: () {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const Level2Intro()),
+          );
+        },
+        backgroundColor: Colors.blue,
+        icon: Icons.arrow_forward,
       ),
+      tips: const [
+        'Check profile pictures for inconsistencies',
+        'Look for suspicious usernames and bios',
+        'Be cautious with unsolicited friend requests',
+        'Report and block suspicious accounts',
+      ],
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final currentData = profileRounds[currentRound];
-    final retryKey = showRetry.toString() + currentRound.toString();
-    
     return Scaffold(
       backgroundColor: DigitalTheme.darkBackground,
-      appBar: AppBar(
-        backgroundColor: DigitalTheme.surfaceBackground,
-        elevation: 0,
-        title: Text(
-          'CYBER SHIELD - PROFILE DETECTOR',
-          style: DigitalTheme.subheadingStyle.copyWith(
-            color: DigitalTheme.primaryCyan,
-            fontSize: 16,
-            letterSpacing: 1.5,
-          ),
-        ),
-        leading: Container(
-          margin: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            border: Border.all(color: DigitalTheme.primaryCyan),
-            borderRadius: BorderRadius.circular(4),
-          ),
-          child: IconButton(
-            icon: const Icon(Icons.arrow_back, color: DigitalTheme.primaryCyan),
-            onPressed: () => Navigator.pop(context),
-          ),
-        ),
-      ),
-      body: Stack(
-        children: [
-          // Background gradient
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  const Color(0xFF0A1A2A),
-                  const Color(0xFF1A2A3A),
-                ],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-              ),
-            ),
-          ),
-          // Grid background painter
-          Positioned.fill(
-            child: CustomPaint(
-              painter: GridPainter(
-                gridColor: const Color(0x1A00D4FF),
-                cellSize: 25,
-              ),
-            ),
-          ),
-          // Main content
-          LayoutBuilder(
-            builder: (context, constraints) {
-              return SingleChildScrollView(
-                padding: EdgeInsets.only(bottom: 10),
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                  child: IntrinsicHeight(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        _buildStatusBar(),
-                        const SizedBox(height: 20),
-                        _buildFeedbackPanel(),
-                        const SizedBox(height: 30),
-                        
-                        if (!levelCompleted)
-                          Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 16),
-                            child: Column(
-                              children: [
-                                Text(
-                                  'SELECT THE FAKE PROFILE',
-                                  style: DigitalTheme.subheadingStyle.copyWith(
-                                    color: DigitalTheme.primaryCyan,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 1.2,
-                                  ),
-                                ),
-                                const SizedBox(height: 20),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: _buildCyberCard(
-                                        borderColor: DigitalTheme.dangerRed,
-                                        isGlowing: !cardSelected,
-                                        child: Container(
-                                          height: MediaQuery.of(context).size.height * 0.4,
-                                          child: ProfileCard(
-                                            key: ValueKey('fake-$retryKey'),
-                                            image: currentData['fake']['image'],
-                                            username: currentData['fake']['username'],
-                                            bio: currentData['fake']['bio'],
-                                            onSelected: handleFakeSelection,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 16),
-                                    Expanded(
-                                      child: _buildCyberCard(
-                                        borderColor: DigitalTheme.successGreen,
-                                        isGlowing: !cardSelected,
-                                        child: Container(
-                                          height: MediaQuery.of(context).size.height * 0.4,
-                                          child: ProfileCard(
-                                            key: ValueKey('real-$retryKey'),
-                                            image: currentData['real']['image'],
-                                            username: currentData['real']['username'],
-                                            bio: currentData['real']['bio'],
-                                            onSelected: handleRealSelection,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        
-                        const SizedBox(height: 30),
-                        
-                        if (showRetry && !levelCompleted)
-                          Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 16),
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              onPressed: resetLevel,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: DigitalTheme.cardBackground,
-                                foregroundColor: DigitalTheme.primaryCyan,
-                                padding: const EdgeInsets.symmetric(vertical: 16),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  side: BorderSide(color: DigitalTheme.primaryCyan),
-                                ),
-                              ),
-                              child: Text(
-                                'RETRY ANALYSIS',
-                                style: DigitalTheme.bodyStyle.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 1.2,
-                                ),
-                              ),
-                            ),
-                          ),
-                        
-                        if (levelCompleted)
-                          Container(
-                            margin: const EdgeInsets.all(16),
-                            padding: const EdgeInsets.all(24),
-                            decoration: BoxDecoration(
-                              color: DigitalTheme.cardBackground,
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: DigitalTheme.successGreen, width: 2),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: DigitalTheme.successGreen.withOpacity(0.3),
-                                  blurRadius: 20,
-                                  spreadRadius: 5,
-                                ),
-                              ],
-                            ),
-                            child: Column(
-                              children: [
-                                Icon(
-                                  Icons.security,
-                                  color: DigitalTheme.successGreen,
-                                  size: 48,
-                                ),
-                                const SizedBox(height: 16),
-                                Text(
-                                  'LEVEL COMPLETED',
-                                  style: DigitalTheme.subheadingStyle.copyWith(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.bold,
-                                    color: DigitalTheme.successGreen,
-                                    letterSpacing: 2,
-                                  ),
-                                ),
-                                const SizedBox(height: 16),
-                                Text(
-                                  ' Well done! You spotted the imposter and protected your digital identity. Always double-check friend requests and stay vigilant against online clones!',
-                                  style: DigitalTheme.bodyStyle.copyWith(
-                                    color: DigitalTheme.successGreen,
-                                    fontSize: 18,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
-                            ),
-                          ),
-                        
-                        const SizedBox(height: 20),
-                        if (levelCompleted)
-                          ElevatedButton.icon(
-                            onPressed: () {
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(builder: (context) => const Level2Intro()),
-                              );
-                            },
-                            icon: const Icon(Icons.arrow_forward),
-                            label: Text('Next Level'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blue,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                            ),
-                          ),
-                      ],
-                    ),
+      appBar: const GameAppBar(title: 'CYBER SHIELD - PROFILE DETECTOR'),
+      body: GameBackground(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: IntrinsicHeight(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      GameStatusBar(
+                        levelName: 'Level 1 - Active',
+                        score: score,
+                        maxScore: 3,
+                      ),
+                      const SizedBox(height: 20),
+                      GameFeedbackPanel(
+                        feedback: feedback,
+                        isSuccess: score > currentRound,
+                        showFeedback: cardSelected,
+                        defaultMessage: 'ANALYZING PROFILES...',
+                      ),
+                      const SizedBox(height: 30),
+                      _buildProfileSelectionArea(),
+                      const SizedBox(height: 30),
+                      _buildRetryButton(),
+                      _buildCompletionCard(),
+                      const SizedBox(height: 20),
+                    ],
                   ),
                 ),
-              );
-            },
-          ),
-        ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }
