@@ -303,7 +303,15 @@ class ChapterGamePage extends StatelessWidget {
                               Navigator.pop(context, 'completed');
                             }
                           });
-                        } else {
+                        } 
+                        else if (chapterId == 1) {
+                          Navigator.pushNamed(context, '/chapter1/game').then((result) {
+                            if (result == 'completed') {
+                              Navigator.pop(context, 'completed');
+                            }
+                          });
+                        }
+                        else {
                           // For other chapters, just mark as completed
                           gameState.completeChapter(chapterId);
                           Navigator.pop(context, 'completed');

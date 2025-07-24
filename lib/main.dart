@@ -1,5 +1,6 @@
 
 // main.dart
+import 'package:claude/games/chapter1/game1_entry.dart';
 import 'package:claude/games/chapter2/game2_entry.dart';
 import 'package:claude/games/chapter4/game4_entry.dart';
 import 'package:claude/games/chapter3/game3_entry.dart';
@@ -41,6 +42,10 @@ class CyberShieldApp extends StatelessWidget {
           onGameExit: () => Navigator.pop(context),
         ),
         '/chapter2/game': (context) => Game2Entry(
+          onGameComplete: () => Navigator.pop(context, 'completed'),
+          onGameExit: () => Navigator.pop(context),
+        ),
+        '/chapter1/game': (context) => Game1Entry(
           onGameComplete: () => Navigator.pop(context, 'completed'),
           onGameExit: () => Navigator.pop(context),
         ),

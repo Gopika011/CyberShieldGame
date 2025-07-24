@@ -13,14 +13,14 @@ class _ChaptersPageState extends State<ChaptersPage> {
   final GameState gameState = GameState();
   
   final List<Chapter> chapters = [
-    // Chapter(
-    //   id: 1,
-    //   title: "The Scholarship Trap",
-    //   description: "Email phishing, fake links, urgency",
-    //   story: "Arya receives an email saying she's selected for a prestigious internship. She's excited, but something feels off...",
-    //   icon: Icons.email,
-    //   color: Color(0xFF00D4FF),
-    // ),
+    Chapter(
+      id: 1,
+      title: "The Scholarship Trap",
+      description: "Email phishing, fake links, urgency",
+      story: "Arya receives an email saying she's selected for a prestigious internship. She's excited, but something feels off...",
+      icon: Icons.email,
+      color: Color(0xFF00D4FF),
+    ),
     Chapter(
       id: 2,
       title: "Deals Too Good to Be True",
