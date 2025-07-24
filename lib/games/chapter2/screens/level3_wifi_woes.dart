@@ -1,5 +1,6 @@
 import 'package:claude/enums/games.dart';
 import 'package:claude/pages/land.dart';
+import 'package:claude/pages/chapters_page.dart';
 import 'package:claude/pages/summary_page.dart';
 import 'package:claude/services/audio_effects.dart';
 import 'package:claude/services/game_state.dart';
@@ -172,11 +173,12 @@ class _Level3WifiWoesState extends State<Level3WifiWoes> {
   }
 
   void _onSummaryContinue() {
-    GameState().completeChapter(2);
-    // Pop both summary page and game page
-    Navigator.of(context).pop(); // Pop summary page
-    Navigator.of(context).popUntil((route) => route.settings.name == '/chapters');
-
+    GameState().completeChapter(2); // or 3, depending on which chapter to unlock
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => ChaptersPage()),
+      (route) => false,
+    );
   }
 
   @override
