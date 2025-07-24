@@ -395,6 +395,14 @@ class SummaryPage extends StatelessWidget {
         return 'PERMISSION PATROL';
       case GameType.networkRisk:
         return 'WI-FI WOES';
+      case GameType.profileDetector:
+        return 'PROFILE DETECTOR';
+      case GameType.chatDefender:
+        return 'CHAT DEFENDER';
+      case GameType.secureProfile:
+        return 'SECURE PROFILE';
+
+
 
       // default:
       //   return 'CYBER SECURITY CHALLENGE';

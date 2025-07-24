@@ -193,7 +193,7 @@ class _Level1State extends State<Level1> with TickerProviderStateMixin {
         builder: (context) => SummaryPage(
           results: gameResults,
           totalQuestions: 3,
-          gameType: GameType.socialEngineering, // Adjust this to match your game type
+          gameType: GameType.profileDetector, 
           onContinue: _navigateToLevel2,
           isLastGameInChapter: false, // Set to true if this is the last game in chapter
         ),

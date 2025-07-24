@@ -106,7 +106,53 @@ class GameInstructionProvider {
               'Stay alert — attackers love unsafe networks!'
             ]
           };
+          
+        case GameType.profileDetector:
+          return {
+            'title': 'Mission: Identify Fake Profiles',
+            'icon': Icons.account_box_outlined,
+            'overview': 'In this module, you will examine user profiles and decide whether they seem real or suspicious.',
+            'instructions': [
+              'Review each profile’s photo, username, bio, and activity',
+              'Look for signs of fake behavior like vague bios or mismatched photos',
+              'Tap "REAL" if the profile seems trustworthy',
+              'Tap "FAKE" if the profile raises any red flags',
+              'Think critically — scammers often disguise fake accounts well',
+              'Stay alert and trust your instincts!'
+            ]
+          };
 
+
+        case GameType.chatDefender:
+          return {
+            'title': 'Mission: Stay Safe in Chats',
+            'icon': Icons.chat_bubble_outline,
+            'overview': 'In this module, you’ll navigate direct messages and choose the safest way to respond.',
+            'instructions': [
+              'Read each message carefully and think before you reply',
+              'Watch for signs of manipulation, pressure, or identity faking',
+              'Choose the response that keeps you safe and cautious',
+              'Tap on the safest reply among the given choices',
+              'Learn from feedback after each decision',
+              'Stay alert — not everyone online is who they claim to be!'
+            ]
+          };
+
+          
+        case GameType.secureProfile:
+          return {
+            'title': 'Secure Your Profile',
+            'icon': Icons.lock_outline,
+            'overview': 'In this game, protect your social media profile from unwanted attention and risky behavior.',
+            'instructions': [
+              'Decide who should be allowed to view your story — block strangers.',
+              'If someone suspicious views your location, choose whether to remove it.',
+              'Review direct messages carefully — block or report if they seem unsafe.',
+              'Think critically and choose the most secure option each time.',
+              'Learn from instant feedback to improve your online safety habits.',
+              'Your digital privacy is in your hands — play smart!'
+            ]
+          };
 
 
     }

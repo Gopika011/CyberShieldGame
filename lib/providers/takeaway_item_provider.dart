@@ -138,9 +138,63 @@ class GameTakeawayProvider {
             ),
           ];
 
+        case GameType.profileDetector:
+          return [
+            TakeawayItem(
+              icon: Icons.account_circle_outlined,
+              title: 'Inspect Profile Details',
+              description: 'Fake accounts often have no posts, mismatched photos, or vague bios.',
+            ),
+            TakeawayItem(
+              icon: Icons.person_search,
+              title: 'Watch Out for Red Flags',
+              description: 'Be cautious of usernames with numbers, overly flattering DMs, or friend requests from strangers.',
+            ),
+            TakeawayItem(
+              icon: Icons.report,
+              title: 'Report Suspicious Profiles',
+              description: 'If something feels off, block and report the profile immediately.',
+            ),
+          ];
 
+        case GameType.chatDefender:
+          return [
+            TakeawayItem(
+              icon: Icons.privacy_tip,
+              title: 'Protect Your Privacy',
+              description: 'Never share personal details like phone numbers or photos with strangers online.',
+            ),
+            TakeawayItem(
+              icon: Icons.verified_user_outlined,
+              title: 'Verify First',
+              description: 'If someone claims to know you, ask questions to confirm their identity.',
+            ),
+            TakeawayItem(
+              icon: Icons.report_gmailerrorred,
+              title: 'Don’t Engage With Suspicious Messages',
+              description: 'Feeling unsafe? Block and report right away.',
+            ),
+          ];
 
-      
+        case GameType.secureProfile:
+          return [
+            TakeawayItem(
+              icon: Icons.visibility_off,
+              title: 'Control Who Sees You',
+              description: 'Be selective about who can view your stories and profile information.',
+            ),
+            TakeawayItem(
+              icon: Icons.location_off_outlined,
+              title: 'Hide Your Location',
+              description: 'Your real-time location can reveal more than you think — keep it off unless absolutely needed.',
+            ),
+            TakeawayItem(
+              icon: Icons.block,
+              title: 'Don’t Engage With Creepy DMs',
+              description: 'Block or report messages that feel inappropriate or invasive.',
+            ),
+          ];
+
       // default:
       //   return [];
     }

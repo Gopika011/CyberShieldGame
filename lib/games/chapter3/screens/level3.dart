@@ -249,7 +249,7 @@ class _Level3State extends State<Level3> with TickerProviderStateMixin {
         builder: (context) => SummaryPage(
           results: results,
           totalQuestions: 5, // Total possible score
-          gameType: GameType.socialEngineering, 
+          gameType: GameType.secureProfile, 
           isLastGameInChapter: true,
           onContinue: () {
             GameState().completeChapter(3);
@@ -592,7 +592,7 @@ class _Level3State extends State<Level3> with TickerProviderStateMixin {
         
         // Show action buttons only when feedback is not showing
         if (!showFeedback && !locationPrompted) ...[
-          // Action buttons - Always in column layout
+          // Action buttons - column layout
           Column(
             children: [
               SizedBox(
@@ -617,7 +617,7 @@ class _Level3State extends State<Level3> with TickerProviderStateMixin {
                     setState(() => locationRemoved = false);
                     handleLocationAction(false);
                   },
-                  backgroundColor: DigitalTheme.cardBackground,
+                  backgroundColor: DigitalTheme.warningOrange,
                   textColor: DigitalTheme.primaryText,
                   icon: Icons.location_on,
                 ),
@@ -737,7 +737,7 @@ class _Level3State extends State<Level3> with TickerProviderStateMixin {
                 child: GameButton(
                   text: 'ALLOW',
                   onPressed: () => handleDMAction('Allow'),
-                  backgroundColor: DigitalTheme.cardBackground,
+                  backgroundColor: DigitalTheme.successGreen,
                   textColor: DigitalTheme.primaryText,
                   icon: Icons.check,
                 ),

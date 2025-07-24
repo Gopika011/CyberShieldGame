@@ -146,7 +146,7 @@ class _Level2State extends State<Level2> {
         builder: (context) => SummaryPage(
           results: results,
           totalQuestions: phases.length,
-          gameType: GameType.socialEngineering,
+          gameType: GameType.chatDefender,
           onContinue: () {
             Navigator.pushReplacement(
               context,

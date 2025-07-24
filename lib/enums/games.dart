@@ -5,6 +5,9 @@ enum GameType {
   malware,
   ecommerceScam,
   appPermissions,
-  networkRisk
+  networkRisk,
+  profileDetector,
+  chatDefender,
+  secureProfile
   // Add more game types as needed
 }
