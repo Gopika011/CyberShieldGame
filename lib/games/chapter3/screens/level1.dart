@@ -1,3 +1,4 @@
+import 'package:claude/enums/games.dart';
 import 'package:claude/games/chapter3/screens/level2_intro.dart';
 import 'package:claude/games/chapter3/widgets/ProfileCard.dart';
 import 'package:claude/games/chapter3/widgets/feedback_panel.dart';
@@ -6,6 +7,8 @@ import 'package:claude/games/chapter3/widgets/game_background.dart';
 import 'package:claude/games/chapter3/widgets/game_button.dart';
 import 'package:claude/games/chapter3/widgets/game_status_bar.dart';
 import 'package:claude/games/chapter3/widgets/level_complete_card.dart';
+import 'package:claude/pages/summary_page.dart';
+import 'package:claude/services/audio_effects.dart';
 import 'package:flutter/material.dart';
 import '../widgets/theme.dart';
 
@@ -25,7 +28,11 @@ class _Level1State extends State<Level1> with TickerProviderStateMixin {
   bool cardSelected = false;
   bool showRetry = false;
   bool levelCompleted = false;
+
+  final AudioEffectsService _audioEffects = AudioEffectsService();
   
+  List<Map<String, dynamic>> gameResults = [];
+
   // Animation controllers
   late AnimationController _pulseController;
   late AnimationController _glowController;
@@ -113,6 +120,12 @@ class _Level1State extends State<Level1> with TickerProviderStateMixin {
       score++;
       feedback = 'PROFILE ANALYSIS COMPLETE';
       cardSelected = true;
+      gameResults.add({
+          'round': currentRound + 1,
+          'isCorrect': true,
+          'selectedProfile': 'fake',
+      });
+      _audioEffects.playCorrect();
     });
 
     _processNextRound();
@@ -125,6 +138,14 @@ class _Level1State extends State<Level1> with TickerProviderStateMixin {
       feedback = 'DETECTION FAILED - REAL PROFILE';
       cardSelected = true;
       showRetry = true;
+
+      gameResults.add({
+        'round': currentRound + 1,
+        'isCorrect': false,
+        'selectedProfile': 'real',
+      });
+
+      _audioEffects.playWrong();
     });
   }
 
@@ -134,6 +155,9 @@ class _Level1State extends State<Level1> with TickerProviderStateMixin {
         setState(() {
           levelCompleted = true;
         });
+
+        _showSummaryPage();
+        
       } else {
         setState(() {
           currentRound++;
@@ -149,6 +173,32 @@ class _Level1State extends State<Level1> with TickerProviderStateMixin {
       cardSelected = false;
       showRetry = false;
     });
+
+    _audioEffects.stop();
+  }
+
+  void _navigateToLevel2() {
+    // Pop both Level1 and SummaryPage, then navigate to Level2Intro
+    // Navigator.of(context).popUntil((route) => route.isFirst);
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const Level2Intro()),
+    );
+  }
+
+  // Show summary page
+  void _showSummaryPage() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => SummaryPage(
+          results: gameResults,
+          totalQuestions: 3,
+          gameType: GameType.socialEngineering, // Adjust this to match your game type
+          onContinue: _navigateToLevel2,
+          isLastGameInChapter: false, // Set to true if this is the last game in chapter
+        ),
+      ),
+    );
   }
 
   // UI Builder methods
@@ -265,33 +315,33 @@ class _Level1State extends State<Level1> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildCompletionCard() {
-    if (!levelCompleted) return const SizedBox.shrink();
+  // Widget _buildCompletionCard() {
+  //   if (!levelCompleted) return const SizedBox.shrink();
     
-    return LevelCompletionCard(
-      title: 'LEVEL COMPLETED',
-      message: 'Well done! You spotted the imposter and protected your digital identity. Always double-check friend requests and stay vigilant against online clones!',
-      score: score,
-      maxScore: 3,
-      nextButton: GameButton(
-        text: 'Next Level',
-        onPressed: () {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const Level2Intro()),
-          );
-        },
-        backgroundColor: Colors.blue,
-        icon: Icons.arrow_forward,
-      ),
-      tips: const [
-        'Check profile pictures for inconsistencies',
-        'Look for suspicious usernames and bios',
-        'Be cautious with unsolicited friend requests',
-        'Report and block suspicious accounts',
-      ],
-    );
-  }
+  //   return LevelCompletionCard(
+  //     title: 'LEVEL COMPLETED',
+  //     message: 'Well done! You spotted the imposter and protected your digital identity. Always double-check friend requests and stay vigilant against online clones!',
+  //     score: score,
+  //     maxScore: 3,
+  //     nextButton: GameButton(
+  //       text: 'Next Level',
+  //       onPressed: () {
+  //         Navigator.pushReplacement(
+  //           context,
+  //           MaterialPageRoute(builder: (context) => const Level2Intro()),
+  //         );
+  //       },
+  //       backgroundColor: Colors.blue,
+  //       icon: Icons.arrow_forward,
+  //     ),
+  //     tips: const [
+  //       'Check profile pictures for inconsistencies',
+  //       'Look for suspicious usernames and bios',
+  //       'Be cautious with unsolicited friend requests',
+  //       'Report and block suspicious accounts',
+  //     ],
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -325,7 +375,7 @@ class _Level1State extends State<Level1> with TickerProviderStateMixin {
                       _buildProfileSelectionArea(),
                       const SizedBox(height: 30),
                       _buildRetryButton(),
-                      _buildCompletionCard(),
+                      // _buildCompletionCard(),
                       const SizedBox(height: 20),
                     ],
                   ),

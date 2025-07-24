@@ -2,14 +2,14 @@ import 'package:claude/games/chapter3/screens/level3_intro.dart';
 import 'package:claude/games/chapter3/widgets/feedback_panel.dart';
 import 'package:claude/games/chapter3/widgets/game_app_bar.dart';
 import 'package:claude/games/chapter3/widgets/game_background.dart';
+import 'package:claude/games/chapter3/widgets/game_button.dart';
 import 'package:claude/games/chapter3/widgets/game_status_bar.dart';
+import 'package:claude/games/chapter3/widgets/level_complete_card.dart';
 import 'package:claude/games/chapter3/widgets/chat_message.dart';
 import 'package:claude/games/chapter3/widgets/choice_button.dart';
-import 'package:claude/enums/games.dart';
-import 'package:claude/pages/summary_page.dart';
-import 'package:claude/services/audio_effects.dart';
 import 'package:flutter/material.dart';
 import '../widgets/theme.dart';
+import 'level2_intro.dart';
 
 class Level2 extends StatefulWidget {
   const Level2({super.key});
@@ -26,9 +26,6 @@ class _Level2State extends State<Level2> {
   bool levelCompleted = false;
   String feedbackMessage = '';
   String feedbackType = '';
-  List<Map<String, dynamic>> results = [];
-
-  final AudioEffectsService _audioEffects = AudioEffectsService();
 
   // Game data
   final List<Map<String, dynamic>> phases = [
@@ -97,24 +94,13 @@ class _Level2State extends State<Level2> {
   // Game logic methods
   void handleChoice(int choiceIndex) {
     final choice = phases[currentPhase]['choices'][choiceIndex];
-    final bool isCorrect = choice['correct'];
-    
-    // Store result for summary
-    results.add({
-      'question': phases[currentPhase]['message'],
-      'selectedAnswer': choice['text'],
-      'isCorrect': isCorrect,
-      'feedback': choice['feedback'],
-    });
     
     setState(() {
-      if (isCorrect) {
+      if (choice['correct']) {
         score++;
         feedbackType = 'success';
-        _audioEffects.playCorrect();
       } else {
         feedbackType = 'error';
-        _audioEffects.playWrong();
       }
       feedbackMessage = choice['feedback'];
       showFeedback = true;
@@ -129,7 +115,6 @@ class _Level2State extends State<Level2> {
         setState(() {
           levelCompleted = true;
         });
-        _showSummaryPage();
       } else {
         setState(() {
           currentPhase++;
@@ -139,48 +124,10 @@ class _Level2State extends State<Level2> {
     });
   }
 
-  void _showSummaryPage() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => SummaryPage(
-          results: results,
-          totalQuestions: phases.length,
-          gameType: GameType.socialEngineering,
-          onContinue: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const Level3Intro()),
-            );
-          },
-          onRetry: (){
-            //pop summary
-            Navigator.pop(context);
-            _retryLevel();
-          }
-        ),
-      ),
-    );
-  }
-
   void retryPhase() {
     setState(() {
       showFeedback = false;
     });
-  }
-
-  void _retryLevel() {
-    setState(() {
-      currentPhase = 0;
-      score = 0;
-      showFeedback = false;
-      levelCompleted = false;
-      feedbackMessage = '';
-      feedbackType = '';
-      results.clear();
-    });
-
-    _audioEffects.stop();
   }
 
   // UI Builder methods
@@ -263,6 +210,52 @@ class _Level2State extends State<Level2> {
     );
   }
 
+  Widget _buildCompletionCard() {
+    if (!levelCompleted) return const SizedBox.shrink();
+    
+    return LevelCompletionCard(
+      title: 'MISSION ACCOMPLISHED',
+      message: score < 2 
+          ? 'THREAT LEVEL: HIGH\nSome choices compromised security. Review protocols and retry.'
+          : 'Excellent cyber defense! You successfully identified and neutralized social engineering threats.',
+      score: score,
+      maxScore: phases.length,
+      nextButton: GameButton(
+        text: 'NEXT LEVEL',
+        onPressed: () {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const Level3Intro()),
+          );
+        },
+        backgroundColor: DigitalTheme.primaryCyan,
+        textColor: Colors.black,
+        icon: Icons.arrow_forward,
+      ),
+      retryButton: score < 2 
+          ? GameButton(
+              text: 'RETRY MISSION',
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const Level2Intro()),
+                );
+              },
+              backgroundColor: DigitalTheme.dangerRed,
+              textColor: Colors.white,
+              icon: Icons.refresh,
+              isIconRight: false,
+            )
+          : null,
+      tips: const [
+        'Never share personal info with strangers',
+        'Verify identities before trusting',
+        'Don\'t send photos to unknown people',
+        'If in doubt, block and report',
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -277,6 +270,7 @@ class _Level2State extends State<Level2> {
               maxScore: phases.length,
             ),
             _buildChatArea(),
+            _buildCompletionCard(),
           ],
         ),
       ),

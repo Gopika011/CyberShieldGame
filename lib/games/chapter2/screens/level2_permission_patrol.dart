@@ -3,6 +3,7 @@ import 'package:claude/games/chapter2/screens/level3_wifi_woes.dart';
 import 'package:claude/games/chapter4/pages/intruction_page.dart';
 import 'package:claude/pages/land.dart';
 import 'package:claude/pages/summary_page.dart';
+import 'package:claude/services/audio_effects.dart';
 import 'package:flutter/material.dart';
 import '../widgets/cyber_button.dart';
 import 'dart:math';
@@ -28,7 +29,10 @@ class _Level2PermissionPatrolState extends State<Level2PermissionPatrol>
   int lives = 3;
   bool showResult = false;
   String resultMessage = '';
-  bool gameOver = false;
+  bool levelCompleted = false;
+
+  final AudioEffectsService _audioEffects = AudioEffectsService();
+
   late AnimationController _shakeController;
   late Animation<double> _shakeAnimation;
 
@@ -141,30 +145,29 @@ class _Level2PermissionPatrolState extends State<Level2PermissionPatrol>
     setState(() {
       showResult = true;
       if (isCorrect) {
-        score += 150; // Higher score for harder level
+        score += 1; 
         resultMessage = permissionScenarios[currentQuestion]['explanation'];
+        _audioEffects.playCorrect();
       } else {
         lives--;
         _shakeController.forward().then((_) => _shakeController.reverse());
         resultMessage = permissionScenarios[currentQuestion]['explanation'];
+        _audioEffects.playWrong();
         
       }
     });
   }
 
-  void nextQuestion() {
-    if (gameOver) {
-      Navigator.pop(context, score);
-      return;
-    }
-    
+  void nextQuestion() {    
     if (currentQuestion < permissionScenarios.length - 1) {
       setState(() {
         currentQuestion++;
         showResult = false;
       });
     } else {
-      // Level completed
+      setState(() {
+        levelCompleted = true;
+      });
       _navigateToSummary();
       // Navigator.pop(context, score);
     }
@@ -180,9 +183,27 @@ class _Level2PermissionPatrolState extends State<Level2PermissionPatrol>
           gameType: GameType.appPermissions, 
           onContinue: _navigateToNextGame,
           isLastGameInChapter: false, 
+          onRetry: () {
+            // Pop summary page
+            Navigator.pop(context);
+            _retryLevel();
+          },
         ),
       ),
     );
+  }
+
+  void _retryLevel() {
+    setState(() {
+      currentQuestion = 0;
+      score = 0;
+      showResult = false;
+      levelCompleted = false;
+      resultMessage = '';
+      results.clear();
+    });
+
+    _audioEffects.stop();
   }
 
   void _navigateToNextGame() {

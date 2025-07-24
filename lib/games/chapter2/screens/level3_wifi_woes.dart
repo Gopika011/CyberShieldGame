@@ -1,6 +1,7 @@
 import 'package:claude/enums/games.dart';
 import 'package:claude/pages/land.dart';
 import 'package:claude/pages/summary_page.dart';
+import 'package:claude/services/audio_effects.dart';
 import 'package:claude/services/game_state.dart';
 import 'package:flutter/material.dart';
 import '../widgets/cyber_button.dart';
@@ -21,11 +22,13 @@ class Level3WifiWoes extends StatefulWidget {
 
 class _Level3WifiWoesState extends State<Level3WifiWoes> {
   int score = 0;
-  int lives = 3;
   int currentStep = 0;
   bool showResult = false;
   String resultMessage = "";
   bool isCorrect = false;
+  bool levelCompleted = false;
+
+  final AudioEffectsService _audioEffects = AudioEffectsService();
 
   List<Map<String, dynamic>> results = [];
 
@@ -37,7 +40,6 @@ class _Level3WifiWoesState extends State<Level3WifiWoes> {
       'options': ['Use Mobile Data Instead', 'Connect & Shop Now'],
       'correctAnswer': 1,
       'explanation': 'Public Wi-Fi is unsafe for payments! Always use mobile data or trusted networks for shopping.',
-      'points': 100,
     },
     {
       'title': 'Airport WiFi Payment',
@@ -46,7 +48,6 @@ class _Level3WifiWoesState extends State<Level3WifiWoes> {
       'options': ['Enter Card Details Now', 'Wait for Secure Connection'],
       'correctAnswer': 1,
       'explanation': 'Never rush payments on public WiFi! Scammers create urgency. Use secure networks only.',
-      'points': 100,
     },
     {
       'title': 'Hotel WiFi Dilemma',
@@ -55,7 +56,6 @@ class _Level3WifiWoesState extends State<Level3WifiWoes> {
       'options': ['Proceed with Payment', 'Verify with Hotel First'],
       'correctAnswer': 1,
       'explanation': 'Fake hotel portals collect personal info! Always verify with hotel staff before entering details.',
-      'points': 100,
     },
     // {
     //   'title': 'VPN Protection',
@@ -77,6 +77,23 @@ class _Level3WifiWoesState extends State<Level3WifiWoes> {
     // },
   ];
 
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeGame();
+  }
+
+  void _initializeGame() {
+    setState(() {
+      currentStep = 0;
+      score = 0;
+      showResult = false;
+      levelCompleted = false;
+      resultMessage = '';
+      results.clear();
+    });
+  }
   void handleAnswer(int selectedAnswer) {
     bool isAnswerCorrect = selectedAnswer == scenarios[currentStep]['correctAnswer'];
 
@@ -92,11 +109,12 @@ class _Level3WifiWoesState extends State<Level3WifiWoes> {
       isCorrect = isAnswerCorrect;
       
       if (isCorrect) {
-        score += scenarios[currentStep]['points'] as int;
+        score += 1;
         resultMessage = "Correct! " + scenarios[currentStep]['explanation'];
+        _audioEffects.playCorrect();
       } else {
-        lives--;
         resultMessage = "Wrong! " + scenarios[currentStep]['explanation'];
+        _audioEffects.playWrong();
       }
       
       showResult = true;
@@ -112,6 +130,9 @@ class _Level3WifiWoesState extends State<Level3WifiWoes> {
       } else {
         // Level completed
         GameState().completeChapter(2);
+        setState(() {
+          levelCompleted = true;
+        });
         _navigateToSummary();
       }
     });
@@ -127,9 +148,27 @@ class _Level3WifiWoesState extends State<Level3WifiWoes> {
           gameType: GameType.networkRisk, 
           onContinue: _onSummaryContinue,
           isLastGameInChapter: true, 
+          onRetry: () {
+            // Pop summary page
+            Navigator.pop(context);
+            _retryLevel();
+          },
         ),
       ),
     );
+  }
+
+  void _retryLevel() {
+    setState(() {
+      currentStep = 0;
+      score = 0;
+      showResult = false;
+      levelCompleted = false;
+      resultMessage = '';
+      results.clear();
+    });
+
+    _audioEffects.stop();
   }
 
   void _onSummaryContinue() {
@@ -410,17 +449,6 @@ class _Level3WifiWoesState extends State<Level3WifiWoes> {
                     ),
                   ],
                   
-                  if (lives <= 0) ...[
-                    SizedBox(height: 20),
-                    Text(
-                      'Game Over! No lives remaining.',
-                      style: TextStyle(
-                        color: Colors.red,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
                 ],
               ),
             ),

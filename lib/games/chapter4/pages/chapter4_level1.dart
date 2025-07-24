@@ -9,7 +9,7 @@ import 'package:claude/games/chapter4/pages/chapter4_level2.dart';
 import 'package:claude/games/chapter4/pages/intruction_page.dart';
 import 'package:claude/pages/land.dart';
 import 'package:claude/pages/summary_page.dart';
-import 'package:claude/services/game_state.dart';
+import 'package:claude/services/audio_effects.dart';
 import 'package:flutter/material.dart';
 
 
@@ -56,7 +56,8 @@ class _Chapter4MainPageState extends State<Chapter4MainPage> with SingleTickerPr
   bool _audioComplete = false; 
   String feedback = ''; 
   final AudioPlayer player = AudioPlayer();
-  final AudioPlayer soundPlayer = AudioPlayer(); 
+  // final AudioPlayer soundPlayer = AudioPlayer(); 
+  final AudioEffectsService _audioEffects = AudioEffectsService();
 
   late AnimationController _progressController; 
   late Animation<double> _progressBarAnimation; 
@@ -88,23 +89,23 @@ class _Chapter4MainPageState extends State<Chapter4MainPage> with SingleTickerPr
   @override
   void dispose() {
     _progressController.dispose();
-    soundPlayer.dispose();
+    // soundPlayer.dispose();
     player.dispose();
     super.dispose();
   }
 
-  void _playSoundEffect(String soundPath) async {
-    try {
-      await soundPlayer.play(AssetSource('assets/games/chapter4/$soundPath'));
-    } catch (e) {
-      print("Error playing sound effect: $e");
-    }
-  }
+  // void _playSoundEffect(String soundPath) async {
+  //   try {
+  //     await soundPlayer.play(AssetSource(soundPath));
+  //   } catch (e) {
+  //     print("Error playing sound effect: $e");
+  //   }
+  // }
 
   void _playSound() async {
     String audioPath = questions[currentIndex]['audio'] as String;
     try {
-      await player.play(AssetSource('$audioPath'));
+      await player.play(AssetSource(audioPath));
 
       player.onPlayerComplete.listen((event) {
         setState(() {
@@ -137,14 +138,17 @@ class _Chapter4MainPageState extends State<Chapter4MainPage> with SingleTickerPr
       if (isTimeout) {
         _currentFeedbackEffect = FeedbackEffect.timeout;
         // _playSoundEffect('audio/wrong_buzz_short.mp3');
+        _audioEffects.playTimeout();
       } else if (correct) {
         feedback = 'CORRECT';
         _currentFeedbackEffect = FeedbackEffect.correct;
         // _playSoundEffect('audio/correct_chime.mp3');
+        _audioEffects.playCorrect();
       } else {
         feedback = 'WRONG';
         _currentFeedbackEffect = FeedbackEffect.wrong;
         // _playSoundEffect('audio/wrong_buzz_short.mp3');
+        _audioEffects.playWrong();
       }
       _progressController.stop(); 
     });
@@ -174,26 +178,48 @@ class _Chapter4MainPageState extends State<Chapter4MainPage> with SingleTickerPr
           gameType: GameType.spamCall,
           onContinue: _navigateToNextGame,
           isLastGameInChapter: false,
+          onRetry: (){
+            Navigator.pop(context);
+            _retryGame();
+          },
         ),
       ),
     );
   }
 
-void _navigateToNextGame() {
-  Navigator.pushReplacement(
-    context,
-    MaterialPageRoute(
-      builder: (context) => InstructionPage(
-        gameType: GameType.socialEngineering,
-        nextGameWidget: CredentialDefenderGame(
-          onGameComplete: widget.onGameComplete,
-          onGameExit: widget.onGameExit,
+  void _retryGame() {
+    setState(() {
+      currentIndex = 0;
+      _hasAnswered = false;
+      _audioComplete = false;
+      feedback = '';
+      results.clear();
+      _currentFeedbackEffect = FeedbackEffect.none;
+      _progressController.reset();
+    });
+    
+    // Stop any playing audio
+    player.stop();
+    // soundPlayer.stop();
+    _audioEffects.stop();
+  }
+
+
+  void _navigateToNextGame() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => InstructionPage(
+          gameType: GameType.socialEngineering,
+          nextGameWidget: CredentialDefenderGame(
+            onGameComplete: widget.onGameComplete,
+            onGameExit: widget.onGameExit,
+          ),
+          onExitChapter: widget.onGameExit,
         ),
-        onExitChapter: widget.onGameExit,
       ),
-    ),
-  );
-}
+    );
+  }
 
 
   @override

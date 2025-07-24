@@ -34,7 +34,6 @@ class CyberShieldApp extends StatelessWidget {
         '/chapter3': (context) => ChapterGamePage(chapterId: 3),
         '/chapter4': (context) => ChapterGamePage(chapterId: 4),
         '/chapter4/game': (context) => Game4Entry( 
-          onGameComplete: () => Navigator.pop(context, 'completed'),
           onGameExit: () => Navigator.pop(context),
         ),
         '/chapter3/game': (context) => Game3Entry(

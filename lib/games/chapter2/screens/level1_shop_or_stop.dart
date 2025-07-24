@@ -3,6 +3,7 @@ import 'package:claude/games/chapter2/screens/level2_permission_patrol.dart';
 import 'package:claude/games/chapter4/pages/intruction_page.dart';
 import 'package:claude/pages/land.dart';
 import 'package:claude/pages/summary_page.dart';
+import 'package:claude/services/audio_effects.dart';
 import 'package:flutter/material.dart';
 import '../widgets/cyber_button.dart';
 
@@ -25,6 +26,9 @@ class _Level1ShopOrStopState extends State<Level1ShopOrStop> {
   int score = 0;
   bool showResult = false;
   String resultMessage = '';
+  bool levelCompleted = false;
+
+  final AudioEffectsService _audioEffects = AudioEffectsService();
 
   List<Map<String, dynamic>> results = [];
   
@@ -102,10 +106,12 @@ class _Level1ShopOrStopState extends State<Level1ShopOrStop> {
     setState(() {
       showResult = true;
       if (isCorrect) {
-        score += 100;
+        score += 1;
         resultMessage = websites[currentQuestion]['explanation'];
+        _audioEffects.playCorrect();
       } else {
         resultMessage = websites[currentQuestion]['explanation'];
+        _audioEffects.playWrong();
       }
     });
   }
@@ -117,9 +123,10 @@ class _Level1ShopOrStopState extends State<Level1ShopOrStop> {
         showResult = false;
       });
     } else {
-      // Game completed
+      setState(() {
+        levelCompleted = true;
+      });
       _navigateToSummary();
-      // Navigator.pop(context, score);
     }
   }
 
@@ -133,9 +140,27 @@ class _Level1ShopOrStopState extends State<Level1ShopOrStop> {
           gameType: GameType.ecommerceScam, 
           onContinue: _navigateToNextGame,
           isLastGameInChapter: false, 
+          onRetry: () {
+            // Pop summary page
+            Navigator.pop(context);
+            _retryLevel();
+          },
         ),
       ),
     );
+  }
+
+  void _retryLevel() {
+    setState(() {
+      currentQuestion = 0;
+      score = 0;
+      showResult = false;
+      levelCompleted = false;
+      resultMessage = '';
+      results.clear();
+    });
+
+    _audioEffects.stop();
   }
 
   void _navigateToNextGame() {

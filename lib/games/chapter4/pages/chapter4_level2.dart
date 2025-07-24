@@ -1,7 +1,8 @@
-import 'package:audioplayers/audioplayers.dart';
 import 'package:claude/enums/games.dart';
+import 'package:claude/pages/chapters_page.dart';
 import 'package:claude/pages/land.dart';
 import 'package:claude/pages/summary_page.dart';
+import 'package:claude/services/audio_effects.dart';
 import 'package:claude/services/game_state.dart';
 import 'package:flutter/material.dart';
 
@@ -44,7 +45,9 @@ class _CredentialDefenderGameState extends State<CredentialDefenderGame> {
   int score = 0;
   bool hasAnswered = false;
   int? selectedAnswer;
-  final soundPlayer = AudioPlayer();
+
+  final AudioEffectsService _audioEffects = AudioEffectsService();
+
   List<Map<String, dynamic>> gameResults = [];
 
   final List<GameScenario> scenarios = [
@@ -74,58 +77,7 @@ class _CredentialDefenderGameState extends State<CredentialDefenderGame> {
       icon: Icons.phone,
       iconColor: const Color(0xFFFF4757),
     ),
-    GameScenario(
-      title: "Password Sharing",
-      description: "Your colleague asks for your work system password because they 'forgot theirs' and need to access something urgently.",
-      options: [
-        "A) Share your password to help them",
-        "B) Share the password but ask them to change it later",
-        "C) Refuse and suggest they contact IT support"
-      ],
-      correctAnswerIndex: 2,
-      explanation: "Never share passwords, even with trusted colleagues. Each person should have their own credentials for accountability and security. Direct them to proper IT channels for password reset assistance.",
-      icon: Icons.work,
-      iconColor: const Color(0xFF00D4FF),
-    ),
-    GameScenario(
-      title: "Email Verification",
-      description: "You receive an email from 'support@youbank.com' asking you to click a link and enter your login credentials to 'update your security settings'.",
-      options: [
-        "A) Click the link and update your settings",
-        "B) Delete the email and log in through the official website",
-        "C) Forward the email to friends to warn them"
-      ],
-      correctAnswerIndex: 1,
-      explanation: "This is likely a phishing email. Never click links in suspicious emails. Always access your bank through the official website or app directly.",
-      icon: Icons.email,
-      iconColor: const Color(0xFF00FFE0),
-    ),
-    GameScenario(
-      title: "Public WiFi Banking",
-      description: "You're at a coffee shop and need to check your bank balance. The free WiFi 'CoffeeShop_Free' is available.",
-      options: [
-        "A) Connect to WiFi and check your balance",
-        "B) Use your mobile data instead",
-        "C) Ask the staff for the WiFi password first"
-      ],
-      correctAnswerIndex: 1,
-      explanation: "Never access sensitive accounts on public WiFi. Public networks are not secure and can be monitored by attackers. Use your mobile data or a trusted VPN for banking activities.",
-      icon: Icons.wifi,
-      iconColor: const Color(0xFF00FF88),
-    ),
-    GameScenario(
-      title: "Social Media Quiz",
-      description: "A fun quiz on social media asks: 'What was your first pet's name?' and 'What street did you grow up on?' to generate your 'superhero name'.",
-      options: [
-        "A) Skip the quiz entirely",
-        "B) Participate - it's just for fun!",
-        "C) Use fake answers for the quiz"
-      ],
-      correctAnswerIndex: 0,
-      explanation: "These questions are common security questions used for password recovery. Sharing real answers publicly can help attackers gain access to your accounts. It's safer to avoid such quizzes entirely.",
-      icon: Icons.quiz,
-      iconColor: const Color(0xFFFF4757),
-    ),
+
   ];
 
   @override
@@ -135,18 +87,9 @@ class _CredentialDefenderGameState extends State<CredentialDefenderGame> {
 
   @override
   void dispose() {
-    soundPlayer.dispose();
     super.dispose();
   }
 
-  void _playSoundEffect(String soundPath) async {
-    try {
-      await soundPlayer.play(AssetSource(soundPath));
-      // await soundPlayer.play(UrlSource(soundPath));
-    } catch (e) {
-      print("Error playing sound effect: $e");
-    }
-  }
 
   void _selectAnswer(int index) {
     if (hasAnswered) return;
@@ -172,9 +115,9 @@ class _CredentialDefenderGameState extends State<CredentialDefenderGame> {
         score++;
       });
       // print("hh");
-      // _playSoundEffect('audio/correct_chime.mp3');
+      _audioEffects.playCorrect();
     } else {
-      // _playSoundEffect('audio/wrong_buzz_short.mp3');
+      _audioEffects.playWrong();
     }
   }
 
@@ -191,7 +134,7 @@ class _CredentialDefenderGameState extends State<CredentialDefenderGame> {
   }
 
   void _navigateToSummary() {
-    Navigator.pushReplacement( 
+    Navigator.push( 
       context,
       MaterialPageRoute(
         builder: (context) => SummaryPage( 
@@ -200,16 +143,36 @@ class _CredentialDefenderGameState extends State<CredentialDefenderGame> {
           gameType: GameType.socialEngineering,
           onContinue: _onSummaryContinue,
           isLastGameInChapter: true,
+          onRetry: (){
+            Navigator.pop(context);
+            _retryGame();
+          },
         ),
       ),
     );
   }
 
+  void _retryGame() {
+    setState(() {
+      currentScenarioIndex = 0;
+      score = 0;
+      hasAnswered = false;
+      selectedAnswer = null;
+      gameResults.clear();
+    });
+
+    _audioEffects.stop();
+  }
+
   void _onSummaryContinue() {
-    // Complete the chapter first
     GameState().completeChapter(4);
-    Navigator.of(context).pop(); // Pop summary page
-    Navigator.of(context).popUntil((route) => route.settings.name == '/chapters');
+    // Navigator.of(context).pop(); // Pop summary page
+    // Navigator.of(context).popUntil((route) => route.settings.name == '/chapters');
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => ChaptersPage()),
+      (route) => false,
+    );
   }
 
   Color _getOptionColor(int index) {

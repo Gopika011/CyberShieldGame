@@ -3,13 +3,15 @@ import 'package:claude/games/chapter3/widgets/game_app_bar.dart';
 import 'package:claude/games/chapter3/widgets/game_background.dart';
 import 'package:claude/games/chapter3/widgets/game_button.dart';
 import 'package:claude/games/chapter3/widgets/game_status_bar.dart';
+import 'package:claude/games/chapter3/widgets/level_complete_card.dart';
 import 'package:claude/games/chapter3/widgets/theme.dart';
-import 'package:claude/pages/summary_page.dart';
-import 'package:claude/services/audio_effects.dart';
+import 'package:claude/pages/land.dart';
 import 'package:flutter/material.dart';
+import '../chapter3.dart';
+import 'level3_intro.dart';
+import 'level1_intro.dart';
 import '../../../pages/chapters_page.dart';
 import '../../../services/game_state.dart';
-import '../../../enums/games.dart'; 
 
 class Level3 extends StatefulWidget {
   const Level3({super.key});
@@ -25,12 +27,6 @@ class _Level3State extends State<Level3> with TickerProviderStateMixin {
   String feedbackMessage = '';
   String feedbackType = '';
   bool levelCompleted = false;
-  bool _isNavigatingToSummary = false;
-
-  final AudioEffectsService _audioEffects = AudioEffectsService();
-
-  // Track results for summary page
-  List<Map<String, dynamic>> results = [];
 
   // Section 1: Story Shield
   final List<Map<String, dynamic>> viewers = [
@@ -80,15 +76,6 @@ class _Level3State extends State<Level3> with TickerProviderStateMixin {
     });
   }
 
-  void _addResult(String question, bool isCorrect, String userAnswer, String correctAnswer) {
-    results.add({
-      'question': question,
-      'isCorrect': isCorrect,
-      'userAnswer': userAnswer,
-      'correctAnswer': correctAnswer,
-    });
-  }
-
   void handleStoryShieldAction({bool hideTapped = false, List<String>? restrictedList}) {
     bool correct = false;
     if (hideTapped) {
@@ -96,25 +83,14 @@ class _Level3State extends State<Level3> with TickerProviderStateMixin {
     } else if (restrictedList != null) {
       correct = viewers.where((v) => !v['isFriend']).every((v) => restrictedList.contains(v['name']));
     }
-    
-    // Add result to tracking
-    _addResult(
-      'Story Shield: Control who sees Arya\'s story & posts',
-      correct,
-      restrictedList != null ? 'Restricted ${restrictedList.length} users' : 'Used hide option',
-      'Restrict all strangers or hide from unknowns',
-    );
-
     setState(() {
       if (correct) {
         score++;
         feedbackType = 'success';
         feedbackMessage = 'Great! Arya\'s story is now hidden from unknowns.';
-        _audioEffects.playCorrect();
       } else {
         feedbackType = 'error';
         feedbackMessage = 'Some strangers can still see Arya\'s story!';
-        _audioEffects.playWrong();
       }
       showFeedback = true;
     });
@@ -122,24 +98,14 @@ class _Level3State extends State<Level3> with TickerProviderStateMixin {
   }
 
   void handleLocationAction(bool remove) {
-    // Add result to tracking
-    _addResult(
-      'Location Reveal: Remove location from Arya\'s post',
-      remove,
-      remove ? 'Removed location' : 'Kept location',
-      'Remove location',
-    );
-
     setState(() {
       if (remove) {
         score++;
         feedbackType = 'success';
         feedbackMessage = 'Smart! Location removed from Arya\'s post.';
-        _audioEffects.playCorrect();
       } else {
         feedbackType = 'error';
         feedbackMessage = 'Rahul_2.0 can still see Arya\'s location!';
-        _audioEffects.playWrong();
       }
       showFeedback = true;
       locationPrompted = true;
@@ -149,25 +115,14 @@ class _Level3State extends State<Level3> with TickerProviderStateMixin {
 
   void handleDMAction(String action) {
     bool correct = action == fakeDMs[currentDM]['correct'];
-    
-    // Add result to tracking
-    _addResult(
-      'DM Defense: ${fakeDMs[currentDM]['message']}',
-      correct,
-      action,
-      fakeDMs[currentDM]['correct'],
-    );
-
     setState(() {
       if (correct) {
         score++;
         feedbackType = 'success';
         feedbackMessage = 'Good choice!';
-        _audioEffects.playCorrect();
       } else {
         feedbackType = 'error';
         feedbackMessage = 'That\'s not the safest option.';
-        _audioEffects.playWrong();
       }
       showFeedback = true;
       dmAnswered = true;
@@ -186,14 +141,6 @@ class _Level3State extends State<Level3> with TickerProviderStateMixin {
   }
 
   void handleDMSetting(String setting) {
-    // Add result to tracking
-    _addResult(
-      'DM Settings: Configure message settings',
-      setting == 'Friends Only',
-      setting,
-      'Friends Only',
-    );
-
     setState(() {
       dmSetting = setting;
       if (setting == 'Friends Only') {
@@ -209,97 +156,11 @@ class _Level3State extends State<Level3> with TickerProviderStateMixin {
     Future.delayed(const Duration(seconds: 2), nextSection);
   }
 
-
-  void _retryLevel() {
-    print("retryymoree");
-    setState(() {
-      currentSection = 0;
-      score = 0;
-      showFeedback = false;
-      feedbackMessage = '';
-      feedbackType = '';
-      levelCompleted = false;
-      _isNavigatingToSummary = false;
-      results.clear();
-      
-      // Reset section-specific state
-      restricted.clear();
-      hideFromUnknownsTapped = false;
-      locationRemoved = false;
-      locationPrompted = false;
-      currentDM = 0;
-      dmAnswered = false;
-      dmSetting = 'Everyone';
-    });
-
-    _audioEffects.stop();
-  }
-
-
-  void _navigateToSummaryPage() {
-    if (_isNavigatingToSummary) return;
-    
-    setState(() {
-      _isNavigatingToSummary = true;
-    });
-
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => SummaryPage(
-          results: results,
-          totalQuestions: 5, // Total possible score
-          gameType: GameType.socialEngineering, 
-          isLastGameInChapter: true,
-          onContinue: () {
-            GameState().completeChapter(3);
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => ChaptersPage()),
-              (route) => false,
-            );
-          },
-          onRetry: () {
-            print("retryy");
-            // Pop summary page
-            Navigator.pop(context);
-            _retryLevel();
-          },
-        ),
-      ),
-    );
-  }
-
   Widget _buildMainContent() {
     return Expanded(
       child: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: levelCompleted ? _buildCompletionNavigation() : _buildSection(),
-      ),
-    );
-  }
-
-  Widget _buildCompletionNavigation() {
-    // Navigate to summary page when level is completed
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _navigateToSummaryPage();
-    });
-    
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(DigitalTheme.primaryCyan),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'Loading Results...',
-            style: DigitalTheme.bodyStyle.copyWith(
-              color: DigitalTheme.primaryText,
-            ),
-          ),
-        ],
+        child: levelCompleted ? _buildCompletionCard() : _buildSection(),
       ),
     );
   }
@@ -877,6 +738,55 @@ class _Level3State extends State<Level3> with TickerProviderStateMixin {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildCompletionCard() {
+    if (!levelCompleted) return const SizedBox.shrink();
+    
+    return LevelCompletionCard(
+      title: 'PROFILE SECURED',
+      message: score < 3 
+          ? 'SECURITY LEVEL: COMPROMISED\nSome of Arya\'s information is still exposed. Review and retry.'
+          : 'Excellent work! You\'ve successfully secured Arya\'s social media profile from potential threats.',
+      score: score,
+      maxScore: 5,
+      nextButton: GameButton(
+        text: 'RETURN TO BASE',
+        onPressed: () {
+          GameState().completeChapter(3);
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => ChaptersPage()),
+            (route) => false,
+          );
+        },
+        backgroundColor: DigitalTheme.primaryCyan,
+        textColor: Colors.black,
+        icon: Icons.home,
+      ),
+      retryButton: score < 3 
+          ? GameButton(
+              text: 'RETRY MISSION',
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const Level3Intro()),
+                );
+              },
+              backgroundColor: DigitalTheme.dangerRed,
+              textColor: Colors.white,
+              icon: Icons.refresh,
+              isIconRight: false,
+            )
+          : null,
+      tips: const [
+        'Always verify friend requests carefully',
+        'Review privacy settings monthly',
+        'Never share location in posts',
+        'Keep message settings to friends only',
+        'Report suspicious behavior immediately',
+      ],
     );
   }
 
