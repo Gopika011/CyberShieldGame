@@ -79,7 +79,7 @@ class GameStateService extends ChangeNotifier {
   void processEmail(Email email, bool isCorrectDrop) {
     if (!_isGameActive) return;
     
-    print('📧 Processing email: ${email.subject} - Correct Drop: $isCorrectDrop');
+    print('📧 Processing email:  [1m${email.subject} [0m - Correct Drop: $isCorrectDrop');
     
     final bool wasAnswerCorrect = (!email.isPhishing && isCorrectDrop) || (email.isPhishing && !isCorrectDrop);
 
@@ -87,16 +87,7 @@ class GameStateService extends ChangeNotifier {
     final updatedChallenges = List<Challenge>.from(_gameState.remainingChallenges);
     updatedChallenges.removeWhere((c) => c.id == email.id);
 
-    int scoreChange = 0;
-    int livesChange = 0;
-
-    if (wasAnswerCorrect) {
-      scoreChange = 10;
-      print('✅ Correct! Added $scoreChange points.');
-    } else {
-      livesChange = -1;
-      print('❌ Incorrect! Lost a life.');
-    }
+    int scoreChange = wasAnswerCorrect ? 10 : 0;
 
     _gameState = _gameState.copyWith(
       remainingChallenges: updatedChallenges,
@@ -104,13 +95,12 @@ class GameStateService extends ChangeNotifier {
       correctAnswers: wasAnswerCorrect ? _gameState.correctAnswers + 1 : _gameState.correctAnswers,
       incorrectAnswers: !wasAnswerCorrect ? _gameState.incorrectAnswers + 1 : _gameState.incorrectAnswers,
       score: _gameState.score + scoreChange,
-      lives: (_gameState.lives + livesChange).clamp(0, 3), // Ensure lives don't go negative
     );
 
     _player.score = _gameState.score; // Keep player score in sync
-    _player.lives = _gameState.lives; // Keep player lives in sync
+    // No more lives logic
     
-    print('📊 Current Stats: Score=${_gameState.score}, Correct=${_gameState.correctAnswers}, Incorrect=${_gameState.incorrectAnswers}, Completed=${_gameState.challengesCompleted}, Lives=${_gameState.lives}');
+    print('📊 Current Stats: Score=${_gameState.score}, Correct=${_gameState.correctAnswers}, Incorrect=${_gameState.incorrectAnswers}, Completed=${_gameState.challengesCompleted}');
 
     _checkEndOfChallenge();
     notifyListeners();
@@ -196,7 +186,7 @@ class GameStateService extends ChangeNotifier {
     final totalChallenges = getCurrentLevel().challenges.length;
     final remainingChallenges = _gameState.remainingChallenges.length;
     
-    print('🔍 Checking end condition: ${_gameState.challengesCompleted}/$totalChallenges completed, $remainingChallenges remaining, Lives: ${_gameState.lives}');
+    print('🔍 Checking end condition: ${_gameState.challengesCompleted}/$totalChallenges completed, $remainingChallenges remaining');
     
     // Check if all challenges are completed first (primary win condition)
     if (_gameState.remainingChallenges.isEmpty && _gameState.challengesCompleted >= totalChallenges) {
@@ -205,16 +195,7 @@ class GameStateService extends ChangeNotifier {
       return;
     }
 
-    // Only fail if lives are 0 AND we haven't completed all challenges
-    if (_gameState.lives <= 0 && remainingChallenges > 0) {
-      _gameState = _gameState.copyWith(gameStatus: GameStatus.failed);
-      _isGameActive = false;
-      _gameTimer?.cancel();
-      print('💀 Game Over - No lives remaining with ${remainingChallenges} challenges left');
-      return;
-    }
-
-    print('⏳ Game continues: ${remainingChallenges} challenges remaining, Lives: ${_gameState.lives}');
+    print('⏳ Game continues: ${remainingChallenges} challenges remaining');
   }
 
   void completeLevel() {
