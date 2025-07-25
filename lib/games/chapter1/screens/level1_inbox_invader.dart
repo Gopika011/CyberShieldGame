@@ -1,5 +1,6 @@
 import 'package:claude/games/chapter1/widgets/digital_components.dart';
 import 'package:claude/games/chapter1/widgets/digital_email_card.dart';
+import 'package:claude/services/audio_effects.dart';
 import 'package:flutter/material.dart';
 import '../models/game_models.dart';
 import '../theme/digital_theme.dart';
@@ -40,6 +41,8 @@ class _Level1InboxInvaderState extends State<Level1InboxInvader>
   bool isSuccess = false;
   List<Map<String, dynamic>> results = [];
 
+  final AudioEffectsService _audioEffects = AudioEffectsService();
+
   @override
   void initState() {
     super.initState();
@@ -77,6 +80,12 @@ class _Level1InboxInvaderState extends State<Level1InboxInvader>
         'sender': email.sender,
         'isPhishing': email.isPhishing,
       });
+      
+      if (isSuccess){
+        _audioEffects.playCorrect();
+      }else{
+        _audioEffects.playWrong();
+      }
     });
     widget.onEmailDrop(email, isCorrect);
     Future.delayed(const Duration(seconds: 2), () {
@@ -157,39 +166,7 @@ class _Level1InboxInvaderState extends State<Level1InboxInvader>
             child: Column(
               children: [
                 // Header
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        gradient: DigitalTheme.primaryGradient,
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: DigitalTheme.neonGlow,
-                      ),
-                      child: const Icon(
-                        Icons.email,
-                        color: DigitalTheme.primaryText,
-                        size: 24,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Inbox Invader',
-                            style: DigitalTheme.headingStyle,
-                          ),
-                          Text(
-                            'Sort legitimate emails from phishing attempts',
-                            style: DigitalTheme.bodyStyle,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+                _buildHeader(),
                 const SizedBox(height: 20),
                 // Main card container
                 Expanded(
@@ -214,7 +191,7 @@ class _Level1InboxInvaderState extends State<Level1InboxInvader>
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Expanded(
-                                child: isMobile ? _buildMobileLayout() : _buildDesktopLayout(),
+                                child: _buildMobileLayout()
                               ),
                             ],
                           ),
@@ -241,23 +218,6 @@ class _Level1InboxInvaderState extends State<Level1InboxInvader>
         const SizedBox(height: 12),
         Expanded(
           flex: 3,
-          child: _buildEnhancedDropZones(),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDesktopLayout() {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          flex: 3,
-          child: _buildEmailList(),
-        ),
-        const SizedBox(width: 24),
-        Expanded(
-          flex: 2,
           child: _buildEnhancedDropZones(),
         ),
       ],
@@ -316,7 +276,8 @@ class _Level1InboxInvaderState extends State<Level1InboxInvader>
           children: [
             Text(
               'Arya\'s Inbox (${remainingEmails.length} emails)',
-              style: DigitalTheme.subheadingStyle,
+              style: DigitalTheme.subheadingStyle
+              
             ),
             const SizedBox(height: 16),
             if (showFeedback)
@@ -377,6 +338,7 @@ class _Level1InboxInvaderState extends State<Level1InboxInvader>
                                     color: DigitalTheme.neonGreen,
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
+                                    decoration: TextDecoration.none,
                                   ),
                                 ),
                               ],
@@ -437,15 +399,6 @@ class _Level1InboxInvaderState extends State<Level1InboxInvader>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: EdgeInsets.only(bottom: isMobile ? 5 : 5),
-          child: Text(
-            'Sort Emails',
-            style: DigitalTheme.getMobileHeadingStyle(context).copyWith(
-              fontSize: DigitalTheme.getResponsiveFontSize(context, 16, 18, 20),
-            ),
-          ),
-        ),
         Expanded(
           child: isMobile
               ? Column(
@@ -561,6 +514,7 @@ class _Level1InboxInvaderState extends State<Level1InboxInvader>
                           color: primaryColor,
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
+                          decoration: TextDecoration.none,
                         ),
                       ),
                     ],

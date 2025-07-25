@@ -44,6 +44,8 @@ class DigitalCard extends StatelessWidget {
   }
 }
 
+
+
 class FuturisticFrame extends StatelessWidget {
   final Widget child;
   final Color? borderColor;
@@ -60,136 +62,21 @@ class FuturisticFrame extends StatelessWidget {
   Widget build(BuildContext context) {
     final color = borderColor ?? DigitalTheme.primaryCyan;
     
-    return Stack(
-      children: [
-        Container(
-          margin: const EdgeInsets.all(8),
-          child: child,
-        ),
-        // Top-left corner with tech details
-        Positioned(
-          top: 0,
-          left: 0,
-          child: _buildTechCorner(color, true, true),
-        ),
-        // Top-right corner with tech details
-        Positioned(
-          top: 0,
-          right: 0,
-          child: _buildTechCorner(color, true, false),
-        ),
-        // Bottom-left corner with tech details
-        Positioned(
-          bottom: 0,
-          left: 0,
-          child: _buildTechCorner(color, false, true),
-        ),
-        // Bottom-right corner with tech details
-        Positioned(
-          bottom: 0,
-          right: 0,
-          child: _buildTechCorner(color, false, false),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTechCorner(Color color, bool isTop, bool isLeft) {
     return Container(
-      width: 30,
-      height: 30,
-      child: CustomPaint(
-        painter: TechCornerPainter(
+      decoration: BoxDecoration(
+        border: Border.all(
           color: color,
-          isTop: isTop,
-          isLeft: isLeft,
-          borderWidth: borderWidth,
+          width: borderWidth,
         ),
+        borderRadius: BorderRadius.circular(12),
       ),
+      child: child,
     );
   }
 }
 
-class TechCornerPainter extends CustomPainter {
-  final Color color;
-  final bool isTop;
-  final bool isLeft;
-  final double borderWidth;
 
-  TechCornerPainter({
-    required this.color,
-    required this.isTop,
-    required this.isLeft,
-    required this.borderWidth,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..strokeWidth = borderWidth
-      ..style = PaintingStyle.stroke;
-
-    final path = Path();
-    
-    if (isTop && isLeft) {
-      // Top-left corner
-      path.moveTo(0, 20);
-      path.lineTo(0, 8);
-      path.lineTo(8, 0);
-      path.lineTo(20, 0);
-      
-      // Add tech details
-      path.moveTo(4, 4);
-      path.lineTo(12, 4);
-      path.moveTo(4, 8);
-      path.lineTo(8, 8);
-    } else if (isTop && !isLeft) {
-      // Top-right corner
-      path.moveTo(size.width, 20);
-      path.lineTo(size.width, 8);
-      path.lineTo(size.width - 8, 0);
-      path.lineTo(size.width - 20, 0);
-      
-      // Add tech details
-      path.moveTo(size.width - 4, 4);
-      path.lineTo(size.width - 12, 4);
-      path.moveTo(size.width - 4, 8);
-      path.lineTo(size.width - 8, 8);
-    } else if (!isTop && isLeft) {
-      // Bottom-left corner
-      path.moveTo(0, size.height - 20);
-      path.lineTo(0, size.height - 8);
-      path.lineTo(8, size.height);
-      path.lineTo(20, size.height);
-      
-      // Add tech details
-      path.moveTo(4, size.height - 4);
-      path.lineTo(12, size.height - 4);
-      path.moveTo(4, size.height - 8);
-      path.lineTo(8, size.height - 8);
-    } else {
-      // Bottom-right corner
-      path.moveTo(size.width, size.height - 20);
-      path.lineTo(size.width, size.height - 8);
-      path.lineTo(size.width - 8, size.height);
-      path.lineTo(size.width - 20, size.height);
-      
-      // Add tech details
-      path.moveTo(size.width - 4, size.height - 4);
-      path.lineTo(size.width - 12, size.height - 4);
-      path.moveTo(size.width - 4, size.height - 8);
-      path.lineTo(size.width - 8, size.height - 8);
-    }
-
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) => false;
-}
-
-class DigitalButton extends StatefulWidget {
+class DigitalButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
   final bool isPrimary;
@@ -206,99 +93,112 @@ class DigitalButton extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<DigitalButton> createState() => _DigitalButtonState();
-}
-
-class _DigitalButtonState extends State<DigitalButton>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _scaleAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 150),
-      vsync: this,
-    );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.95).animate(_controller);
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTapDown: (_) => _controller.forward(),
-      onTapUp: (_) => _controller.reverse(),
-      onTapCancel: () => _controller.reverse(),
-      onTap: widget.onPressed,
-      child: AnimatedBuilder(
-        animation: _scaleAnimation,
-        builder: (context, child) {
-          return Transform.scale(
-            scale: _scaleAnimation.value,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              decoration: BoxDecoration(
-                gradient: widget.isPrimary 
-                    ? DigitalTheme.primaryGradient 
-                    : LinearGradient(
-                        colors: [
-                          DigitalTheme.surfaceBackground,
-                          DigitalTheme.cardBackground,
-                        ],
-                      ),
-                borderRadius: BorderRadius.circular(8),
-                border: widget.isPrimary 
-                    ? null 
-                    : Border.all(color: DigitalTheme.primaryCyan, width: 1),
-                boxShadow: widget.isPrimary ? DigitalTheme.neonGlow : null,
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (widget.icon != null) ...[
-                    Icon(
-                      widget.icon,
-                      color: DigitalTheme.primaryText,
-                      size: 18,
-                    ),
-                    const SizedBox(width: 8),
-                  ],
-                  if (widget.isLoading)
-                    const SizedBox(
-                      width: 16,
-                      height: 16,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          DigitalTheme.primaryText,
-                        ),
-                      ),
-                    )
-                  else
-                    Text(
-                      widget.text,
-                      style: const TextStyle(
-                        color: DigitalTheme.primaryText,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
+    final primaryColor = const Color(0xFF00D4FF);
+    final secondaryColor = const Color(0xFF0099CC);
+    
+    return Container(
+      width: double.infinity,
+      height: 45,
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: isPrimary ? primaryColor : primaryColor.withOpacity(0.6),
+          width: 2,
+        ),
+        borderRadius: BorderRadius.circular(8),
+        gradient: isPrimary 
+            ? LinearGradient(
+                colors: [
+                  primaryColor.withOpacity(0.2),
+                  secondaryColor.withOpacity(0.1),
+                  Colors.transparent,
                 ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              )
+            : LinearGradient(
+                colors: [
+                  primaryColor.withOpacity(0.05),
+                  Colors.transparent,
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
+        boxShadow: isPrimary 
+            ? [
+                BoxShadow(
+                  color: primaryColor.withOpacity(0.3),
+                  blurRadius: 8,
+                  spreadRadius: 0,
+                ),
+                BoxShadow(
+                  color: primaryColor.withOpacity(0.1),
+                  blurRadius: 16,
+                  spreadRadius: 2,
+                ),
+              ]
+            : [
+                BoxShadow(
+                  color: primaryColor.withOpacity(0.1),
+                  blurRadius: 4,
+                  spreadRadius: 0,
+                ),
+              ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onPressed,
+          borderRadius: BorderRadius.circular(8),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (icon != null && !isLoading) ...[
+                  Icon(
+                    icon,
+                    color: isPrimary ? primaryColor : primaryColor.withOpacity(0.8),
+                    size: 18,
+                  ),
+                  const SizedBox(width: 8),
+                ],
+                if (isLoading) ...[
+                  SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        isPrimary ? primaryColor : primaryColor.withOpacity(0.8),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                ],
+                Flexible(
+                  child: Text(
+                    text,
+                    style: TextStyle(
+                      color: isPrimary ? primaryColor : primaryColor.withOpacity(0.8),
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1,
+                    ),
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
             ),
-          );
-        },
+          ),
+        ),
       ),
     );
   }
 }
+
+
 
 class DigitalProgressBar extends StatelessWidget {
   final double progress;

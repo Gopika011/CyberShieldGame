@@ -1,3 +1,4 @@
+import 'package:claude/services/audio_effects.dart';
 import 'package:flutter/material.dart';
 import '../models/game_models.dart';
 import '../theme/digital_theme.dart';
@@ -22,66 +23,24 @@ class Level3ReplyRight extends StatefulWidget {
   State<Level3ReplyRight> createState() => _Level3ReplyRightState();
 }
 
-class _Level3ReplyRightState extends State<Level3ReplyRight>
-    with TickerProviderStateMixin {
+class _Level3ReplyRightState extends State<Level3ReplyRight> {
   int currentDialogueIndex = 0;
   bool showingFeedback = false;
   DialogueOption? selectedOption;
   List<Map<String, dynamic>> results = [];
   bool levelCompleted = false;
 
-  late AnimationController _messageController;
-  late AnimationController _optionsController;
-  late Animation<double> _messageAnimation;
-  late Animation<double> _optionsAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _messageController = AnimationController(
-      duration: const Duration(milliseconds: 800),
-      vsync: this,
-    );
-    _optionsController = AnimationController(
-      duration: const Duration(milliseconds: 600),
-      vsync: this,
-    );
-
-    _messageAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _messageController, curve: Curves.easeOut),
-    );
-    _optionsAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _optionsController, curve: Curves.easeOut),
-    );
-
-    _startAnimations();
-  }
-
-  void _startAnimations() {
-    _messageController.forward().then((_) {
-      Future.delayed(const Duration(milliseconds: 500), () {
-        _optionsController.forward();
-      });
-    });
-  }
-
-  @override
-  void dispose() {
-    _messageController.dispose();
-    _optionsController.dispose();
-    super.dispose();
-  }
+  final AudioEffectsService _audioEffects = AudioEffectsService();
 
   @override
   Widget build(BuildContext context) {
     if (levelCompleted) {
-      // Show summary page after completion
       return SummaryPage(
         results: results,
         totalQuestions: widget.dialogues.length,
         gameType: GameType.phishing,
         onContinue: () {
-          app_state.GameState().completeChapter(1); // Unlock next chapter (The Impersonator)
+          app_state.GameState().completeChapter(1);
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => ChaptersPage()),
@@ -97,7 +56,7 @@ class _Level3ReplyRightState extends State<Level3ReplyRight>
             levelCompleted = false;
           });
         },
-        isLastGameInChapter: true, // Show 'Go to Next Chapter' button
+        isLastGameInChapter: true,
       );
     }
 
@@ -110,236 +69,257 @@ class _Level3ReplyRightState extends State<Level3ReplyRight>
 
     final currentDialogue = widget.dialogues[currentDialogueIndex];
 
-    return DigitalCard(
-      glowEffect: true,
-      child: Scrollbar(
-        thumbVisibility: true,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Header
-              _buildHeader(),
-
-              const SizedBox(height: 24),
-
-              // Progress Indicator
-              _buildProgressIndicator(),
-
-              const SizedBox(height: 24),
-
-              // Scenario
-              _buildScenario(currentDialogue),
-
-              const SizedBox(height: 24),
-
-              // Message
-              AnimatedBuilder(
-                animation: _messageAnimation,
-                builder: (context, child) {
-                  return Transform.translate(
-                    offset: Offset(0, 50 * (1 - _messageAnimation.value)),
-                    child: Opacity(
-                      opacity: _messageAnimation.value,
-                      child: _buildMessage(currentDialogue),
-                    ),
-                  );
-                },
-              ),
-
-              const SizedBox(height: 24),
-
-              // Options or Feedback
-              AnimatedBuilder(
-                animation: _optionsAnimation,
-                builder: (context, child) {
-                  return Transform.translate(
-                    offset: Offset(0, 30 * (1 - _optionsAnimation.value)),
-                    child: Opacity(
-                      opacity: _optionsAnimation.value,
-                      child: showingFeedback
-                          ? _buildFeedback(currentDialogue, selectedOption!)
-                          : _buildOptions(currentDialogue),
-                    ),
-                  );
-                },
-              ),
-
-              // Bottom padding to ensure all content is accessible
-              const SizedBox(height: 100),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Row(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            gradient: DigitalTheme.primaryGradient,
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: DigitalTheme.neonGlow,
-          ),
-          child: const Icon(
-            Icons.chat_bubble_outline,
-            color: DigitalTheme.primaryText,
-            size: 24,
-          ),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Reply Right',
-                style: DigitalTheme.headingStyle,
-              ),
-              Text(
-                'Choose the safest response to each situation',
-                style: DigitalTheme.bodyStyle,
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildProgressIndicator() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Scenario ${currentDialogueIndex + 1} of ${widget.dialogues.length}',
-              style: DigitalTheme.captionStyle,
-            ),
-            Text(
-              '${((currentDialogueIndex / widget.dialogues.length) * 100).toInt()}%',
-              style: DigitalTheme.captionStyle.copyWith(
-                color: DigitalTheme.primaryCyan,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Container(
-          height: 4,
-          decoration: BoxDecoration(
-            color: DigitalTheme.surfaceBackground,
-            borderRadius: BorderRadius.circular(2),
-          ),
-          child: FractionallySizedBox(
-            alignment: Alignment.centerLeft,
-            widthFactor: currentDialogueIndex / widget.dialogues.length,
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: DigitalTheme.primaryGradient,
-                borderRadius: BorderRadius.circular(2),
-                boxShadow: [
-                  BoxShadow(
-                    color: DigitalTheme.primaryCyan.withOpacity(0.5),
-                    blurRadius: 8,
-                  ),
+    return Scaffold(
+      backgroundColor: const Color(0xFF0A1520),
+      body: Stack(
+        children: [
+          // Background gradient
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Color.fromARGB(202, 10, 21, 32),
+                  Color.fromARGB(206, 15, 27, 46),
+                  Color.fromARGB(158, 26, 35, 50),
                 ],
               ),
             ),
           ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildScenario(DialogueChallenge dialogue) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: DigitalTheme.accentBlue.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: DigitalTheme.accentBlue.withOpacity(0.3),
-          width: 1,
-        ),
-      ),
-      child: Row(
-        children: [
-          Icon(
-            Icons.info_outline,
-            color: DigitalTheme.accentBlue,
-            size: 20,
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              dialogue.scenario,
-              style: DigitalTheme.bodyStyle.copyWith(
-                color: DigitalTheme.accentBlue,
+          
+          // Cyber grid background
+          Positioned.fill(
+            child: CustomPaint(
+              painter: GridPainter(
+                gridColor: const Color(0x1A00D4FF),
+                cellSize: 25,
               ),
             ),
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildMessage(DialogueChallenge dialogue) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            DigitalTheme.dangerRed.withOpacity(0.1),
-            DigitalTheme.warningOrange.withOpacity(0.1),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: DigitalTheme.dangerRed.withOpacity(0.3),
-          width: 2,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: DigitalTheme.dangerRed.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(8),
+          
+          // Main content
+          SafeArea(
+            child: Column(
+              children: [
+                // Progress indicator
+                Container(
+                  padding: EdgeInsets.all(16),
+                  margin: EdgeInsets.only(bottom: 2),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Scenario ${currentDialogueIndex + 1} of ${widget.dialogues.length}',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 8),
+                      LinearProgressIndicator(
+                        value: (currentDialogueIndex + 1) / widget.dialogues.length,
+                        backgroundColor: Colors.grey[300],
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.indigo),
+                        minHeight: 6,
+                      ),
+                    ],
+                  ),
                 ),
-                child: Icon(
-                  Icons.warning,
-                  color: DigitalTheme.dangerRed,
-                  size: 15,
+                
+                // Scenario card
+                Expanded(
+                  child: Container(
+                    margin: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: const Color(0xFF00D4FF).withOpacity(0.5), width: 1),
+                      borderRadius: BorderRadius.circular(16),
+                      color: const Color(0x05FFFFFF),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF00D4FF).withOpacity(0.1),
+                          blurRadius: 20,
+                          spreadRadius: -5,
+                        ),
+                      ],
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Threat header
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: const Color(0xFF00D4FF).withOpacity(0.5), width: 1),
+                              borderRadius: BorderRadius.circular(12),
+                              color: const Color(0xFF00D4FF).withOpacity(0.1),
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: const Color(0xFF00D4FF), width: 2),
+                                    borderRadius: BorderRadius.circular(8),
+                                    color: const Color(0xFF00D4FF).withOpacity(0.1),
+                                  ),
+                                  child: Icon(
+                                    Icons.chat_bubble_outline,
+                                    color: const Color(0xFF00D4FF),
+                                    size: 24,
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      const Text(
+                                        'SOCIAL THREAT DETECTED',
+                                        style: TextStyle(
+                                          color: Color(0xFF00D4FF),
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                          letterSpacing: 1.5,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        'REPLY RIGHT CHALLENGE',
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                          letterSpacing: 0.8,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          
+                          const SizedBox(height: 20),
+                          
+                          // Scenario description
+                          Text(
+                            currentDialogue.scenario,
+                            style: const TextStyle(
+                              fontSize: 15,
+                              color: Color(0xFFB8C6DB),
+                              height: 1.5,
+                            ),
+                          ),
+                          
+                          const SizedBox(height: 20),
+                          
+                          // Suspicious message
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  const Color(0xFFFF4757).withOpacity(0.1),
+                                  const Color(0xFFFFA502).withOpacity(0.1),
+                                ],
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: const Color(0xFFFF4757).withOpacity(0.3),
+                                width: 2,
+                              ),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFFFF4757).withOpacity(0.2),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: const Icon(
+                                        Icons.warning,
+                                        color: Color(0xFFFF4757),
+                                        size: 15,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    const Text(
+                                      'SUSPICIOUS MESSAGE',
+                                      style: TextStyle(
+                                        color: Color(0xFFFF4757),
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                        letterSpacing: 1.2,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  currentDialogue.message,
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                    color: Color(0xFFB8C6DB),
+                                    height: 1.5,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          
+                          const SizedBox(height: 20),
+                          
+                          // Options or Feedback
+                          Expanded(
+                            child: showingFeedback
+                                ? _buildFeedback(currentDialogue, selectedOption!)
+                                : _buildOptions(currentDialogue),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-              const SizedBox(width: 10),
-              Text(
-                'Suspicious Message',
-                style: DigitalTheme.subheadingStyle.copyWith(
-                  color: DigitalTheme.dangerRed,
-                  fontSize: 12,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Text(
-            dialogue.message,
-            style: DigitalTheme.bodyStyle.copyWith(
-              fontSize: 16,
-              height: 1.5,
+                
+                // Next button (only shown during feedback)
+                if (showingFeedback)
+                  Container(
+                    margin: const EdgeInsets.all(20),
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: _nextDialogue,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF00D4FF),
+                        foregroundColor: const Color(0xFF0A1520),
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        elevation: 0,
+                      ),
+                      child: Text(
+                        currentDialogueIndex < widget.dialogues.length - 1 ? 'NEXT SCENARIO' : 'MISSION COMPLETE',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.5,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
             ),
           ),
         ],
@@ -350,106 +330,68 @@ class _Level3ReplyRightState extends State<Level3ReplyRight>
   Widget _buildOptions(DialogueChallenge dialogue) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
+        const Text(
           'How should Arya respond?',
-          style: DigitalTheme.subheadingStyle.copyWith(fontSize: 16),
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+            letterSpacing: 0.5,
+          ),
         ),
         const SizedBox(height: 16),
-        ...dialogue.options.asMap().entries.map((entry) {
-          final index = entry.key;
-          final option = entry.value;
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: _buildOptionCard(dialogue, option, index),
-          );
-        }).toList(),
-      ],
-    );
-  }
-
-  Widget _buildOptionCard(DialogueChallenge dialogue, DialogueOption option, int index) {
-    return GestureDetector(
-      onTap: () => _selectOption(dialogue, option),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              DigitalTheme.cardBackground,
-              DigitalTheme.surfaceBackground,
-            ],
-          ),
-          borderRadius: BorderRadius.circular(12),
-          // Modified: Set a static border color for all options
-          border: Border.all(
-            color: DigitalTheme.secondaryText.withOpacity(0.5), // A neutral greyish color
-            width: 2,
-          ),
-        ),
-        child: Row(
-          children: [
-            // Option Number
-            Container(
-              width: 32,
-              height: 32,
-              decoration: BoxDecoration(
-                gradient: DigitalTheme.primaryGradient,
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Center(
-                child: Text(
-                  String.fromCharCode(65 + index), // A, B, C, D
-                  style: const TextStyle(
-                    color: DigitalTheme.primaryText,
-                    fontWeight: FontWeight.bold,
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                for (int i = 0; i < dialogue.options.length; i++)
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () => _selectOption(dialogue, dialogue.options[i]),
+                        borderRadius: BorderRadius.circular(8),
+                        child: Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: const Color(0x05FFFFFF),
+                            border: Border.all(
+                              color: const Color(0xFF00D4FF).withOpacity(0.3),
+                              width: 2,
+                            ),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  dialogue.options[i].text,
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ),
+              ],
             ),
-
-            const SizedBox(width: 16),
-
-            // Option Text
-            Expanded(
-              child: Text(
-                option.text,
-                style: DigitalTheme.bodyStyle.copyWith(fontSize: 15),
-              ),
-            ),
-
-            // Removed: Risk Indicator (small bar with round markings)
-            // The following block is commented out to remove the risk indicator.
-            /*
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: _getRiskColor(option.riskLevel).withOpacity(0.2),
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: List.generate(5, (i) => Icon(
-                  Icons.circle,
-                  size: 6,
-                  color: i < option.riskLevel
-                      ? _getRiskColor(option.riskLevel)
-                      : DigitalTheme.secondaryText.withOpacity(0.3),
-                )),
-              ),
-            ),
-            */
-          ],
+          ),
         ),
-      ),
+      ],
     );
   }
 
   Widget _buildFeedback(DialogueChallenge dialogue, DialogueOption option) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
       children: [
         // Feedback Header
         Container(
@@ -500,91 +442,8 @@ class _Level3ReplyRightState extends State<Level3ReplyRight>
           ),
         ),
 
-        const SizedBox(height: 20),
-
-        // Explanation
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: DigitalTheme.accentBlue.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: DigitalTheme.accentBlue.withOpacity(0.3),
-              width: 1,
-            ),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Why this matters:',
-                style: DigitalTheme.subheadingStyle.copyWith(
-                  color: DigitalTheme.accentBlue,
-                  fontSize: 16,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                dialogue.explanation,
-                style: DigitalTheme.bodyStyle.copyWith(
-                  color: DigitalTheme.accentBlue.withOpacity(0.8),
-                ),
-              ),
-            ],
-          ),
-        ),
-
-        const SizedBox(height: 24),
-
-        // Continue Button
-        Center(
-          child: DigitalButton(
-            text: currentDialogueIndex < widget.dialogues.length - 1
-                ? 'Next Scenario'
-                : 'Complete Level',
-            onPressed: _nextDialogue,
-            isPrimary: true,
-            icon: Icons.arrow_forward,
-          ),
-        ),
+        const Spacer(),
       ],
-    );
-  }
-
-  Widget _buildCompletionScreen() {
-    return DigitalCard(
-      glowEffect: true,
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                gradient: DigitalTheme.primaryGradient,
-                borderRadius: BorderRadius.circular(50),
-                boxShadow: DigitalTheme.neonGlow,
-              ),
-              child: const Icon(
-                Icons.check_circle,
-                color: DigitalTheme.primaryText,
-                size: 48,
-              ),
-            ),
-            const SizedBox(height: 24),
-            Text(
-              'Level Complete!',
-              style: DigitalTheme.headingStyle.copyWith(fontSize: 28),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              'Arya learned how to respond safely to cyber threats!',
-              style: DigitalTheme.bodyStyle,
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -598,6 +457,12 @@ class _Level3ReplyRightState extends State<Level3ReplyRight>
         'answer': dialogue.options.firstWhere((o) => o.isCorrect).text,
         'userAnswer': option.text,
       });
+
+      if(option.isCorrect){
+        _audioEffects.playCorrect();
+      }else{
+        _audioEffects.playWrong();
+      }
     });
     widget.onOptionSelected(dialogue, option);
   }
@@ -609,30 +474,10 @@ class _Level3ReplyRightState extends State<Level3ReplyRight>
         showingFeedback = false;
         selectedOption = null;
       });
-
-      _messageController.reset();
-      _optionsController.reset();
-      _startAnimations();
     } else {
       setState(() {
         levelCompleted = true;
       });
-    }
-  }
-
-  Color _getRiskColor(int riskLevel) {
-    switch (riskLevel) {
-      case 1:
-        return DigitalTheme.neonGreen;
-      case 2:
-        return DigitalTheme.primaryCyan;
-      case 3:
-        return DigitalTheme.warningOrange;
-      case 4:
-      case 5:
-        return DigitalTheme.dangerRed;
-      default:
-        return DigitalTheme.secondaryText;
     }
   }
 }

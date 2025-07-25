@@ -1,3 +1,4 @@
+import 'package:claude/services/audio_effects.dart';
 import 'package:flutter/material.dart';
 import '../models/game_models.dart';
 import '../theme/digital_theme.dart';
@@ -29,10 +30,10 @@ class _Level2LinkLogicState extends State<Level2LinkLogic> {
   List<Map<String, dynamic>> results = [];
   bool levelCompleted = false;
 
+  final AudioEffectsService _audioEffects = AudioEffectsService();
+
   @override
   Widget build(BuildContext context) {
-    final isMobile = DigitalTheme.isMobile(context);
-
     if (levelCompleted) {
       // Show summary page after completion
       return SummaryPage(
@@ -72,82 +73,77 @@ class _Level2LinkLogicState extends State<Level2LinkLogic> {
 
     final currentLink = widget.links[currentLinkIndex];
 
-    return Stack(
-      children: [
-        // Background gradient
-        Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Color.fromARGB(202, 10, 21, 32),
-                Color.fromARGB(206, 15, 27, 46),
-                Color.fromARGB(158, 26, 35, 50),
-              ],
+    return Scaffold(
+      backgroundColor: const Color(0xFF0A1520),
+      body: Stack(
+        children: [
+          // Background gradient
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Color.fromARGB(202, 10, 21, 32),
+                  Color.fromARGB(206, 15, 27, 46),
+                  Color.fromARGB(158, 26, 35, 50),
+                ],
+              ),
             ),
           ),
-        ),
-        // Grid background painter
-        Positioned.fill(
-          child: CustomPaint(
-            painter: GridPainter(
-              gridColor: const Color(0x1A00D4FF),
-              cellSize: 25,
+          
+          // Cyber grid background
+          Positioned.fill(
+            child: CustomPaint(
+              painter: GridPainter(
+                gridColor: const Color(0x1A00D4FF),
+                cellSize: 25,
+              ),
             ),
           ),
-        ),
-        // Main content
-        SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(20),
+          
+          // Main content
+          SafeArea(
             child: Column(
               children: [
-                // Header
-                Row(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(isMobile ? 8 : 12),
-                      decoration: BoxDecoration(
-                        gradient: DigitalTheme.primaryGradient,
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: DigitalTheme.neonGlow,
-                      ),
-                      child: Icon(
-                        Icons.link,
-                        color: DigitalTheme.primaryText,
-                        size: DigitalTheme.getMobileIconSize(context),
-                      ),
-                    ),
-                    SizedBox(width: isMobile ? 12 : 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                // Progress indicator
+                Container(
+                  padding: EdgeInsets.all(16),
+                  margin: EdgeInsets.only(bottom: 2),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Link Logic',
-                            style: DigitalTheme.getMobileHeadingStyle(context),
-                          ),
-                          Text(
-                            'Identify legitimate URLs from fake ones',
-                            style: DigitalTheme.getMobileBodyStyle(context),
+                            'Link ${currentLinkIndex + 1} of ${widget.links.length}',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.grey[600],
+                            ),
                           ),
                         ],
                       ),
-                    ),
-                  ],
+                      SizedBox(height: 8),
+                      LinearProgressIndicator(
+                        value: (currentLinkIndex + 1) / widget.links.length,
+                        backgroundColor: Colors.grey[300],
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.indigo),
+                        minHeight: 6,
+                      ),
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 20),
+                
                 // Main card container
                 Expanded(
                   child: Container(
+                    margin: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
+                      border: Border.all(color: const Color(0xFF00D4FF).withOpacity(0.5), width: 1),
+                      borderRadius: BorderRadius.circular(16),
                       color: const Color(0x05FFFFFF),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: const Color(0xFF00D4FF).withOpacity(0.5),
-                        width: 1,
-                      ),
                       boxShadow: [
                         BoxShadow(
                           color: const Color(0xFF00D4FF).withOpacity(0.1),
@@ -156,168 +152,148 @@ class _Level2LinkLogicState extends State<Level2LinkLogic> {
                         ),
                       ],
                     ),
-                    child: Column(
-                      children: [
-                        // Top accent bar
-                        Container(
-                          height: 4,
-                          decoration: const BoxDecoration(
-                            color: Color(0xFF00D4FF),
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(12),
-                              topRight: Radius.circular(12),
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Threat header
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: const Color(0xFF00D4FF).withOpacity(0.5), width: 1),
+                              borderRadius: BorderRadius.circular(12),
+                              color: const Color(0xFF00D4FF).withOpacity(0.1),
                             ),
-                          ),
-                        ),
-                        // Content
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.all(20),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            child: Row(
                               children: [
-                                _buildProgressIndicator(context),
-                                SizedBox(height: isMobile ? 16 : 24),
-                                _buildInstructions(context),
-                                SizedBox(height: isMobile ? 16 : 24),
+                                Container(
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: const Color(0xFF00D4FF), width: 2),
+                                    borderRadius: BorderRadius.circular(8),
+                                    color: const Color(0xFF00D4FF).withOpacity(0.1),
+                                  ),
+                                  child: Icon(
+                                    Icons.link,
+                                    color: const Color(0xFF00D4FF),
+                                    size: 24,
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
                                 Expanded(
-                                  child: showingFeedback
-                                      ? _buildFeedback(context, currentLink, selectedAnswer!)
-                                      : _buildLinkChallenge(context, currentLink),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      const Text(
+                                        'URL ANALYSIS REQUIRED',
+                                        style: TextStyle(
+                                          color: Color(0xFF00D4FF),
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                          letterSpacing: 1.5,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        'LINK LOGIC CHALLENGE',
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                          letterSpacing: 0.8,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ],
                             ),
                           ),
-                        ),
-                      ],
+                          
+                          const SizedBox(height: 20),
+                          
+                          // Instructions
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF00D4FF).withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: const Color(0xFF00D4FF).withOpacity(0.3),
+                                width: 2,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF00D4FF).withOpacity(0.2),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: const Icon(
+                                    Icons.info_outline,
+                                    color: Color(0xFF00D4FF),
+                                    size: 15,
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Text(
+                                    'Look carefully at each URL. Check for misspellings, suspicious domains, and security indicators.',
+                                    style: const TextStyle(
+                                      fontSize: 15,
+                                      color: Color(0xFFB8C6DB),
+                                      height: 1.5,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          
+                          const SizedBox(height: 20),
+                          
+                          // Challenge content
+                          Expanded(
+                            child: showingFeedback
+                                ? _buildFeedback(currentLink, selectedAnswer!)
+                                : _buildLinkChallenge(currentLink),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildHeader(BuildContext context) {
-    final isMobile = DigitalTheme.isMobile(context);
-    
-    return Row(
-      children: [
-        Container(
-          padding: EdgeInsets.all(isMobile ? 8 : 12),
-          decoration: BoxDecoration(
-            gradient: DigitalTheme.primaryGradient,
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: DigitalTheme.neonGlow,
-          ),
-          child: Icon(
-            Icons.link,
-            color: DigitalTheme.primaryText,
-            size: DigitalTheme.getMobileIconSize(context),
-          ),
-        ),
-        SizedBox(width: isMobile ? 12 : 16),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Link Logic',
-                style: DigitalTheme.getMobileHeadingStyle(context),
-              ),
-              Text(
-                'Identify legitimate URLs from fake ones',
-                style: DigitalTheme.getMobileBodyStyle(context),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildProgressIndicator(BuildContext context) {
-    final isMobile = DigitalTheme.isMobile(context);
-    
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Link ${currentLinkIndex + 1} of ${widget.links.length}',
-              style: DigitalTheme.captionStyle.copyWith(
-                fontSize: DigitalTheme.getResponsiveFontSize(context, 11, 12, 14),
-              ),
-            ),
-            Text(
-              '${((currentLinkIndex / widget.links.length) * 100).toInt()}%',
-              style: DigitalTheme.captionStyle.copyWith(
-                color: DigitalTheme.primaryCyan,
-                fontSize: DigitalTheme.getResponsiveFontSize(context, 11, 12, 14),
-              ),
-            ),
-          ],
-        ),
-        SizedBox(height: isMobile ? 6 : 8),
-        Container(
-          height: isMobile ? 3 : 4,
-          decoration: BoxDecoration(
-            color: DigitalTheme.surfaceBackground,
-            borderRadius: BorderRadius.circular(2),
-          ),
-          child: FractionallySizedBox(
-            alignment: Alignment.centerLeft,
-            widthFactor: currentLinkIndex / widget.links.length,
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: DigitalTheme.primaryGradient,
-                borderRadius: BorderRadius.circular(2),
-                boxShadow: [
-                  BoxShadow(
-                    color: DigitalTheme.primaryCyan.withOpacity(0.5),
-                    blurRadius: 8,
+                
+                // Continue button (only shown during feedback)
+                if (showingFeedback)
+                  Container(
+                    margin: const EdgeInsets.all(20),
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: _nextLink,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF00D4FF),
+                        foregroundColor: const Color(0xFF0A1520),
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        elevation: 0,
+                      ),
+                      child: Text(
+                        currentLinkIndex < widget.links.length - 1 ? 'NEXT LINK' : 'MISSION COMPLETE',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.5,
+                        ),
+                      ),
+                    ),
                   ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildInstructions(BuildContext context) {
-    final isMobile = DigitalTheme.isMobile(context);
-    
-    return Container(
-      padding: EdgeInsets.all(isMobile ? 12 : 16),
-      decoration: BoxDecoration(
-        color: DigitalTheme.accentBlue.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: DigitalTheme.accentBlue.withOpacity(0.3),
-          width: 1,
-        ),
-      ),
-      child: Row(
-        children: [
-          Icon(
-            Icons.info_outline,
-            color: DigitalTheme.accentBlue,
-            size: DigitalTheme.getMobileIconSize(context),
-          ),
-          SizedBox(width: isMobile ? 8 : 12),
-          Expanded(
-            child: Text(
-              'Look carefully at each URL. Check for misspellings, suspicious domains, and security indicators.',
-              style: DigitalTheme.getMobileBodyStyle(context).copyWith(
-                color: DigitalTheme.accentBlue,
-              ),
+              ],
             ),
           ),
         ],
@@ -325,35 +301,36 @@ class _Level2LinkLogicState extends State<Level2LinkLogic> {
     );
   }
 
-  Widget _buildLinkChallenge(BuildContext context, LinkChallenge link) {
-    final isMobile = DigitalTheme.isMobile(context);
-    
+  Widget _buildLinkChallenge(LinkChallenge link) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Is this URL legitimate or fake?',
-          style: DigitalTheme.subheadingStyle.copyWith(
-            fontSize: DigitalTheme.getResponsiveFontSize(context, 14, 16, 18),
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+            letterSpacing: 0.5,
           ),
         ),
         
-        SizedBox(height: isMobile ? 16 : 24),
+        const SizedBox(height: 16),
         
-        // URL Display - NEUTRAL BLUE COLOR FOR ALL
+        // URL Display
         Container(
           width: double.infinity,
-          padding: EdgeInsets.all(isMobile ? 16 : 20),
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                DigitalTheme.cardBackground,
-                DigitalTheme.surfaceBackground,
+                DigitalTheme.accentBlue.withOpacity(0.1),
+                DigitalTheme.accentBlue.withOpacity(0.05),
               ],
             ),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: DigitalTheme.primaryCyan.withOpacity(0.5), // SAME BLUE FOR ALL
+              color: DigitalTheme.accentBlue.withOpacity(0.3),
               width: 2,
             ),
           ),
@@ -362,74 +339,87 @@ class _Level2LinkLogicState extends State<Level2LinkLogic> {
             children: [
               Row(
                 children: [
-                  Icon(
-                    Icons.language,
-                    color: DigitalTheme.primaryCyan, // SAME BLUE FOR ALL
-                    size: DigitalTheme.getMobileIconSize(context),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: DigitalTheme.accentBlue.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(
+                      Icons.language,
+                      color: DigitalTheme.accentBlue,
+                      size: 15,
+                    ),
                   ),
-                  SizedBox(width: isMobile ? 8 : 12),
+                  const SizedBox(width: 10),
                   Text(
-                    'Website URL',
-                    style: DigitalTheme.captionStyle.copyWith(
-                      color: DigitalTheme.primaryCyan, // SAME BLUE FOR ALL
-                      fontSize: DigitalTheme.getResponsiveFontSize(context, 11, 12, 14),
+                    'WEBSITE URL',
+                    style: TextStyle(
+                      color: DigitalTheme.accentBlue,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 1.2,
                     ),
                   ),
                 ],
               ),
               
-              SizedBox(height: isMobile ? 12 : 16),
+              const SizedBox(height: 12),
               
-              // URL Text - NEUTRAL BLUE COLOR
+              // URL Text
               Container(
-                padding: EdgeInsets.all(isMobile ? 12 : 16),
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: DigitalTheme.darkBackground.withOpacity(0.5),
+                  color: const Color(0xFF0A1520).withOpacity(0.5),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: DigitalTheme.primaryCyan.withOpacity(0.3), // SAME BLUE FOR ALL
+                    color: DigitalTheme.accentBlue.withOpacity(0.3),
                     width: 1,
                   ),
                 ),
                 child: Text(
                   link.displayUrl,
                   style: TextStyle(
-                    fontSize: DigitalTheme.getResponsiveFontSize(context, 14, 16, 18),
+                    fontSize: 16,
                     fontFamily: 'monospace',
-                    color: DigitalTheme.primaryCyan, // SAME BLUE FOR ALL - NO HINTS!
+                    color: DigitalTheme.accentBlue,
                     fontWeight: FontWeight.w500,
+                    height: 1.3,
                   ),
                 ),
               ),
               
-              SizedBox(height: isMobile ? 12 : 16),
+              const SizedBox(height: 12),
               
               Text(
                 link.description,
-                style: DigitalTheme.getMobileBodyStyle(context),
+                style: TextStyle(
+                  color: DigitalTheme.accentBlue,
+                  fontSize: 15,
+                  height: 1.5,
+                ),
               ),
             ],
           ),
         ),
         
-        SizedBox(height: isMobile ? 20 : 32),
+        const SizedBox(height: 20),
         
         // Answer Buttons
         Row(
           children: [
             Expanded(
               child: _buildAnswerButton(
-                context,
                 'Legitimate',
                 Icons.shield,
                 DigitalTheme.neonGreen,
                 () => _selectAnswer(link, true),
               ),
             ),
-            SizedBox(width: isMobile ? 12 : 16),
+            const SizedBox(width: 16),
             Expanded(
               child: _buildAnswerButton(
-                context,
                 'Fake',
                 Icons.warning,
                 DigitalTheme.dangerRed,
@@ -443,56 +433,63 @@ class _Level2LinkLogicState extends State<Level2LinkLogic> {
   }
 
   Widget _buildAnswerButton(
-    BuildContext context,
     String text,
     IconData icon,
     Color color,
     VoidCallback onPressed,
   ) {
-    final isMobile = DigitalTheme.isMobile(context);
-    
-    return GestureDetector(
-      onTap: onPressed,
-      child: Container(
-        height: DigitalTheme.getMobileButtonHeight(context),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              color.withOpacity(0.2),
-              color.withOpacity(0.1),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onPressed,
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          height: 55,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                color.withOpacity(0.2),
+                color.withOpacity(0.1),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: color.withOpacity(0.5),
+              width: 2,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: color.withOpacity(0.2),
+                blurRadius: 8,
+                spreadRadius: 0,
+              ),
             ],
           ),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: color.withOpacity(0.5),
-            width: 2,
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              icon,
-              color: color,
-              size: DigitalTheme.getMobileIconSize(context),
-            ),
-            SizedBox(width: isMobile ? 6 : 8),
-            Text(
-              text,
-              style: TextStyle(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                icon,
                 color: color,
-                fontWeight: FontWeight.w600,
-                fontSize: DigitalTheme.getResponsiveFontSize(context, 14, 16, 18),
+                size: 20,
               ),
-            ),
-          ],
+              const SizedBox(width: 8),
+              Text(
+                text,
+                style: TextStyle(
+                  color: color,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildFeedback(BuildContext context, LinkChallenge link, bool userAnswer) {
-    final isMobile = DigitalTheme.isMobile(context);
+  Widget _buildFeedback(LinkChallenge link, bool userAnswer) {
     final isCorrect = userAnswer == link.isLegitimate;
     
     return Column(
@@ -500,7 +497,7 @@ class _Level2LinkLogicState extends State<Level2LinkLogic> {
       children: [
         // Feedback Header
         Container(
-          padding: EdgeInsets.all(isMobile ? 12 : 16),
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: isCorrect 
                 ? DigitalTheme.neonGreen.withOpacity(0.1)
@@ -520,9 +517,9 @@ class _Level2LinkLogicState extends State<Level2LinkLogic> {
                 color: isCorrect 
                     ? DigitalTheme.neonGreen
                     : DigitalTheme.dangerRed,
-                size: DigitalTheme.getMobileIconSize(context) + 8,
+                size: 32,
               ),
-              SizedBox(width: isMobile ? 12 : 16),
+              const SizedBox(width: 16),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -533,7 +530,6 @@ class _Level2LinkLogicState extends State<Level2LinkLogic> {
                         color: isCorrect 
                             ? DigitalTheme.neonGreen
                             : DigitalTheme.dangerRed,
-                        fontSize: DigitalTheme.getResponsiveFontSize(context, 16, 18, 20),
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -541,7 +537,7 @@ class _Level2LinkLogicState extends State<Level2LinkLogic> {
                       link.isLegitimate 
                           ? 'This URL is legitimate'
                           : 'This URL is fake/malicious',
-                      style: DigitalTheme.getMobileBodyStyle(context),
+                      style: DigitalTheme.bodyStyle,
                     ),
                   ],
                 ),
@@ -550,46 +546,67 @@ class _Level2LinkLogicState extends State<Level2LinkLogic> {
           ),
         ),
         
-        SizedBox(height: isMobile ? 16 : 20),
+        const SizedBox(height: 16),
         
         // Indicators
         Container(
-          padding: EdgeInsets.all(isMobile ? 12 : 16),
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: DigitalTheme.accentBlue.withOpacity(0.1),
+            border: Border.all(color: const Color(0xFF00D4FF).withOpacity(0.5), width: 1),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: DigitalTheme.accentBlue.withOpacity(0.3),
-              width: 1,
-            ),
+            color: const Color(0xFF00D4FF).withOpacity(0.05),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Key Indicators:',
-                style: DigitalTheme.subheadingStyle.copyWith(
-                  color: DigitalTheme.accentBlue,
-                  fontSize: DigitalTheme.getResponsiveFontSize(context, 14, 16, 18),
-                ),
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: const Color(0xFF00D4FF), width: 1),
+                      borderRadius: BorderRadius.circular(6),
+                      color: const Color(0xFF00D4FF).withOpacity(0.1),
+                    ),
+                    child: const Icon(
+                      Icons.lightbulb_outline,
+                      color: Color(0xFF00D4FF),
+                      size: 16,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  const Text(
+                    "KEY INDICATORS",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF00D4FF),
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                ],
               ),
-              SizedBox(height: isMobile ? 8 : 12),
+              const SizedBox(height: 12),
               ...link.indicators.map((indicator) => Padding(
-                padding: EdgeInsets.only(bottom: isMobile ? 4 : 6),
+                padding: const EdgeInsets.only(bottom: 8),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       '• ',
-                      style: DigitalTheme.getMobileBodyStyle(context).copyWith(
-                        color: DigitalTheme.accentBlue.withOpacity(0.8),
+                      style: const TextStyle(
+                        color: Color(0xFFB8C6DB),
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                     Expanded(
                       child: Text(
                         indicator,
-                        style: DigitalTheme.getMobileBodyStyle(context).copyWith(
-                          color: DigitalTheme.accentBlue.withOpacity(0.8),
+                        style: const TextStyle(
+                          color: Color(0xFFB8C6DB),
+                          fontSize: 13,
+                          height: 1.5,
                         ),
                       ),
                     ),
@@ -601,56 +618,7 @@ class _Level2LinkLogicState extends State<Level2LinkLogic> {
         ),
         
         const Spacer(),
-        
-        // Continue Button
-        Center(
-          child: DigitalButton(
-            text: currentLinkIndex < widget.links.length - 1 
-                ? 'Next Link' 
-                : 'Complete Level',
-            onPressed: _nextLink,
-            isPrimary: true,
-            icon: Icons.arrow_forward,
-          ),
-        ),
       ],
-    );
-  }
-
-  Widget _buildCompletionScreen() {
-    return DigitalCard(
-      glowEffect: true,
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                gradient: DigitalTheme.primaryGradient,
-                borderRadius: BorderRadius.circular(50),
-                boxShadow: DigitalTheme.neonGlow,
-              ),
-              child: const Icon(
-                Icons.check_circle,
-                color: DigitalTheme.primaryText,
-                size: 48,
-              ),
-            ),
-            const SizedBox(height: 24),
-            Text(
-              'Level Complete!',
-              style: DigitalTheme.headingStyle.copyWith(fontSize: 28),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              'Arya learned how to identify fake URLs!',
-              style: DigitalTheme.bodyStyle,
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -664,6 +632,12 @@ class _Level2LinkLogicState extends State<Level2LinkLogic> {
         'answer': link.isLegitimate ? 'Legitimate' : 'Fake',
         'userAnswer': answer ? 'Legitimate' : 'Fake',
       });
+
+      if(answer == link.isLegitimate){
+        _audioEffects.playCorrect();
+      }else{
+        _audioEffects.playWrong();
+      }
     });
     widget.onLinkSelected(link, answer == link.isLegitimate);
   }

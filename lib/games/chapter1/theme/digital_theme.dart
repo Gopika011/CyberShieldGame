@@ -70,6 +70,7 @@ class DigitalTheme {
     fontWeight: FontWeight.bold,
     color: primaryText,
     letterSpacing: 1.2,
+    decoration: TextDecoration.none,
   );
   
   static TextStyle get subheadingStyle => TextStyle(
@@ -77,18 +78,21 @@ class DigitalTheme {
     fontWeight: FontWeight.w600,
     color: primaryText,
     letterSpacing: 0.8,
+    decoration: TextDecoration.none,
   );
   
   static TextStyle get bodyStyle => TextStyle(
     fontSize: _getResponsiveFontSize(14, 15, 16),
     color: secondaryText,
     height: 1.5,
+    decoration: TextDecoration.none,
   );
   
   static TextStyle get captionStyle => TextStyle(
     fontSize: _getResponsiveFontSize(12, 13, 14),
     color: secondaryText,
     letterSpacing: 0.5,
+    decoration: TextDecoration.none,
   );
   
   // Mobile Responsive Helper
@@ -131,12 +135,14 @@ class DigitalTheme {
     fontWeight: FontWeight.bold,
     color: primaryText,
     letterSpacing: 1.0,
+    decoration: TextDecoration.none,
   );
   
   static TextStyle getMobileBodyStyle(BuildContext context) => TextStyle(
     fontSize: getResponsiveFontSize(context, 12, 14, 16),
     color: secondaryText,
     height: 1.4,
+    decoration: TextDecoration.none,
   );
   
   static EdgeInsets getMobilePadding(BuildContext context) => EdgeInsets.all(
