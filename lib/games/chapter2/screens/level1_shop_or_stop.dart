@@ -1,3 +1,4 @@
+import 'package:claude/components/game_progress_bar.dart';
 import 'package:claude/enums/games.dart';
 import 'package:claude/games/chapter2/screens/level2_permission_patrol.dart';
 import 'package:claude/games/chapter4/pages/intruction_page.dart';
@@ -211,7 +212,19 @@ class _Level1ShopOrStopState extends State<Level1ShopOrStop> {
           ),
           // Main content
           SafeArea(
-            child: showResult ? _buildResultScreen() : _buildGameScreen(),
+            child: Column(
+              children: [
+                // Progress indicator
+                GameProgressBar(
+                  currentQuestion: currentQuestion,
+                  totalQuestions: websites.length,
+                ),
+                
+                Expanded(
+                  child: showResult ? _buildResultScreen() : _buildGameScreen(),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -222,14 +235,9 @@ class _Level1ShopOrStopState extends State<Level1ShopOrStop> {
     final website = websites[currentQuestion];
     
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(20),
       child: Column(
         children: [
-          // Header
-          _buildHeader(),
-          
-          SizedBox(height: 20),
-          
           // Website mockup
           Expanded(
             child: Container(
@@ -356,16 +364,16 @@ class _Level1ShopOrStopState extends State<Level1ShopOrStop> {
           
           SizedBox(height: 20),
           
-          // Question
-          Text(
-            'Is this website SAFE or FAKE?',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-            textAlign: TextAlign.center,
-          ),
+          // // Question
+          // Text(
+          //   'Is this website SAFE or FAKE?',
+          //   style: TextStyle(
+          //     color: Colors.white,
+          //     fontSize: 20,
+          //     fontWeight: FontWeight.bold,
+          //   ),
+          //   textAlign: TextAlign.center,
+          // ),
           
           SizedBox(height: 20),
           
@@ -391,6 +399,8 @@ class _Level1ShopOrStopState extends State<Level1ShopOrStop> {
               ),
             ],
           ),
+
+          SizedBox(height: 20),
         ],
       ),
     );
@@ -403,9 +413,6 @@ Widget _buildResultScreen() {
     padding: const EdgeInsets.all(16.0),
     child: Column(
       children: [
-        _buildHeader(),
-        SizedBox(height: 40),
-        
         Expanded(
           child: Center(
             child: Container(
@@ -469,50 +476,4 @@ Widget _buildResultScreen() {
     ),
   );
 }
-
-  Widget _buildHeader() {
-    return Row(
-      children: [
-        IconButton(
-          icon: Icon(Icons.arrow_back, color: const Color(0xFF00D4FF)),
-          onPressed: () => Navigator.pop(context),
-        ),
-        Expanded(
-          child: Column(
-            children: [
-              Text(
-                'LEVEL 1: SHOP OR STOP?',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Text(
-                'Question ${currentQuestion + 1} of ${websites.length}',
-                style: TextStyle(
-                  color: Colors.white70,
-                  fontSize: 14,
-                ),
-              ),
-            ],
-          ),
-        ),
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          decoration: BoxDecoration(
-            border: Border.all(color: const Color(0xFF00D4FF)),
-            borderRadius: BorderRadius.circular(6),
-          ),
-          child: Text(
-            'Score: $score',
-            style: TextStyle(
-              color: const Color(0xFF00D4FF),
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
 }

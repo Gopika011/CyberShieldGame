@@ -93,7 +93,7 @@ class SummaryPage extends StatelessWidget {
                     ),
                   ),
 
-                  const SizedBox(height: 30),
+                  SizedBox(height: shouldShowRetry ? 20 : 30),
 
                   // Accuracy Section with futuristic progress bar
                   Container(
@@ -202,7 +202,7 @@ class SummaryPage extends StatelessWidget {
                     ),
                   ),
                   
-                  const SizedBox(height: 30),
+                  SizedBox(height: shouldShowRetry ? 20 : 30),
                   
                   // Stats Cards with cyber design
                   Row(
@@ -217,7 +217,7 @@ class SummaryPage extends StatelessWidget {
                     ],
                   ),
                   
-                  const SizedBox(height: 40),
+                  SizedBox(height: shouldShowRetry ? 20 : 30),
 
                   // Key Takeaways Section
                   Container(
@@ -275,7 +275,7 @@ class SummaryPage extends StatelessWidget {
                     ),
                   ),
                   
-                  const SizedBox(height: 40),
+                  SizedBox(height: shouldShowRetry ? 20 : 30),
                   
                   //Retry
                   if (shouldShowRetry && onRetry != null) ...[
@@ -286,7 +286,7 @@ class SummaryPage extends StatelessWidget {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFFF4757).withOpacity(0.1),
                           foregroundColor: const Color(0xFFFF4757),
-                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          padding: const EdgeInsets.symmetric(vertical: 12),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                             side: const BorderSide(color: Color(0xFFFF4757)),
@@ -322,7 +322,7 @@ class SummaryPage extends StatelessWidget {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF00D4FF).withOpacity(0.1),
                           foregroundColor: const Color(0xFF00D4FF),
-                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          padding: const EdgeInsets.symmetric(vertical: 12),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                             side: const BorderSide(color: Color(0xFF00D4FF)),
@@ -347,7 +347,7 @@ class SummaryPage extends StatelessWidget {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF00D4FF),
                             foregroundColor: Colors.black,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
@@ -478,7 +478,7 @@ class SummaryPage extends StatelessWidget {
 
   Widget _buildCyberStatCard(String label, int value, Color accentColor) {
     return Container(
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         border: Border.all(color: accentColor.withOpacity(0.5), width: 1),
         borderRadius: BorderRadius.circular(8),

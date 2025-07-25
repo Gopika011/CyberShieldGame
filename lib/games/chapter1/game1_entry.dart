@@ -1,3 +1,5 @@
+import 'package:claude/enums/games.dart';
+import 'package:claude/games/chapter4/pages/intruction_page.dart';
 import 'package:flutter/material.dart';
 import 'package:claude/games/chapter1/models/game_models.dart';
 import 'package:claude/games/chapter1/screens/level1_inbox_invader.dart';
@@ -40,6 +42,15 @@ class _Game1EntryState extends State<Game1Entry> {
 
   @override
   Widget build(BuildContext context) {
+    // return InstructionPage(
+    //   gameType: GameType.ecommerceScam,
+    //   nextGameWidget: Level1InboxInvader(
+    //     emails: gameService.gameState.remainingChallenges.whereType<Email>().toList(),
+    //     onEmailDrop: (email, isCorrect) {
+    //       gameService.processEmail(email, isCorrect);
+    //     },
+    //   ),
+    // );
     return Level1InboxInvader(
       emails: gameService.gameState.remainingChallenges.whereType<Email>().toList(),
       onEmailDrop: (email, isCorrect) {

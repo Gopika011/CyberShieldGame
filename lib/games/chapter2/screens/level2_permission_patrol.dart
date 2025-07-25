@@ -1,3 +1,4 @@
+import 'package:claude/components/game_progress_bar.dart';
 import 'package:claude/enums/games.dart';
 import 'package:claude/games/chapter2/screens/level3_wifi_woes.dart';
 import 'package:claude/games/chapter4/pages/intruction_page.dart';
@@ -6,7 +7,6 @@ import 'package:claude/pages/summary_page.dart';
 import 'package:claude/services/audio_effects.dart';
 import 'package:flutter/material.dart';
 import '../widgets/cyber_button.dart';
-import 'dart:math';
 
 class Level2PermissionPatrol extends StatefulWidget {
   final VoidCallback? onGameComplete;
@@ -254,15 +254,18 @@ class _Level2PermissionPatrolState extends State<Level2PermissionPatrol>
           ),
           // Main content with shake animation
           SafeArea(
-            child: AnimatedBuilder(
-              animation: _shakeAnimation,
-              builder: (context, child) {
-                return Transform.translate(
-                  offset: Offset(_shakeAnimation.value, 0),
+            child: Column(
+              children: [
+                // Progress indicator
+                GameProgressBar(
+                  currentQuestion: currentQuestion,
+                  totalQuestions: permissionScenarios.length,
+                ),
+                
+                Expanded(
                   child: showResult ? _buildResultScreen() : _buildGameScreen(),
-                );
-              },
-            ),
+                ),
+              ],)
           ),
         ],
       ),
@@ -273,14 +276,9 @@ class _Level2PermissionPatrolState extends State<Level2PermissionPatrol>
     final scenario = permissionScenarios[currentQuestion];
     
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(20),
       child: Column(
         children: [
-          // Header with lives
-          _buildHeader(),
-          
-          SizedBox(height: 20),
-          
           // App permission request mockup
           Expanded(
             child: Container(
@@ -378,7 +376,6 @@ class _Level2PermissionPatrolState extends State<Level2PermissionPatrol>
                               itemCount: scenario['permissions'].length,
                               itemBuilder: (context, index) {
                                 final permission = scenario['permissions'][index];
-                                final isSuspicious = permission['suspicious'];
                                 
                                 return Container(
                                   margin: EdgeInsets.only(bottom: 12),
@@ -446,16 +443,16 @@ class _Level2PermissionPatrolState extends State<Level2PermissionPatrol>
           
           SizedBox(height: 20),
           
-          // Question
-          Text(
-            'Should you ALLOW or DENY these permissions?',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-            textAlign: TextAlign.center,
-          ),
+          // // Question
+          // Text(
+          //   'Should you ALLOW or DENY these permissions?',
+          //   style: TextStyle(
+          //     color: Colors.white,
+          //     fontSize: 18,
+          //     fontWeight: FontWeight.bold,
+          //   ),
+          //   textAlign: TextAlign.center,
+          // ),
           
           SizedBox(height: 20),
           
@@ -481,6 +478,7 @@ class _Level2PermissionPatrolState extends State<Level2PermissionPatrol>
               ),
             ],
           ),
+          SizedBox(height: 20),
         ],
       ),
     );
@@ -493,8 +491,8 @@ class _Level2PermissionPatrolState extends State<Level2PermissionPatrol>
       padding: const EdgeInsets.all(16.0),
       child: Column(
         children: [
-          _buildHeader(),
-          SizedBox(height: 40),
+          // _buildHeader(),
+          // SizedBox(height: 40),
           
           Expanded(
             child: Center(
@@ -560,62 +558,35 @@ class _Level2PermissionPatrolState extends State<Level2PermissionPatrol>
     );
   }
 
-  Widget _buildHeader() {
-    return Row(
-      children: [
-        IconButton(
-          icon: Icon(Icons.arrow_back, color: const Color(0xFF00D4FF)),
-          onPressed: () => Navigator.pop(context),
-        ),
-        Expanded(
-          child: Column(
-            children: [
-              Text(
-                'LEVEL 2: PERMISSION PATROL',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Text(
-                'App ${currentQuestion + 1} of ${permissionScenarios.length}',
-                style: TextStyle(
-                  color: Colors.white70,
-                  fontSize: 12,
-                ),
-              ),
-            ],
-          ),
-        ),
-        // Lives display
-        // Row(
-        //   children: [
-        //     ...List.generate(3, (index) => 
-        //       Icon(
-        //         Icons.favorite,
-        //         color: index < lives ? Colors.red : Colors.grey,
-        //         size: 20,
-        //       ),
-        //     ),
-        //     SizedBox(width: 16),
-        //     Container(
-        //       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        //       decoration: BoxDecoration(
-        //         border: Border.all(color: const Color(0xFF00D4FF)),
-        //         borderRadius: BorderRadius.circular(6),
-        //       ),
-        //       child: Text(
-        //         'Score: $score',
-        //         style: TextStyle(
-        //           color: const Color(0xFF00D4FF),
-        //           fontWeight: FontWeight.bold,
-        //         ),
-        //       ),
-        //     ),
-        //   ],
-        // ),
-      ],
-    );
-  }
+  // Widget _buildHeader() {
+  //   return Row(
+  //     children: [
+  //       IconButton(
+  //         icon: Icon(Icons.arrow_back, color: const Color(0xFF00D4FF)),
+  //         onPressed: () => Navigator.pop(context),
+  //       ),
+  //       Expanded(
+  //         child: Column(
+  //           children: [
+  //             Text(
+  //               'LEVEL 2: PERMISSION PATROL',
+  //               style: TextStyle(
+  //                 color: Colors.white,
+  //                 fontSize: 16,
+  //                 fontWeight: FontWeight.bold,
+  //               ),
+  //             ),
+  //             Text(
+  //               'App ${currentQuestion + 1} of ${permissionScenarios.length}',
+  //               style: TextStyle(
+  //                 color: Colors.white70,
+  //                 fontSize: 12,
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 }

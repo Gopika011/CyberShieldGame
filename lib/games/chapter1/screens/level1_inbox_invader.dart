@@ -1,5 +1,6 @@
 import 'package:claude/games/chapter1/widgets/digital_components.dart';
 import 'package:claude/games/chapter1/widgets/digital_email_card.dart';
+import 'package:claude/games/chapter4/pages/intruction_page.dart';
 import 'package:claude/services/audio_effects.dart';
 import 'package:flutter/material.dart';
 import '../models/game_models.dart';
@@ -43,11 +44,16 @@ class _Level1InboxInvaderState extends State<Level1InboxInvader>
 
   final AudioEffectsService _audioEffects = AudioEffectsService();
 
+  // Track original email count for progress calculation
+  late int totalEmails;
+  int get processedEmails => totalEmails - widget.emails.length;
+
   @override
   void initState() {
     super.initState();
     _setupAnimations();
     _scrollController = ScrollController();
+    totalEmails = widget.emails.length; // Store initial count
   }
 
   void _setupAnimations() {
@@ -111,12 +117,24 @@ class _Level1InboxInvaderState extends State<Level1InboxInvader>
                 totalQuestions: results.length,
                 gameType: GameType.phishing,
                 onContinue: () {
+                  // Navigator.pushReplacement(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //     builder: (context) => Level2LinkLogic(
+                  //       links: LevelData.level2Links,
+                  //       onLinkSelected: (link, isCorrect) {},
+                  //     ),
+                  //   ),
+                  // );
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => Level2LinkLogic(
+                      builder: (context) => InstructionPage(
+                        gameType: GameType.appPermissions, 
+                        nextGameWidget: Level2LinkLogic(
                         links: LevelData.level2Links,
                         onLinkSelected: (link, isCorrect) {},
+                        ),
                       ),
                     ),
                   );
@@ -134,77 +152,159 @@ class _Level1InboxInvaderState extends State<Level1InboxInvader>
   Widget build(BuildContext context) {
     final bool isMobile = DigitalTheme.isMobile(context);
 
-    return Stack(
-      children: [
-        // Background gradient
-        Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Color.fromARGB(202, 10, 21, 32),
-                Color.fromARGB(206, 15, 27, 46),
-                Color.fromARGB(158, 26, 35, 50),
-              ],
+    return Scaffold(
+      backgroundColor: const Color(0xFF0A1520),
+      body: Stack(
+        children: [
+          // Background gradient
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Color.fromARGB(202, 10, 21, 32),
+                  Color.fromARGB(206, 15, 27, 46),
+                  Color.fromARGB(158, 26, 35, 50),
+                ],
+              ),
             ),
           ),
-        ),
-        // Grid background painter
-        Positioned.fill(
-          child: CustomPaint(
-            painter: GridPainter(
-              gridColor: const Color(0x1A00D4FF),
-              cellSize: 25,
+          
+          // Cyber grid background
+          Positioned.fill(
+            child: CustomPaint(
+              painter: GridPainter(
+                gridColor: const Color(0x1A00D4FF),
+                cellSize: 25,
+              ),
             ),
           ),
-        ),
-        // Main content
-        SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(20),
+          
+          // Main content
+          SafeArea(
             child: Column(
               children: [
-                // Header
-                _buildHeader(),
-                const SizedBox(height: 20),
-                // Main card container
-                Expanded(
+                // Progress indicator
+                Container(
+                  padding: EdgeInsets.all(16),
                   child: Column(
                     children: [
-                      // Top accent bar
-                      Container(
-                        height: 4,
-                        decoration: const BoxDecoration(
-                          color: Color(0xFF00D4FF),
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(12),
-                            topRight: Radius.circular(12),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Email ${processedEmails} of ${totalEmails} processed',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.grey[600],
+                            ),
                           ),
-                        ),
+                        ],
                       ),
-                      // Content
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(20),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: _buildMobileLayout()
-                              ),
-                            ],
-                          ),
-                        ),
+                      SizedBox(height: 8),
+                      LinearProgressIndicator(
+                        value: totalEmails > 0 ? processedEmails / totalEmails : 0.0,
+                        backgroundColor: Colors.grey[300],
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.indigo),
+                        minHeight: 6,
                       ),
                     ],
+                  ),
+                ),
+                
+                // Main card container
+                Expanded(
+                  child: Container(
+                    margin: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: const Color(0xFF00D4FF).withOpacity(0.5), width: 1),
+                      borderRadius: BorderRadius.circular(16),
+                      color: const Color(0x05FFFFFF),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF00D4FF).withOpacity(0.1),
+                          blurRadius: 20,
+                          spreadRadius: -5,
+                        ),
+                      ],
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Threat header (Level2 style)
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: const Color(0xFF00D4FF).withOpacity(0.5), width: 1),
+                              borderRadius: BorderRadius.circular(12),
+                              color: const Color(0xFF00D4FF).withOpacity(0.1),
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: const Color(0xFF00D4FF), width: 2),
+                                    borderRadius: BorderRadius.circular(8),
+                                    color: const Color(0xFF00D4FF).withOpacity(0.1),
+                                  ),
+                                  child: Icon(
+                                    Icons.email,
+                                    color: const Color(0xFF00D4FF),
+                                    size: 24,
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      const Text(
+                                        'EMAIL SECURITY ANALYSIS',
+                                        style: TextStyle(
+                                          color: Color(0xFF00D4FF),
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                          letterSpacing: 1.5,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        'INBOX INVADER',
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                          letterSpacing: 0.8,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          
+                          const SizedBox(height: 20),
+                          
+                          // Main content
+                          Expanded(
+                            child: _buildMobileLayout(),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ],
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -224,52 +324,25 @@ class _Level1InboxInvaderState extends State<Level1InboxInvader>
     );
   }
 
-  Widget _buildHeader() {
-    return Row(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            gradient: DigitalTheme.primaryGradient,
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: DigitalTheme.neonGlow,
-          ),
-          child: const Icon(
-            Icons.email,
-            color: DigitalTheme.primaryText,
-            size: 24,
-          ),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Inbox Invader',
-                style: DigitalTheme.headingStyle,
-              ),
-              Text(
-                'Sort legitimate emails from phishing attempts',
-                style: DigitalTheme.bodyStyle,
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _buildEmailList() {
     final remainingEmails = widget.emails;
 
     return FuturisticFrame(
-      borderColor: DigitalTheme.primaryCyan,
+      borderColor: DigitalTheme.accentBlue.withOpacity(1),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          gradient: DigitalTheme.cardGradient,
-          borderRadius: BorderRadius.circular(12),
+            gradient: LinearGradient(
+              colors: [
+                DigitalTheme.accentBlue.withOpacity(0.1),
+                DigitalTheme.accentBlue.withOpacity(0.05),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(12),
+            // border: Border.all(
+            //   color: DigitalTheme.accentBlue.withOpacity(0.3),
+            //   width: 2,
+            // ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -520,17 +593,17 @@ class _Level1InboxInvaderState extends State<Level1InboxInvader>
                     ],
                   ),
                 ),
-                if (isHovering) ...[
-                  const SizedBox(height: 8),
-                  Text(
-                    'Drop here!',
-                    style: TextStyle(
-                      color: primaryColor,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
+                // if (isHovering) ...[
+                //   const SizedBox(height: 8),
+                //   Text(
+                //     'Drop here!',
+                //     style: TextStyle(
+                //       color: primaryColor,
+                //       fontSize: 12,
+                //       fontWeight: FontWeight.w600,
+                //     ),
+                //   ),
+                // ],
               ],
             ),
           ),

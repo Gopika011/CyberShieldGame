@@ -7,12 +7,14 @@ class InstructionPage extends StatelessWidget {
   final GameType gameType;
   final Widget nextGameWidget;
   final VoidCallback? onExitChapter;
+  final VoidCallback? onStart;
 
   const InstructionPage({
     Key? key,
     required this.gameType,
     required this.nextGameWidget,
     this.onExitChapter,
+    this.onStart
   }) : super(key: key);
 
   @override

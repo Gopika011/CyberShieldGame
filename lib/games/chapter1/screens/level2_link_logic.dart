@@ -1,3 +1,4 @@
+import 'package:claude/games/chapter4/pages/intruction_page.dart';
 import 'package:claude/services/audio_effects.dart';
 import 'package:flutter/material.dart';
 import '../models/game_models.dart';
@@ -41,12 +42,24 @@ class _Level2LinkLogicState extends State<Level2LinkLogic> {
         totalQuestions: widget.links.length,
         gameType: GameType.phishing,
         onContinue: () {
+          // Navigator.pushReplacement(
+          //   context,
+          //   MaterialPageRoute(
+          //     builder: (context) => Level3ReplyRight(
+          //       dialogues: LevelData.level3Dialogues,
+          //       onOptionSelected: (dialogue, option) {},
+          //     ),
+          //   ),
+          // );
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => Level3ReplyRight(
-                dialogues: LevelData.level3Dialogues,
-                onOptionSelected: (dialogue, option) {},
+              builder: (context) => InstructionPage(
+                gameType: GameType.appPermissions, 
+                nextGameWidget: Level3ReplyRight(
+                  dialogues: LevelData.level3Dialogues,
+                  onOptionSelected: (dialogue, option) {},
+                ),
               ),
             ),
           );
