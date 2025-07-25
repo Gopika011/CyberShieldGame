@@ -44,16 +44,18 @@ class _Level1InboxInvaderState extends State<Level1InboxInvader>
 
   final AudioEffectsService _audioEffects = AudioEffectsService();
 
-  // Track original email count for progress calculation
+  // Local state for emails
+  late List<Email> remainingEmails;
   late int totalEmails;
-  int get processedEmails => totalEmails - widget.emails.length;
+  int get processedEmails => totalEmails - remainingEmails.length;
 
   @override
   void initState() {
     super.initState();
     _setupAnimations();
     _scrollController = ScrollController();
-    totalEmails = widget.emails.length; // Store initial count
+    remainingEmails = List.from(widget.emails);
+    totalEmails = remainingEmails.length; // Store initial count
   }
 
   void _setupAnimations() {
@@ -86,7 +88,7 @@ class _Level1InboxInvaderState extends State<Level1InboxInvader>
         'sender': email.sender,
         'isPhishing': email.isPhishing,
       });
-      
+      remainingEmails.remove(email);
       if (isSuccess){
         _audioEffects.playCorrect();
       }else{
@@ -101,7 +103,7 @@ class _Level1InboxInvaderState extends State<Level1InboxInvader>
         feedbackMessage = '';
       });
       // If all emails are sorted, show summary
-      if (widget.emails.isEmpty) {
+      if (remainingEmails.isEmpty) {
         Future.delayed(const Duration(milliseconds: 300), () {
           if (!mounted) return;
           Navigator.pushReplacement(
@@ -117,15 +119,6 @@ class _Level1InboxInvaderState extends State<Level1InboxInvader>
                 totalQuestions: results.length,
                 gameType: GameType.phishing,
                 onContinue: () {
-                  // Navigator.pushReplacement(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //     builder: (context) => Level2LinkLogic(
-                  //       links: LevelData.level2Links,
-                  //       onLinkSelected: (link, isCorrect) {},
-                  //     ),
-                  //   ),
-                  // );
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
@@ -325,8 +318,6 @@ class _Level1InboxInvaderState extends State<Level1InboxInvader>
   }
 
   Widget _buildEmailList() {
-    final remainingEmails = widget.emails;
-
     return FuturisticFrame(
       borderColor: DigitalTheme.accentBlue.withOpacity(1),
       child: Container(

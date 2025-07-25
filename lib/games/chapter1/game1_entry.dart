@@ -3,6 +3,7 @@ import 'package:claude/games/chapter4/pages/intruction_page.dart';
 import 'package:flutter/material.dart';
 import 'package:claude/games/chapter1/models/game_models.dart';
 import 'package:claude/games/chapter1/screens/level1_inbox_invader.dart';
+import 'package:claude/games/chapter1/screens/level1_intro.dart';
 import 'package:claude/games/chapter1/service/game_state_service.dart';
 
 class Game1Entry extends StatefulWidget {
@@ -51,7 +52,7 @@ class _Game1EntryState extends State<Game1Entry> {
     //     },
     //   ),
     // );
-    return Level1InboxInvader(
+    return Level1Intro(
       emails: gameService.gameState.remainingChallenges.whereType<Email>().toList(),
       onEmailDrop: (email, isCorrect) {
         gameService.processEmail(email, isCorrect);
