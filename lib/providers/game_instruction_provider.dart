@@ -84,7 +84,6 @@ class GameInstructionProvider {
             'overview': 'In this module, you will review apps and the permissions they request. Your job is to allow only what makes sense.',
             'instructions': [
               'Carefully review the app name, type, and permissions it requests',
-              'Tap on each permission to see why it’s needed',
               'Analyze whether the requested permissions match the app’s purpose',
               'Tap "ALLOW" if all permissions seem reasonable',
               'Tap "DENY" if any permissions look suspicious or unnecessary',
@@ -151,6 +150,48 @@ class GameInstructionProvider {
               'Think critically and choose the most secure option each time.',
               'Learn from instant feedback to improve your online safety habits.',
               'Your digital privacy is in your hands — play smart!'
+            ]
+          };
+
+        case GameType.inboxInvader:
+          return {
+            'title': 'Mission: Stop the Inbox Invaders',
+            'icon': Icons.mail_outline,
+            'overview': 'Learn to spot phishing emails by identifying red flags and sorting legit messages from scams.',
+            'instructions': [
+              'Read each email carefully before making a decision',
+              'Look for suspicious domains, urgent language, or generic greetings',
+              'Identify if the email is legitimate or a phishing attempt',
+              'Drag or tap to classify the email correctly',
+              'Pay attention to feedback to learn key phishing indicators',
+              'Stay alert — phishing emails often mimic trusted sources!',
+            ]
+          };
+
+        case GameType.linkLogic:
+          return {
+            'title': 'Mission: Master the Link Logic',
+            'icon': Icons.link,
+            'overview': 'Test your ability to identify legitimate and fake URLs by spotting subtle red flags.',
+            'instructions': [
+              'Inspect each URL carefully before deciding',
+              'Check for spelling mistakes, extra characters, or strange domain extensions',
+              'Decide whether the link is safe or a phishing attempt',
+              'Be cautious — fake links are designed to look almost identical to the real thing!',
+            ]
+          };
+          
+        case GameType.replyRight:
+          return {
+            'title': 'Mission: Reply the Right Way',
+            'icon': Icons.message_outlined,
+            'overview': 'Practice making safe decisions in tricky online scenarios involving emails, social media, and pop-ups.',
+            'instructions': [
+              'Read each scenario carefully and understand the situation',
+              'Analyze the message for red flags like urgency or personal info requests',
+              'Select the safest and most secure response from the options',
+              'Think like a security expert — scammers prey on quick reactions',
+              'Remember: When in doubt, verify through trusted channels.',
             ]
           };
 

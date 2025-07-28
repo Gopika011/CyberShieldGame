@@ -401,9 +401,12 @@ class SummaryPage extends StatelessWidget {
         return 'CHAT DEFENDER';
       case GameType.secureProfile:
         return 'SECURE PROFILE';
-
-
-
+      case GameType.inboxInvader:
+        return 'INBOX INVADER';     
+      case GameType.linkLogic:
+        return 'LINK LOGIC'; 
+      case GameType.replyRight:
+        return 'REPLY RIGHT CHALLENGE'; 
       // default:
       //   return 'CYBER SECURITY CHALLENGE';
     }

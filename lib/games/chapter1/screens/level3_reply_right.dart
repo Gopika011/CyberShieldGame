@@ -38,7 +38,7 @@ class _Level3ReplyRightState extends State<Level3ReplyRight> {
       return SummaryPage(
         results: results,
         totalQuestions: widget.dialogues.length,
-        gameType: GameType.phishing,
+        gameType: GameType.replyRight,
         onContinue: () {
           app_state.GameState().completeChapter(1);
           Navigator.pushAndRemoveUntil(

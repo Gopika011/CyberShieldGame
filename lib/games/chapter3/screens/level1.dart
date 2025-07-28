@@ -260,7 +260,7 @@ class _Level1State extends State<Level1> with TickerProviderStateMixin {
             children: [
               Expanded(
                 child: _buildCyberCard(
-                  borderColor: DigitalTheme.dangerRed,
+                  // borderColor: DigitalTheme.dangerRed,
                   isGlowing: !cardSelected,
                   child: Container(
                     height: MediaQuery.of(context).size.height * 0.4,
@@ -277,7 +277,7 @@ class _Level1State extends State<Level1> with TickerProviderStateMixin {
               const SizedBox(width: 16),
               Expanded(
                 child: _buildCyberCard(
-                  borderColor: DigitalTheme.successGreen,
+                  // borderColor: DigitalTheme.successGreen,
                   isGlowing: !cardSelected,
                   child: Container(
                     height: MediaQuery.of(context).size.height * 0.4,

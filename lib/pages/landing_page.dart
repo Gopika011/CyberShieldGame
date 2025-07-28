@@ -135,12 +135,12 @@ class LandingPage extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        // Start button
+                        // Start button - now navigates to video intro
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
                             onPressed: () {
-                              Navigator.pushNamed(context, '/chapters');
+                              Navigator.pushNamed(context, '/video-intro');
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFF00D4FF),

@@ -40,7 +40,7 @@ class _Level3WifiWoesState extends State<Level3WifiWoes> {
       'description': 'You\'re at a coffee shop and want to buy the iPhone. You see "Free_WiFi_Shop" network.',
       'question': 'Should you connect and enter your card details?',
       'options': ['Use Mobile Data Instead', 'Connect & Shop Now'],
-      'correctAnswer': 1,
+      'correctAnswer': 0,
       'explanation': 'Public Wi-Fi is unsafe for payments! Always use mobile data or trusted networks for shopping.',
     },
     {

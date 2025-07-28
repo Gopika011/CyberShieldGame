@@ -245,11 +245,7 @@ class _ChaptersPageState extends State<ChaptersPage> {
                           ),
                           child: ElevatedButton(
                             onPressed: () async {
-                              if (chapter.id == 3) {
-                                await Navigator.pushNamed(context, '/chapter3/game');
-                              } else {
-                                await Navigator.pushNamed(context, '/chapter${chapter.id}');
-                              }
+                              await Navigator.pushNamed(context, '/chapter${chapter.id}');
                               setState(() {});
                             },
                             style: ElevatedButton.styleFrom(

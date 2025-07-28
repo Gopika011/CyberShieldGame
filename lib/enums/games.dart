@@ -8,6 +8,9 @@ enum GameType {
   networkRisk,
   profileDetector,
   chatDefender,
-  secureProfile
+  secureProfile,
+  inboxInvader,
+  linkLogic,
+  replyRight
   // Add more game types as needed
 }

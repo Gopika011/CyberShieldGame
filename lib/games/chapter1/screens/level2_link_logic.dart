@@ -40,7 +40,7 @@ class _Level2LinkLogicState extends State<Level2LinkLogic> {
       return SummaryPage(
         results: results,
         totalQuestions: widget.links.length,
-        gameType: GameType.phishing,
+        gameType: GameType.linkLogic,
         onContinue: () {
           // Navigator.pushReplacement(
           //   context,
@@ -55,7 +55,7 @@ class _Level2LinkLogicState extends State<Level2LinkLogic> {
             context,
             MaterialPageRoute(
               builder: (context) => InstructionPage(
-                gameType: GameType.appPermissions, 
+                gameType: GameType.replyRight, 
                 nextGameWidget: Level3ReplyRight(
                   dialogues: LevelData.level3Dialogues,
                   onOptionSelected: (dialogue, option) {},

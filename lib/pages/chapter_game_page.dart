@@ -1,16 +1,50 @@
+import 'package:claude/pages/comic_intro.dart';
 import 'package:claude/pages/land.dart';
 import 'package:claude/services/game_state.dart';
 import 'package:flutter/material.dart';
 
-class ChapterGamePage extends StatelessWidget {
+class ChapterGamePage extends StatefulWidget {
   final int chapterId;
-  final GameState gameState = GameState();
 
   ChapterGamePage({required this.chapterId});
 
   @override
+  State<ChapterGamePage> createState() => _ChapterGamePageState();
+}
+
+class _ChapterGamePageState extends State<ChapterGamePage> {
+  final GameState gameState = GameState();
+  bool _showComic = true;
+
+  void _onComicComplete() {
+    if (mounted) {
+      setState(() {
+        _showComic = false;
+      });
+    }
+  }
+
+  void _onComicSkip() {
+    if (mounted) {
+      setState(() {
+        _showComic = false;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final chapter = _getChapterData(chapterId);
+    if (_showComic) {
+      return Scaffold(
+        body: ComicIntro(
+          chapterId: widget.chapterId,
+          onComplete: _onComicComplete,
+          onSkip: _onComicSkip,
+        ),
+      );
+    }
+
+    final chapter = _getChapterData(widget.chapterId);
     
     return Scaffold(
       body: Stack(
@@ -40,303 +74,312 @@ class ChapterGamePage extends StatelessWidget {
             ),
           ),
           
-          // Main content
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Header
-                  Row(
-                    children: [
-                      Container(
+          // Main content with fade in animation
+          AnimatedOpacity(
+            opacity: _showComic ? 0.0 : 1.0,
+            duration: const Duration(milliseconds: 500),
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Header
+                    Row(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            color: const Color(0x05FFFFFF),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: const Color(0xFF00D4FF).withOpacity(0.5),
+                              width: 1,
+                            ),
+                          ),
+                          child: IconButton(
+                            icon: const Icon(
+                              Icons.arrow_back,
+                              color: Color(0xFF00D4FF),
+                            ),
+                            onPressed: () => Navigator.pop(context, 'updated'),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'CHAPTER ${(widget.chapterId - 1).toString().padLeft(2, '0')}',
+                                style: const TextStyle(
+                                  color: Color(0xFFB8C6DB),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                  letterSpacing: 2,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                chapter['title'].toUpperCase(),
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    
+                    const SizedBox(height: 20),
+                    
+                    // Main content card
+                    Expanded(
+                      child: Container(
+                        width: double.infinity,
                         decoration: BoxDecoration(
                           color: const Color(0x05FFFFFF),
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(12),
                           border: Border.all(
                             color: const Color(0xFF00D4FF).withOpacity(0.5),
                             width: 1,
                           ),
-                        ),
-                        child: IconButton(
-                          icon: const Icon(
-                            Icons.arrow_back,
-                            color: Color(0xFF00D4FF),
-                          ),
-                          onPressed: () => Navigator.pop(context, 'updated'),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'CHAPTER ${(chapterId -1).toString().padLeft(2, '0')}',
-                              style: const TextStyle(
-                                color: Color(0xFFB8C6DB),
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                letterSpacing: 2,
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              chapter['title'].toUpperCase(),
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
-                                letterSpacing: 0.5,
-                              ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFF00D4FF).withOpacity(0.1),
+                              blurRadius: 20,
+                              spreadRadius: -5,
                             ),
                           ],
                         ),
-                      ),
-                    ],
-                  ),
-                  
-                  const SizedBox(height: 20),
-                  
-                  // Main content card
-                  Expanded(
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: const Color(0x05FFFFFF),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: const Color(0xFF00D4FF).withOpacity(0.5),
-                          width: 1,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0xFF00D4FF).withOpacity(0.1),
-                            blurRadius: 20,
-                            spreadRadius: -5,
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        children: [
-                          // Top accent bar
-                          Container(
-                            height: 4,
-                            decoration: const BoxDecoration(
-                              color: Color(0xFF00D4FF),
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(12),
-                                topRight: Radius.circular(12),
+                        child: Column(
+                          children: [
+                            // Top accent bar
+                            Container(
+                              height: 4,
+                              decoration: const BoxDecoration(
+                                color: Color(0xFF00D4FF),
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(12),
+                                  topRight: Radius.circular(12),
+                                ),
                               ),
                             ),
-                          ),
-                          
-                          // Content
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.all(20),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  // Chapter icon and header
-                                  Container(
-                                    padding: const EdgeInsets.all(16),
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFF00D4FF).withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(8),
-                                      border: Border.all(
-                                        color: const Color(0xFF00D4FF),
-                                        width: 1,
+                            
+                            // Content
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.all(20),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // Chapter icon and header
+                                    Container(
+                                      padding: const EdgeInsets.all(16),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFF00D4FF).withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(8),
+                                        border: Border.all(
+                                          color: const Color(0xFF00D4FF),
+                                          width: 1,
+                                        ),
                                       ),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Container(
-                                          padding: const EdgeInsets.all(12),
-                                          decoration: BoxDecoration(
-                                            color: const Color(0xFF00D4FF).withOpacity(0.1),
-                                            borderRadius: BorderRadius.circular(8),
-                                          ),
-                                          child: Icon(
-                                            chapter['icon'],
-                                            color: const Color(0xFF00D4FF),
-                                            size: 24,
-                                          ),
-                                        ),
-                                        const SizedBox(width: 16),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              const Text(
-                                                'MISSION BRIEFING',
-                                                style: TextStyle(
-                                                  color: Color(0xFFB8C6DB),
-                                                  fontSize: 11,
-                                                  fontWeight: FontWeight.w500,
-                                                  letterSpacing: 1.5,
-                                                ),
-                                              ),
-                                              const SizedBox(height: 4),
-                                              Text(
-                                                chapter['title'],
-                                                style: const TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  
-                                  const SizedBox(height: 16),
-                                  
-                                  Expanded(
-                                    child: SingleChildScrollView(
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                      child: Row(
                                         children: [
-                                          Text(
-                                            chapter['story'],
-                                            style: const TextStyle(
-                                              fontSize: 15,
-                                              color: Color(0xFFB8C6DB),
-                                              height: 1.6,
+                                          Container(
+                                            padding: const EdgeInsets.all(12),
+                                            decoration: BoxDecoration(
+                                              color: const Color(0xFF00D4FF).withOpacity(0.1),
+                                              borderRadius: BorderRadius.circular(8),
+                                            ),
+                                            child: Icon(
+                                              chapter['icon'],
+                                              color: const Color(0xFF00D4FF),
+                                              size: 24,
                                             ),
                                           ),
-                                          const SizedBox(height: 50),
-                                          // Training modules block
-                                          Container(
-                                            padding: const EdgeInsets.all(16),
-                                            decoration: BoxDecoration(
-                                              color: const Color(0x05FFFFFF),
-                                              borderRadius: BorderRadius.circular(8),
-                                              border: Border.all(
-                                                color: const Color(0xFF00D4FF).withOpacity(0.3),
-                                                width: 1,
-                                              ),
-                                            ),
+                                          const SizedBox(width: 16),
+                                          Expanded(
                                             child: Column(
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
-                                                Row(
-                                                  children: [
-                                                    Container(
-                                                      padding: const EdgeInsets.all(6),
-                                                      decoration: BoxDecoration(
-                                                        color: const Color(0xFF00D4FF).withOpacity(0.1),
-                                                        borderRadius: BorderRadius.circular(4),
-                                                      ),
-                                                      child: const Icon(
-                                                        Icons.layers_outlined,
-                                                        color: Color(0xFF00D4FF),
-                                                        size: 14,
-                                                      ),
-                                                    ),
-                                                    const SizedBox(width: 8),
-                                                    const Text(
-                                                      'TRAINING MODULES',
-                                                      style: TextStyle(
-                                                        fontSize: 12,
-                                                        fontWeight: FontWeight.w600,
-                                                        color: Color(0xFFB8C6DB),
-                                                        letterSpacing: 1,
-                                                      ),
-                                                    ),
-                                                  ],
+                                                const Text(
+                                                  'MISSION BRIEFING',
+                                                  style: TextStyle(
+                                                    color: Color(0xFFB8C6DB),
+                                                    fontSize: 11,
+                                                    fontWeight: FontWeight.w500,
+                                                    letterSpacing: 1.5,
+                                                  ),
                                                 ),
-                                                const SizedBox(height: 12),
-                                                ...(chapter['levels'] as List).map<Widget>((levelData) {
-                                                  return Padding(
-                                                    padding: const EdgeInsets.only(bottom: 6),
-                                                    child: _buildMissionLevel(
-                                                      levelData['level'],
-                                                      levelData['description'],
-                                                      levelData['icon'],
-                                                    ),
-                                                  );
-                                                }).toList(),
+                                                const SizedBox(height: 4),
+                                                Text(
+                                                  chapter['title'],
+                                                  style: const TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
                                               ],
                                             ),
                                           ),
                                         ],
                                       ),
                                     ),
-                                  ),
-
-                                
-                                ],
+                                    
+                                    const SizedBox(height: 16),
+                                    
+                                    Expanded(
+                                      child: SingleChildScrollView(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              chapter['story'],
+                                              style: const TextStyle(
+                                                fontSize: 15,
+                                                color: Color(0xFFB8C6DB),
+                                                height: 1.6,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 50),
+                                            // Training modules block
+                                            Container(
+                                              padding: const EdgeInsets.all(16),
+                                              decoration: BoxDecoration(
+                                                color: const Color(0x05FFFFFF),
+                                                borderRadius: BorderRadius.circular(8),
+                                                border: Border.all(
+                                                  color: const Color(0xFF00D4FF).withOpacity(0.3),
+                                                  width: 1,
+                                                ),
+                                              ),
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      Container(
+                                                        padding: const EdgeInsets.all(6),
+                                                        decoration: BoxDecoration(
+                                                          color: const Color(0xFF00D4FF).withOpacity(0.1),
+                                                          borderRadius: BorderRadius.circular(4),
+                                                        ),
+                                                        child: const Icon(
+                                                          Icons.layers_outlined,
+                                                          color: Color(0xFF00D4FF),
+                                                          size: 14,
+                                                        ),
+                                                      ),
+                                                      const SizedBox(width: 8),
+                                                      const Text(
+                                                        'TRAINING MODULES',
+                                                        style: TextStyle(
+                                                          fontSize: 12,
+                                                          fontWeight: FontWeight.w600,
+                                                          color: Color(0xFFB8C6DB),
+                                                          letterSpacing: 1,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  const SizedBox(height: 12),
+                                                  ...(chapter['levels'] as List).map<Widget>((levelData) {
+                                                    return Padding(
+                                                      padding: const EdgeInsets.only(bottom: 6),
+                                                      child: _buildMissionLevel(
+                                                        levelData['level'],
+                                                        levelData['description'],
+                                                        levelData['icon'],
+                                                      ),
+                                                    );
+                                                  }).toList(),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    
+                    const SizedBox(height: 16),
+                    
+                    // Action button
+                    Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF00D4FF).withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: const Color(0xFF00D4FF)),
+                      ),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          if (widget.chapterId == 2) {
+                            Navigator.pushNamed(context, '/chapter2/game').then((result) {
+                              if (result == 'completed') {
+                                Navigator.pop(context, 'completed');
+                              }
+                            });
+                          } else if (widget.chapterId == 4) {
+                            Navigator.pushNamed(context, '/chapter4/game').then((result) {
+                              if (result == 'completed') {
+                                Navigator.pop(context, 'completed');
+                              }
+                            });
+                          } 
+                          else if (widget.chapterId == 1) {
+                            Navigator.pushNamed(context, '/chapter1/game').then((result) {
+                              if (result == 'completed') {
+                                Navigator.pop(context, 'completed');
+                              }
+                            });
+                          }
+                          else if (widget.chapterId == 3) {
+                            Navigator.pushNamed(context, '/chapter3/game').then((result) {
+                              if (result == 'completed') {
+                                Navigator.pop(context, 'completed');
+                              }
+                            });
+                          }
+                          else {
+                            // For other chapters, just mark as completed
+                            gameState.completeChapter(widget.chapterId);
+                            Navigator.pop(context, 'completed');
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          shadowColor: Colors.transparent,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
                           ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  
-                  const SizedBox(height: 16),
-                  
-                  // Action button
-                  Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF00D4FF).withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: const Color(0xFF00D4FF)),
-                    ),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        if (chapterId == 2) {
-                          Navigator.pushNamed(context, '/chapter2/game').then((result) {
-                            if (result == 'completed') {
-                              Navigator.pop(context, 'completed');
-                            }
-                          });
-                        } else if (chapterId == 4) {
-                          Navigator.pushNamed(context, '/chapter4/game').then((result) {
-                            if (result == 'completed') {
-                              Navigator.pop(context, 'completed');
-                            }
-                          });
-                        } 
-                        else if (chapterId == 1) {
-                          Navigator.pushNamed(context, '/chapter1/game').then((result) {
-                            if (result == 'completed') {
-                              Navigator.pop(context, 'completed');
-                            }
-                          });
-                        }
-                        else {
-                          // For other chapters, just mark as completed
-                          gameState.completeChapter(chapterId);
-                          Navigator.pop(context, 'completed');
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.transparent,
-                        shadowColor: Colors.transparent,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
                         ),
-                      ),
-                      child: Text(
-                        (chapterId == 1 || chapterId == 2 || chapterId == 4 || chapterId == 3) ? 'START MISSION' : 'COMPLETE MISSION',
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF00D4FF),
-                          letterSpacing: 1,
+                        child: Text(
+                          (widget.chapterId == 1 || widget.chapterId == 2 || widget.chapterId == 4 || widget.chapterId == 3) ? 'START MISSION' : 'COMPLETE MISSION',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF00D4FF),
+                            letterSpacing: 1,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -439,16 +482,6 @@ class ChapterGamePage extends StatelessWidget {
         'levels': [
           {'level': 'LEVEL 01', 'description': 'Interactive Detection Training', 'icon': Icons.psychology_outlined},
           {'level': 'LEVEL 02', 'description': 'Decision-Based Scenarios', 'icon': Icons.quiz_outlined},
-        ],
-      },
-      5: {
-        'title': 'The Final Test',
-        'story': 'Arya faces her most challenging scenario yet - a sophisticated multi-layered attack that combines elements from all her previous encounters.',
-        'icon': Icons.security_outlined,
-        'levels': [
-          {'level': 'LEVEL 01', 'description': 'Multi-Stage Threat Detection', 'icon': Icons.layers_outlined},
-          {'level': 'LEVEL 02', 'description': 'Live Attack Simulation', 'icon': Icons.bug_report_outlined},
-          {'level': 'LEVEL 03', 'description': 'Digital Safety Certification', 'icon': Icons.verified_user_outlined},
         ],
       },
     };

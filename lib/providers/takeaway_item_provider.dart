@@ -195,6 +195,64 @@ class GameTakeawayProvider {
             ),
           ];
 
+        case GameType.inboxInvader:
+          return [
+            TakeawayItem(
+              icon: Icons.search,
+              title: 'Examine Every Detail',
+              description: 'Always check sender domains, spelling, and tone. Phishing emails often use subtle tricks to appear real.',
+            ),
+            TakeawayItem(
+              icon: Icons.warning_amber,
+              title: 'Beware of Urgency Traps',
+              description: 'Scammers use fear and time pressure to make you act fast. Take a moment to verify before responding.',
+            ),
+            TakeawayItem(
+              icon: Icons.shield_outlined,
+              title: 'Verify Through Official Channels',
+              description: 'When in doubt, contact the organization directly via their official website or phone number instead of using email links.',
+            ),
+          ];
+          
+        case GameType.linkLogic:
+          return [
+            TakeawayItem(
+              icon: Icons.https,
+              title: 'Trust HTTPS, But Verify',
+              description: 'HTTPS and padlock icons are important, but always check the domain spelling and structure for authenticity.',
+            ),
+            TakeawayItem(
+              icon: Icons.find_in_page,
+              title: 'Spot Lookalike Domains',
+              description: 'Attackers use tricks like replacing letters with numbers (e.g., go0gle.com). Always read URLs carefully.',
+            ),
+            TakeawayItem(
+              icon: Icons.verified,
+              title: 'Use Official Sources',
+              description: 'Type the address manually or use bookmarks for critical sites like banking, email, and school portals.',
+            ),
+          ];
+
+        case GameType.replyRight:
+          return [
+            TakeawayItem(
+              icon: Icons.privacy_tip_outlined,
+              title: 'Protect Your Personal Data',
+              description: 'Never share personal information or credentials unless you are 100% sure of the requester’s identity.',
+            ),
+            TakeawayItem(
+              icon: Icons.report_problem,
+              title: 'Don’t Trust Urgency or Fear Tactics',
+              description: 'Scammers create panic to make you act without thinking. Pause, verify, and then respond safely.',
+            ),
+            TakeawayItem(
+              icon: Icons.security_outlined,
+              title: 'Verify Before You Act',
+              description: 'Always use official websites or contact methods to confirm requests instead of following links or pop-ups.',
+            ),
+          ];
+
+
       // default:
       //   return [];
     }

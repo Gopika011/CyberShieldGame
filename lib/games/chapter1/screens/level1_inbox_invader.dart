@@ -117,13 +117,13 @@ class _Level1InboxInvaderState extends State<Level1InboxInvader>
                   'userAnswer': r['isCorrect'] ? 'Correct' : 'Incorrect',
                 }).toList(),
                 totalQuestions: results.length,
-                gameType: GameType.phishing,
+                gameType: GameType.inboxInvader,
                 onContinue: () {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
                       builder: (context) => InstructionPage(
-                        gameType: GameType.appPermissions, 
+                        gameType: GameType.linkLogic, 
                         nextGameWidget: Level2LinkLogic(
                         links: LevelData.level2Links,
                         onLinkSelected: (link, isCorrect) {},

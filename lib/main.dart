@@ -7,6 +7,7 @@ import 'package:claude/games/chapter3/game3_entry.dart';
 import 'package:claude/pages/chapter_game_page.dart';
 import 'package:claude/pages/chapters_page.dart';
 import 'package:claude/pages/landing_page.dart';
+import 'package:claude/pages/video_intro_page.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -29,6 +30,7 @@ class CyberShieldApp extends StatelessWidget {
       ),
       home: LandingPage(),
       routes: {
+        '/video-intro': (context) => VideoIntroPage(),
         '/chapters': (context) => ChaptersPage(),
         '/chapter1': (context) => ChapterGamePage(chapterId: 1),
         '/chapter2': (context) => ChapterGamePage(chapterId: 2),

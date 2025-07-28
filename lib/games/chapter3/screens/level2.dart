@@ -36,6 +36,11 @@ class _Level2State extends State<Level2> {
       'message': 'Hey! Do you remember me? I sat behind you in class.',
       'choices': [
         {
+          'text': 'Send a selfie!',
+          'correct': false,
+          'feedback': 'Dangerous! Never ask for or send photos to strangers.',
+        },
+        {
           'text': 'Oh hi! Can you remind me your last name?',
           'correct': true,
           'feedback': 'Smart! Always verify identities before trusting strangers online.',
@@ -45,11 +50,7 @@ class _Level2State extends State<Level2> {
           'correct': false,
           'feedback': 'Oops! Don\'t pretend to know someone without verifying their identity.',
         },
-        {
-          'text': 'Send a selfie!',
-          'correct': false,
-          'feedback': 'Dangerous! Never ask for or send photos to strangers.',
-        },
+
       ],
     },
     {
@@ -76,11 +77,6 @@ class _Level2State extends State<Level2> {
       'message': 'Send a selfie right now 😄',
       'choices': [
         {
-          'text': 'That\'s a weird request. No thanks.',
-          'correct': true,
-          'feedback': 'Perfect! Trust your instincts and don\'t share photos with strangers.',
-        },
-        {
           'text': 'Send a photo',
           'correct': false,
           'feedback': 'Never! Sharing photos with strangers can be dangerous and lead to misuse.',
@@ -89,6 +85,11 @@ class _Level2State extends State<Level2> {
           'text': 'Why?',
           'correct': false,
           'feedback': 'Even asking why gives them an opportunity to manipulate you.',
+        },
+        {
+          'text': 'That\'s a weird request. No thanks.',
+          'correct': true,
+          'feedback': 'Perfect! Trust your instincts and don\'t share photos with strangers.',
         },
       ],
     },
